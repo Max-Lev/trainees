@@ -2,14 +2,30 @@
     .container{
         padding: 1rem;
     }
-    .filter-container {
-        width: 30%;
+    .filter-row {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
         margin-top: 1rem;
-
-        ::ng-deep{
-            .mat-mdc-text-field-wrapper {
-                border-radius: 5px;
-            }
+      }
+      
+      .filter-field {
+        flex: 1;
+        max-width: 30%;
+        
+        ::ng-deep {
+          .mat-mdc-text-field-wrapper {
+            border-radius: 5px;
+          }
         }
+      }
+      
+      .button-container {
+        display: flex;
+        justify-content: center;
+      }
+
+      .selected-row{
+        font-weight: bold;
+      }
     }
-}
