@@ -1,0 +1,15 @@
+:host {
+    .container{
+        padding: 1rem;
+    }
+    .filter-container {
+        width: 30%;
+        margin-top: 1rem;
+
+        ::ng-deep{
+            .mat-mdc-text-field-wrapper {
+                border-radius: 5px;
+            }
+        }
+    }
+}

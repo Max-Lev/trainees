@@ -1,0 +1,35 @@
+@use '@angular/material' as mat;
+
+// Define custom color palette
+$dark-primary: mat.define-palette(mat.$grey-palette, 200); // light grey
+$dark-accent:  mat.define-palette(mat.$grey-palette, 500); // medium grey
+$dark-warn:    mat.define-palette(mat.$red-palette, 700);
+
+// Create dark theme
+$dark-theme: mat.define-dark-theme((
+  color: (
+    primary: $dark-primary,
+    accent: $dark-accent,
+    warn: $dark-warn
+  ),
+  typography: mat.define-typography-config(),
+  density: 0
+));
+
+// Include theme styles
+@include mat.all-component-themes($dark-theme);
+
+// Optional: Add background and foreground customization
+html, body {
+  background-color: #121212; // dark background
+  color: #f0f0f0; // white-ish text
+}
+
+.mat-app-background {
+  background-color: #1e1e1e;
+}
+
+.mat-toolbar {
+  background-color: #2c2c2c;
+  color: #ffffff;
+}
