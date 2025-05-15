@@ -9,10 +9,17 @@ export class DataTableContainerService {
   constructor() { }
 
   selectedTrainee = signal<Trainee | null>(null);
-
   toggleSelection(row: Trainee) {
-    const isSelected = this.selectedTrainee();
-    (isSelected) ? this.selectedTrainee.set(null) : this.selectedTrainee.set(row);
-    console.log(this.selectedTrainee());
+    const selected: Trainee | null = this.selectedTrainee();
+    if (selected?.id === row.id) {
+      (selected) ? this.selectedTrainee.set(null) : this.selectedTrainee.set(row);
+    } else {
+      this.selectedTrainee.set(row);
+    }
   }
+
+  filterValue = signal<string | null>('');
+
+  pageState = signal<number | null>(null);
+
 }

@@ -1,18 +1,19 @@
 <div class="container">
 
-  <div class="filter-row">
+  <form [formGroup]="form" class="filter-row">
     <mat-form-field class="filter-field">
       <mat-label>Filter</mat-label>
-      <input matInput (keyup)="applyFilter($event)" placeholder="Try 'ID:4' or '>85' or 'date<2024-05-01'" #input>
+      <!-- (keyup)="applyFilter($event)" -->
+      <input formControlName="search" matInput placeholder="Try 'ID:4' or '> 85' or 'date < 2024-05-01'" #input>
     </mat-form-field>
-    
+
     <div class="button-container">
       <button mat-flat-button color="primary">Add</button>
     </div>
     <div class="button-container">
       <button mat-flat-button color="primary">Remove</button>
     </div>
-  </div>
+  </form>
 
 
 
@@ -29,9 +30,11 @@
     }
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr [class.selected-row]="row.id===_selectedTrainee()?.id" mat-row (click)="selectedRowHandler(row)" *matRowDef="let row; columns: displayedColumns;"></tr>
-    
+    <tr [class.selected-row]="row.id===_selectedTrainee()?.id" mat-row (click)="selectedRowHandler(row)"
+      *matRowDef="let row; columns: displayedColumns;"></tr>
+
   </table>
-  <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator>
+  <mat-paginator (page)="pageSelected($event)" [pageSizeOptions]="[5, 10, 20,25, 100]"
+    aria-label="Select page of users"></mat-paginator>
 
 </div>
