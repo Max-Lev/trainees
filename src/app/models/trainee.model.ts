@@ -10,6 +10,7 @@ export interface Trainee {
     city?: string;
     country?: string;
     zip?: string;
+    isSelected?: boolean;
   }
   
   export interface TraineeMonitor {

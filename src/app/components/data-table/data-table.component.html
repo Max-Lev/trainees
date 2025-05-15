@@ -29,9 +29,9 @@
     }
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr [class.selected-row]="row===row?.isSelected" mat-row (click)="selectedRow(row)" *matRowDef="let row; columns: displayedColumns;"></tr>
+    <tr [class.selected-row]="row.id===_selectedTrainee()?.id" mat-row (click)="selectedRowHandler(row)" *matRowDef="let row; columns: displayedColumns;"></tr>
+    
   </table>
   <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator>
-
 
 </div>
