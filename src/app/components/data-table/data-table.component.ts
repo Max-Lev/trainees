@@ -1,4 +1,5 @@
-import { AfterViewInit, ChangeDetectorRef, Component, effect, inject, Input, OnChanges, OnDestroy, OnInit, signal, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, effect, inject, Input, 
+  OnChanges, OnDestroy, OnInit, signal, SimpleChanges, ViewChild } from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -11,6 +12,7 @@ import { DataTableContainerService } from './data-table-container.service';
 import { FilterPredicateUtilService } from './filter-predicate-util.service';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, of } from 'rxjs';
+import { DetailsPanelComponent } from '../details-panel/details-panel.component';
 @Component({
   selector: 'app-data-table',
   imports: [
@@ -18,6 +20,7 @@ import { debounceTime, of } from 'rxjs';
     MatTableModule, MatButtonModule,
     MatPaginator, MatPaginatorModule,
     ReactiveFormsModule,
+    DetailsPanelComponent
 
   ],
   standalone: true,
@@ -37,7 +40,7 @@ export class DataTableComponent implements OnChanges, OnInit, AfterViewInit, OnD
 
   dataSource = new MatTableDataSource<Trainee>([]);
 
-  _selectedTrainee = this.dataTableContainerService.selectedTrainee;
+  selectedTrainee = this.dataTableContainerService.selectedTrainee;
 
   form = new FormGroup({
     search: new FormControl<string | null>(this.dataTableContainerService.filterValue()),
@@ -50,6 +53,8 @@ export class DataTableComponent implements OnChanges, OnInit, AfterViewInit, OnD
   @Input() set trainees(value: Trainee[]) { this._trainees.set(value); }
   get trainees(): Trainee[] { return this._trainees(); }
 
+  addNewTraineeState = this.dataTableContainerService.addNewTraineeState;
+
   constructor() {
 
     this.setCustomFilterPredicate();
@@ -57,17 +62,9 @@ export class DataTableComponent implements OnChanges, OnInit, AfterViewInit, OnD
     this.searchInputState();
 
     effect(() => {
-      console.log(this._selectedTrainee())
+      console.log('selectedTrainee: ',this.selectedTrainee())
+      console.log('addNewTraineeState: ',this.addNewTraineeState())
     });
-
-    // this._pageState = toSignal(
-    //   this.paginator?.page.asObservable() ?? of(null),
-    //   { initialValue: undefined }
-    // );
-
-    // effect(() =>{
-    //   console.log(this._pageState())
-    // })
 
   }
 
@@ -78,6 +75,7 @@ export class DataTableComponent implements OnChanges, OnInit, AfterViewInit, OnD
   ngOnChanges(changes: SimpleChanges): void {
     // this.dataSource.data = this.trainees;
   }
+
   ngAfterViewInit(): void {
     this.setPaginatorDataSource();
 
@@ -122,7 +120,8 @@ export class DataTableComponent implements OnChanges, OnInit, AfterViewInit, OnD
   }
 
   selectedRowHandler(row: Trainee) {
-    this.dataTableContainerService.toggleSelection(row)
+    this.dataTableContainerService.toggleSelection(row);
+    // this.addNewTraineeState = false;
   }
 
   pageSelected($event: PageEvent) {
@@ -135,6 +134,10 @@ export class DataTableComponent implements OnChanges, OnInit, AfterViewInit, OnD
 
   addTrainee(){
     // save edited panel data
+    // this.addNewTraineeState = true;
+    this.dataTableContainerService.addNewTraineeState.set(true);
+    this.dataTableContainerService.selectedTrainee.set(null);
+    // this.selectedTrainee.set(null);
   }
 
 }

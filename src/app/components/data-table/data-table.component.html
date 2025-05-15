@@ -3,7 +3,6 @@
   <form [formGroup]="form" class="filter-row">
     <mat-form-field class="filter-field">
       <mat-label>Filter</mat-label>
-      <!-- (keyup)="applyFilter($event)" -->
       <input formControlName="search" matInput placeholder="Try 'ID:4' or '> 85' or 'date < 2024-05-01'" #input>
     </mat-form-field>
 
@@ -31,7 +30,7 @@
         }
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr [class.selected-row]="row.id===_selectedTrainee()?.id" mat-row (click)="selectedRowHandler(row)"
+        <tr [class.selected-row]="row.id===selectedTrainee()?.id" mat-row (click)="selectedRowHandler(row)"
           *matRowDef="let row; columns: displayedColumns;"></tr>
 
       </table>
@@ -40,9 +39,9 @@
     </div>
 
 
-    @if(_selectedTrainee()){
+    @if(selectedTrainee() || addNewTraineeState()){
       <div class="panel-wrapper">
-        panel
+        <app-details-panel [selectedTrainee]="selectedTrainee()"></app-details-panel>
       </div>
     }
 
