@@ -26,6 +26,5 @@ export class DataTableContainer {
 
   pageState = signal<number | null>(null);
 
-  // addNewTraineeState = signal<boolean>(false);
 
 }

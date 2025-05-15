@@ -9,8 +9,11 @@
     "dateJoined": "2022-09-01",
     "address": "123 Main St",
     "city": "Boston",
+    "state": "MA",
     "country": "USA",
-    "zip": "02108"
+    "zip": "02108",
+    "age": 32,
+    "phone": "617-555-1234"
   },
   {
     "id": 2,
@@ -22,8 +25,11 @@
     "dateJoined": "2022-09-05",
     "address": "456 Park Ave",
     "city": "New York",
+    "state": "NY",
     "country": "USA",
-    "zip": "10001"
+    "zip": "10001",
+    "age": 24,
+    "phone": "212-555-9876"
   },
   {
     "id": 3,
@@ -35,8 +41,11 @@
     "dateJoined": "2022-09-01",
     "address": "123 Main St",
     "city": "Boston",
+    "state": "MA",
     "country": "USA",
-    "zip": "02108"
+    "zip": "02108",
+    "age": 31,
+    "phone": "617-555-2345"
   },
   {
     "id": 4,
@@ -48,8 +57,11 @@
     "dateJoined": "2022-08-15",
     "address": "789 Elm St",
     "city": "Chicago",
+    "state": "IL",
     "country": "USA",
-    "zip": "60007"
+    "zip": "60007",
+    "age": 27,
+    "phone": "312-555-7890"
   },
   {
     "id": 5,
@@ -61,8 +73,11 @@
     "dateJoined": "2022-09-05",
     "address": "456 Park Ave",
     "city": "New York",
+    "state": "NY",
     "country": "USA",
-    "zip": "10001"
+    "zip": "10001",
+    "age": 29,
+    "phone": "212-555-3456"
   },
   {
     "id": 6,
@@ -74,8 +89,11 @@
     "dateJoined": "2022-09-10",
     "address": "101 Pine St",
     "city": "Seattle",
+    "state": "WA",
     "country": "USA",
-    "zip": "98101"
+    "zip": "98101",
+    "age": 26,
+    "phone": "206-555-8765"
   },
   {
     "id": 7,
@@ -87,8 +105,11 @@
     "dateJoined": "2022-08-15",
     "address": "789 Elm St",
     "city": "Chicago",
+    "state": "IL",
     "country": "USA",
-    "zip": "60007"
+    "zip": "60007",
+    "age": 33,
+    "phone": "312-555-9012"
   },
   {
     "id": 8,
@@ -100,8 +121,11 @@
     "dateJoined": "2022-09-20",
     "address": "202 Oak St",
     "city": "Austin",
+    "state": "TX",
     "country": "USA",
-    "zip": "78701"
+    "zip": "78701",
+    "age": 25,
+    "phone": "512-555-2345"
   },
   {
     "id": 9,
@@ -113,8 +137,11 @@
     "dateJoined": "2022-09-01",
     "address": "123 Main St",
     "city": "Boston",
+    "state": "MA",
     "country": "USA",
-    "zip": "02108"
+    "zip": "02108",
+    "age": 30,
+    "phone": "617-555-4567"
   },
   {
     "id": 10,
@@ -126,8 +153,11 @@
     "dateJoined": "2022-09-10",
     "address": "101 Pine St",
     "city": "Seattle",
+    "state": "WA",
     "country": "USA",
-    "zip": "98101"
+    "zip": "98101",
+    "age": 21,
+    "phone": "206-555-1234"
   },
   {
     "id": 11,
@@ -139,8 +169,11 @@
     "dateJoined": "2022-10-01",
     "address": "303 Maple St",
     "city": "Denver",
+    "state": "CO",
     "country": "USA",
-    "zip": "80202"
+    "zip": "80202",
+    "age": 22,
+    "phone": "303-555-8901"
   },
   {
     "id": 12,
@@ -152,8 +185,11 @@
     "dateJoined": "2022-09-05",
     "address": "456 Park Ave",
     "city": "New York",
+    "state": "NY",
     "country": "USA",
-    "zip": "10001"
+    "zip": "10001",
+    "age": 34,
+    "phone": "212-555-6789"
   },
   {
     "id": 13,
@@ -165,8 +201,11 @@
     "dateJoined": "2022-09-20",
     "address": "202 Oak St",
     "city": "Austin",
+    "state": "TX",
     "country": "USA",
-    "zip": "78701"
+    "zip": "78701",
+    "age": 36,
+    "phone": "512-555-3456"
   },
   {
     "id": 14,
@@ -178,8 +217,11 @@
     "dateJoined": "2022-08-15",
     "address": "789 Elm St",
     "city": "Chicago",
+    "state": "IL",
     "country": "USA",
-    "zip": "60007"
+    "zip": "60007",
+    "age": 38,
+    "phone": "312-555-2345"
   },
   {
     "id": 15,
@@ -191,8 +233,11 @@
     "dateJoined": "2022-10-05",
     "address": "404 Cedar St",
     "city": "Portland",
+    "state": "OR",
     "country": "USA",
-    "zip": "97201"
+    "zip": "97201",
+    "age": 23,
+    "phone": "503-555-7890"
   },
   {
     "id": 16,
@@ -204,8 +249,11 @@
     "dateJoined": "2022-10-01",
     "address": "303 Maple St",
     "city": "Denver",
+    "state": "CO",
     "country": "USA",
-    "zip": "80202"
+    "zip": "80202",
+    "age": 24,
+    "phone": "303-555-1234"
   },
   {
     "id": 17,
@@ -217,8 +265,11 @@
     "dateJoined": "2022-09-10",
     "address": "101 Pine St",
     "city": "Seattle",
+    "state": "WA",
     "country": "USA",
-    "zip": "98101"
+    "zip": "98101",
+    "age": 28,
+    "phone": "206-555-6543"
   },
   {
     "id": 18,
@@ -230,8 +281,11 @@
     "dateJoined": "2022-10-05",
     "address": "404 Cedar St",
     "city": "Portland",
+    "state": "OR",
     "country": "USA",
-    "zip": "97201"
+    "zip": "97201",
+    "age": 35,
+    "phone": "503-555-4321"
   },
   {
     "id": 19,
@@ -243,8 +297,11 @@
     "dateJoined": "2022-09-20",
     "address": "202 Oak St",
     "city": "Austin",
+    "state": "TX",
     "country": "USA",
-    "zip": "78701"
+    "zip": "78701",
+    "age": 30,
+    "phone": "512-555-9876"
   },
   {
     "id": 20,
@@ -256,7 +313,90 @@
     "dateJoined": "2022-10-10",
     "address": "505 Birch St",
     "city": "Miami",
+    "state": "FL",
     "country": "USA",
-    "zip": "33101"
+    "zip": "33101",
+    "age": 40,
+    "phone": "305-555-8765"
+  },
+  {
+    "id": 21,
+    "name": "Liam Carter",
+    "subject": "Geometry",
+    "grade": 81,
+    "date": "2023-01-18",
+    "email": "liam@example.com",
+    "dateJoined": "2022-11-01",
+    "address": "606 Spruce St",
+    "city": "San Diego",
+    "state": "CA",
+    "country": "USA",
+    "zip": "92101",
+    "age": 27,
+    "phone": "619-555-3456"
+  },
+  {
+    "id": 22,
+    "name": "Olivia Green",
+    "subject": "Trigonometry",
+    "grade": 76,
+    "date": "2023-01-19",
+    "email": "olivia@example.com",
+    "dateJoined": "2022-10-15",
+    "address": "707 Fir St",
+    "city": "Phoenix",
+    "state": "AZ",
+    "country": "USA",
+    "zip": "85001",
+    "age": 21,
+    "phone": "602-555-7890"
+  },
+  {
+    "id": 23,
+    "name": "Ethan Lee",
+    "subject": "Statistics",
+    "grade": 84,
+    "date": "2023-01-20",
+    "email": "ethan@example.com",
+    "dateJoined": "2022-09-25",
+    "address": "808 Walnut St",
+    "city": "Philadelphia",
+    "state": "PA",
+    "country": "USA",
+    "zip": "19107",
+    "age": 29,
+    "phone": "215-555-2109"
+  },
+  {
+    "id": 24,
+    "name": "Sophia Hall",
+    "subject": "Calculus",
+    "grade": 90,
+    "date": "2023-01-21",
+    "email": "sophia@example.com",
+    "dateJoined": "2022-08-30",
+    "address": "909 Cherry St",
+    "city": "Dallas",
+    "state": "TX",
+    "country": "USA",
+    "zip": "75201",
+    "age": 26,
+    "phone": "214-555-6543"
+  },
+  {
+    "id": 25,
+    "name": "Noah Scott",
+    "subject": "Economics",
+    "grade": 73,
+    "date": "2023-01-22",
+    "email": "noah@example.com",
+    "dateJoined": "2022-09-10",
+    "address": "1010 Palm St",
+    "city": "San Jose",
+    "state": "CA",
+    "country": "USA",
+    "zip": "95112",
+    "age": 33,
+    "phone": "408-555-7890"
   }
 ]

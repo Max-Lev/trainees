@@ -5,12 +5,16 @@ export interface Trainee {
     grade: number;
     date: string;
     email?: string;
-    dateJoined?: string;
+    dateJoined?: string | null;
     address?: string;
     city?: string;
     country?: string;
-    zip?: string;
-    isSelected?: boolean;
+    zip?: number;
+    // phone?:string | null;
+    phone?:number | null;
+    state?:string;
+    age:number;
+
   }
   
   export interface TraineeMonitor {

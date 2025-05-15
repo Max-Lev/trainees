@@ -1,8 +1,11 @@
 :host {
+  display: flex;
+
   .container {
     padding: 1rem;
     display: flex;
     flex-direction: column;
+    flex: 1;
   }
 
   .filter-row {
@@ -30,36 +33,19 @@
 
   .selected-row {
     font-weight: bold;
+    color: rgb(85, 204, 68);
   }
 
   .table-container {
-    // border: 1px solid red;
     display: flex;
-    // flex: 2;
-    // flex-direction: column;
 
     .table-wrapper {
       display: flex;
-          flex-direction: column;
-          flex: 3;
+      flex-direction: column;
+      flex: 3;
     }
-
-    .panel-wrapper {
-      border: 1px solid blue;
-      display: flex;
-          flex-direction: column;
-          flex: 1;
-    }
-
 
   }
 
-  // .panel-container{
-  //   width: 200px;
-  //   height: 200px;
-  //   border:1px solid blue;
-  //   display: flex;
-  //   flex:1;
-  // }
 
 }

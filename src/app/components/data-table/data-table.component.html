@@ -38,16 +38,13 @@
         aria-label="Select page of users"></mat-paginator>
     </div>
 
-    <!-- {{selectedTrainee() | json }}{{addNewTraineeState()}} -->
-    @if(selectedTrainee().action===DATAGRID_SELECT_ACTIONS.select_row || selectedTrainee().action===DATAGRID_SELECT_ACTIONS.add_trainee){
-    <div class="panel-wrapper">
-      <app-details-panel [selectedTrainee]="selectedTrainee().payload"></app-details-panel>
-    </div>
-    }
-
-
   </div>
 
-
-
 </div>
+
+@if(selectedTrainee().action===DATAGRID_SELECT_ACTIONS.select_row ||
+selectedTrainee().action===DATAGRID_SELECT_ACTIONS.open_details_panel){
+<div>
+  <app-details-panel [selectedTrainee]="selectedTrainee().payload"></app-details-panel>
+</div>
+}

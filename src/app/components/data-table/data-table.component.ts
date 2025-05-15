@@ -74,13 +74,29 @@ export class DataTableComponent implements OnChanges, OnInit, AfterViewInit, OnD
 
     effect(() => {
       console.log('selectedTrainee: ', this.selectedTrainee())
-      // console.log('addNewTraineeState: ', this.addNewTraineeState())
     });
 
   }
 
   ngOnInit(): void {
-
+    // this.dataTableContainer.selectedTrainee.set(
+    //   {
+    //     "action": "SELECT_ROW_ACTION",
+    //     "payload": {
+    //       "id": 5,
+    //       "name": "Jane Doe",
+    //       "subject": "Biology",
+    //       "grade": 58,
+    //       "date": "2023-01-25",
+    //       "email": "jane@example.com",
+    //       "dateJoined": "2022-09-05",
+    //       "address": "456 Park Ave",
+    //       "city": "New York",
+    //       "country": "USA",
+    //       "zip": 10001
+    //     }
+    //   }
+    // )
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -144,7 +160,9 @@ export class DataTableComponent implements OnChanges, OnInit, AfterViewInit, OnD
   }
 
   addTrainee() {
-    this.dataTableContainer.selectedTrainee.set({ action: SELECT_ACTIONS.add_trainee, payload: null });
+    this.dataTableContainer.selectedTrainee.set({
+      action: SELECT_ACTIONS.open_details_panel, payload: null
+    });
 
   }
 

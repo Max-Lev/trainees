@@ -1,0 +1,18 @@
+
+[
+    { "value": "Mathematics", "viewValue": "Mathematics" },
+    { "value": "Physics", "viewValue": "Physics" },
+    { "value": "Chemistry", "viewValue": "Chemistry" },
+    { "value": "Biology", "viewValue": "Biology" },
+    { "value": "Algebra", "viewValue": "Algebra" },
+    { "value": "Geometry", "viewValue": "Geometry" },
+    { "value": "Trigonometry", "viewValue": "Trigonometry" },
+    { "value": "Statistics", "viewValue": "Statistics" },
+    { "value": "Calculus", "viewValue": "Calculus" },
+    { "value": "Economics", "viewValue": "Economics" },
+    { "value": "Computer Science", "viewValue": "Computer Science" },
+    { "value": "History", "viewValue": "History" },
+    { "value": "English Literature", "viewValue": "English Literature" },
+    { "value": "Art History", "viewValue": "Art History" },
+    { "value": "Psychology", "viewValue": "Psychology" }
+  ]
