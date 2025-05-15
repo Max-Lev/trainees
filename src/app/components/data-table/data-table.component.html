@@ -10,7 +10,7 @@
       <button (click)="addTrainee()" mat-flat-button color="primary">Add</button>
     </div>
     <div class="button-container">
-      <button mat-flat-button color="primary">Remove</button>
+      <button [disabled]="isRemoveBtnDisabled()" mat-flat-button color="primary">Remove</button>
     </div>
   </form>
 
@@ -30,7 +30,7 @@
         }
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr [class.selected-row]="row.id===selectedTrainee()?.id" mat-row (click)="selectedRowHandler(row)"
+        <tr [class.selected-row]="row.id===selectedTrainee().payload?.id" mat-row (click)="selectedRowHandler(row)"
           *matRowDef="let row; columns: displayedColumns;"></tr>
 
       </table>
@@ -38,11 +38,11 @@
         aria-label="Select page of users"></mat-paginator>
     </div>
 
-
-    @if(selectedTrainee() || addNewTraineeState()){
-      <div class="panel-wrapper">
-        <app-details-panel [selectedTrainee]="selectedTrainee()"></app-details-panel>
-      </div>
+    <!-- {{selectedTrainee() | json }}{{addNewTraineeState()}} -->
+    @if(selectedTrainee().action===DATAGRID_SELECT_ACTIONS.select_row || selectedTrainee().action===DATAGRID_SELECT_ACTIONS.add_trainee){
+    <div class="panel-wrapper">
+      <app-details-panel [selectedTrainee]="selectedTrainee().payload"></app-details-panel>
+    </div>
     }
 
 

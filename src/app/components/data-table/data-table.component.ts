@@ -1,5 +1,7 @@
-import { AfterViewInit, ChangeDetectorRef, Component, effect, inject, Input, 
-  OnChanges, OnDestroy, OnInit, signal, SimpleChanges, ViewChild } from '@angular/core';
+import {
+  AfterViewInit, ChangeDetectorRef, Component, computed, effect, inject, Input,
+  OnChanges, OnDestroy, OnInit, signal, SimpleChanges, ViewChild
+} from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -8,11 +10,13 @@ import { Trainee } from '../../models/trainee.model';
 import { MatButtonModule } from '@angular/material/button';
 import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { DataTableContainerService } from './data-table-container.service';
+import { DataTableContainer } from './data-table-container.service';
 import { FilterPredicateUtilService } from './filter-predicate-util.service';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, of } from 'rxjs';
 import { DetailsPanelComponent } from '../details-panel/details-panel.component';
+import { JsonPipe } from '@angular/common';
+import { DATAGRID_SELECT_ACTIONS as SELECT_ACTIONS } from '../../models/data.actions';
 @Component({
   selector: 'app-data-table',
   imports: [
@@ -20,7 +24,8 @@ import { DetailsPanelComponent } from '../details-panel/details-panel.component'
     MatTableModule, MatButtonModule,
     MatPaginator, MatPaginatorModule,
     ReactiveFormsModule,
-    DetailsPanelComponent
+    DetailsPanelComponent,
+    // JsonPipe
 
   ],
   standalone: true,
@@ -30,7 +35,7 @@ import { DetailsPanelComponent } from '../details-panel/details-panel.component'
 export class DataTableComponent implements OnChanges, OnInit, AfterViewInit, OnDestroy {
 
   cdr = inject(ChangeDetectorRef);
-  dataTableContainerService = inject(DataTableContainerService);
+  dataTableContainer = inject(DataTableContainer);
   filterPredicateUtilService = inject(FilterPredicateUtilService);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -40,10 +45,9 @@ export class DataTableComponent implements OnChanges, OnInit, AfterViewInit, OnD
 
   dataSource = new MatTableDataSource<Trainee>([]);
 
-  selectedTrainee = this.dataTableContainerService.selectedTrainee;
 
   form = new FormGroup({
-    search: new FormControl<string | null>(this.dataTableContainerService.filterValue()),
+    search: new FormControl<string | null>(this.dataTableContainer.filterValue()),
     addBtn: new FormControl<string | null>(''),
     removeBtn: new FormControl<string | null>(''),
   });
@@ -53,7 +57,14 @@ export class DataTableComponent implements OnChanges, OnInit, AfterViewInit, OnD
   @Input() set trainees(value: Trainee[]) { this._trainees.set(value); }
   get trainees(): Trainee[] { return this._trainees(); }
 
-  addNewTraineeState = this.dataTableContainerService.addNewTraineeState;
+  // addNewTraineeState = this.dataTableContainerService.addNewTraineeState;
+
+  DATAGRID_SELECT_ACTIONS = SELECT_ACTIONS;
+  selectedTrainee = this.dataTableContainer.selectedTrainee;
+
+  isRemoveBtnDisabled = computed(() => {
+    return this.dataTableContainer.selectedTrainee().action === SELECT_ACTIONS.select_row ? false : true;
+  });
 
   constructor() {
 
@@ -62,8 +73,8 @@ export class DataTableComponent implements OnChanges, OnInit, AfterViewInit, OnD
     this.searchInputState();
 
     effect(() => {
-      console.log('selectedTrainee: ',this.selectedTrainee())
-      console.log('addNewTraineeState: ',this.addNewTraineeState())
+      console.log('selectedTrainee: ', this.selectedTrainee())
+      // console.log('addNewTraineeState: ', this.addNewTraineeState())
     });
 
   }
@@ -80,8 +91,8 @@ export class DataTableComponent implements OnChanges, OnInit, AfterViewInit, OnD
     this.setPaginatorDataSource();
 
     this.form.controls.search.valueChanges.pipe(debounceTime(1000)).subscribe((filterValue: string | null) => {
-      
-      this.dataTableContainerService.filterValue.set(filterValue);
+
+      this.dataTableContainer.filterValue.set(filterValue);
       if (filterValue) {
         this.dataSource.filter = filterValue.trim().toLowerCase();
       } else {
@@ -91,7 +102,7 @@ export class DataTableComponent implements OnChanges, OnInit, AfterViewInit, OnD
 
     this.paginationState();
 
-   
+
 
   }
 
@@ -115,29 +126,26 @@ export class DataTableComponent implements OnChanges, OnInit, AfterViewInit, OnD
 
   searchInputState() {
     effect(() => {
-      this.dataSource.filter = this.dataTableContainerService.filterValue() ?? '';
+      this.dataSource.filter = this.dataTableContainer.filterValue() ?? '';
     });
   }
 
   selectedRowHandler(row: Trainee) {
-    this.dataTableContainerService.toggleSelection(row);
+    this.dataTableContainer.toggleSelection({ action: SELECT_ACTIONS.select_row, payload: row });
     // this.addNewTraineeState = false;
   }
 
   pageSelected($event: PageEvent) {
-    this.dataTableContainerService.pageState.set($event.pageSize);
+    this.dataTableContainer.pageState.set($event.pageSize);
   }
 
   paginationState() {
-    this.paginator.pageSize = this.dataTableContainerService.pageState() ?? 0;
+    this.paginator.pageSize = this.dataTableContainer.pageState() ?? 0;
   }
 
-  addTrainee(){
-    // save edited panel data
-    // this.addNewTraineeState = true;
-    this.dataTableContainerService.addNewTraineeState.set(true);
-    this.dataTableContainerService.selectedTrainee.set(null);
-    // this.selectedTrainee.set(null);
+  addTrainee() {
+    this.dataTableContainer.selectedTrainee.set({ action: SELECT_ACTIONS.add_trainee, payload: null });
+
   }
 
 }
