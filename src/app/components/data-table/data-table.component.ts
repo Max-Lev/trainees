@@ -133,4 +133,8 @@ export class DataTableComponent implements OnChanges, OnInit, AfterViewInit, OnD
     this.paginator.pageSize = this.dataTableContainerService.pageState() ?? 0;
   }
 
+  addTrainee(){
+    // save edited panel data
+  }
+
 }
