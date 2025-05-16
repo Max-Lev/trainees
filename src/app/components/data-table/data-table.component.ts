@@ -1,6 +1,6 @@
 import {
   AfterViewInit, ChangeDetectorRef, Component, computed, effect, inject, Input,
-  OnChanges, OnDestroy, OnInit, signal, SimpleChanges, ViewChild
+  OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild
 } from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
@@ -9,14 +9,12 @@ import { DATA_COLUMNS } from '../../models/data-table-columns';
 import { Trainee } from '../../models/trainee.model';
 import { MatButtonModule } from '@angular/material/button';
 import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { DataTableContainer } from './data-table-container.service';
 import { FilterPredicateUtilService } from './filter-predicate-util.service';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { debounceTime, of } from 'rxjs';
+import { debounceTime } from 'rxjs';
 import { DetailsPanelComponent } from '../details-panel/details-panel.component';
-import { JsonPipe } from '@angular/common';
-import { DATAGRID_SELECT_ACTIONS as SELECT_ACTIONS } from '../../models/data.actions';
+import { SELECT_ACTIONS } from '../../models/data.actions';
 @Component({
   selector: 'app-data-table',
   imports: [
@@ -25,7 +23,7 @@ import { DATAGRID_SELECT_ACTIONS as SELECT_ACTIONS } from '../../models/data.act
     MatPaginator, MatPaginatorModule,
     ReactiveFormsModule,
     DetailsPanelComponent,
-    // JsonPipe
+
 
   ],
   standalone: true,
@@ -41,6 +39,7 @@ export class DataTableComponent implements OnChanges, OnInit, AfterViewInit, OnD
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   columns = DATA_COLUMNS;
+
   displayedColumns = DATA_COLUMNS.map(c => c.columnDef);
 
   dataSource = new MatTableDataSource<Trainee>([]);
@@ -53,18 +52,37 @@ export class DataTableComponent implements OnChanges, OnInit, AfterViewInit, OnD
   });
 
 
-  private readonly _trainees = signal<Trainee[]>([]);
-  @Input() set trainees(value: Trainee[]) { this._trainees.set(value); }
-  get trainees(): Trainee[] { return this._trainees(); }
+  // private readonly _trainees = signal<Trainee[]>([]);
+  // @Input() set trainees(value: Trainee[]) { 
+  //   this._trainees.set(value); 
+  //   this.dataTableContainer.trainees.set(value);
+  // }
+  // get trainees(): Trainee[] { 
+  //   return this._trainees(); 
+  // }
 
-  // addNewTraineeState = this.dataTableContainerService.addNewTraineeState;
+  // When you get new input
+  @Input() set trainees(value: Trainee[]) {
+    this.dataTableContainer.trainees.set(value);
+  }
 
-  DATAGRID_SELECT_ACTIONS = SELECT_ACTIONS;
+  // Use this signal directly from service
+  get trainees(): Trainee[] {
+    return this.dataTableContainer.trainees();
+  }
+
+  SELECT_ACTIONS = SELECT_ACTIONS;
   selectedTrainee = this.dataTableContainer.selectedTrainee;
 
   isRemoveBtnDisabled = computed(() => {
     return this.dataTableContainer.selectedTrainee().action === SELECT_ACTIONS.select_row ? false : true;
   });
+
+  activeActionState = computed(() => {
+    return this.dataTableContainer.selectedTrainee().action;
+  });
+
+
 
   constructor() {
 
@@ -73,8 +91,16 @@ export class DataTableComponent implements OnChanges, OnInit, AfterViewInit, OnD
     this.searchInputState();
 
     effect(() => {
-      console.log('selectedTrainee: ', this.selectedTrainee())
+      // console.log('selectedTrainee: ', this.selectedTrainee())
+      // console.log('action: ', this.dataTableContainer.selectedTrainee().action)
+      console.log('activeActionState: ', this.activeActionState())
+      console.log('dataTableContainer trainees: ', this.dataTableContainer.trainees())
+      // console.log('_trainees: ', this._trainees())
     });
+
+    // effect(() => {
+    //   this._trainees.set(this.dataTableContainer.trainees());
+    // });
 
   }
 
@@ -100,7 +126,7 @@ export class DataTableComponent implements OnChanges, OnInit, AfterViewInit, OnD
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    // this.dataSource.data = this.trainees;
+    console.log(changes)
   }
 
   ngAfterViewInit(): void {
@@ -118,7 +144,7 @@ export class DataTableComponent implements OnChanges, OnInit, AfterViewInit, OnD
 
     this.paginationState();
 
-
+    // this._trainees.set(this.dataTableContainer.trainees());
 
   }
 
@@ -128,7 +154,8 @@ export class DataTableComponent implements OnChanges, OnInit, AfterViewInit, OnD
 
   setTableDataSource() {
     effect(() => {
-      this.dataSource.data = this._trainees();
+      // this.dataSource.data = this._trainees();
+      this.dataSource.data = this.dataTableContainer.trainees();
     });
   }
 
@@ -146,11 +173,6 @@ export class DataTableComponent implements OnChanges, OnInit, AfterViewInit, OnD
     });
   }
 
-  selectedRowHandler(row: Trainee) {
-    this.dataTableContainer.toggleSelection({ action: SELECT_ACTIONS.select_row, payload: row });
-    // this.addNewTraineeState = false;
-  }
-
   pageSelected($event: PageEvent) {
     this.dataTableContainer.pageState.set($event.pageSize);
   }
@@ -159,11 +181,88 @@ export class DataTableComponent implements OnChanges, OnInit, AfterViewInit, OnD
     this.paginator.pageSize = this.dataTableContainer.pageState() ?? 0;
   }
 
+
+  selectedRowHandler(row: Trainee) {
+    this.dataTableContainer.toggleSelection({ action: SELECT_ACTIONS.select_row, payload: row });
+    // this.addNewTraineeState = false;
+  }
+
+
+  // prevAction: string = '';
   addTrainee() {
-    this.dataTableContainer.selectedTrainee.set({
-      action: SELECT_ACTIONS.open_details_panel, payload: null
-    });
+    // this.dataTableContainer.selectedTrainee.set({
+    //   action: SELECT_ACTIONS.open_details_panel, payload: null
+    // });
+    console.log(this.dataTableContainer.selectedTrainee().action);
+
+    //no selection on the grid
+    // if(this.dataTableContainer.selectedTrainee().action===SELECT_ACTIONS.initial){
+    if (this.activeActionState() === SELECT_ACTIONS.initial || this.activeActionState() === SELECT_ACTIONS.deselect_row) {
+      this.dataTableContainer.selectedTrainee.set({ action: SELECT_ACTIONS.add_trainee, payload: null });
+      debugger
+    }
+    if (this.activeActionState() === SELECT_ACTIONS.select_row) {
+      let trainee: Trainee = this.dataTableContainer.selectedTrainee().payload!;
+      trainee = {
+        ...trainee,
+        name: "Max",
+        // id: 1000
+      }
+      this.dataTableContainer.updateTrainee(trainee);
+      // this.dataTableContainer.selectedTrainee.set({ action: SELECT_ACTIONS.select_row, payload: trainee });
+      debugger
+    }
+
+
+
+    //after initial not selection action
+    // if (this.dataTableContainer.selectedTrainee().action === SELECT_ACTIONS.add_trainee) {
+    //   debugger
+    // }
+
+    // //trainee selected
+    // if (this.dataTableContainer.selectedTrainee().action === SELECT_ACTIONS.select_row) {
+    //   this.dataTableContainer.selectedTrainee.set({ action: SELECT_ACTIONS.update_existing_trainee, payload: null });
+    //   debugger
+    // }
 
   }
+  // addMode = signal(false);
+
+  // addTrainee() {
+  //   const currentAction = this.dataTableContainer.selectedTrainee().action;
+
+  //   if (currentAction === SELECT_ACTIONS.select_row) {
+  //     // User clicked add while a row is selected — clear selection and prep for add
+  //     this.dataTableContainer.selectedTrainee.set({
+  //       action: SELECT_ACTIONS.add_new_trainee,
+  //       payload: null
+  //     });
+  //     this.addMode.set(true);
+  //     return;
+  //   }
+
+  //   if (currentAction === SELECT_ACTIONS.initial) {
+  //     // No row selected yet, just open empty form
+  //     this.dataTableContainer.selectedTrainee.set({
+  //       action: SELECT_ACTIONS.add_new_trainee,
+  //       payload: null
+  //     });
+  //     this.addMode.set(true);
+  //     return;
+  //   }
+
+  //   if (currentAction === SELECT_ACTIONS.add_new_trainee && this.addMode()) {
+  //     // Form is open and user confirms add (e.g. from panel Save button)
+  //     const newTrainee: Trainee = /* collect from child form or service */;
+  //     this.dataTableContainer.addNewTrainee(newTrainee);
+  //     this.dataTableContainer.selectedTrainee.set({
+  //       action: SELECT_ACTIONS.initial,
+  //       payload: null
+  //     });
+  //     this.addMode.set(false);
+  //   }
+  // }
+
 
 }

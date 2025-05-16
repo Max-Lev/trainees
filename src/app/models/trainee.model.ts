@@ -1,6 +1,6 @@
 export interface Trainee {
     id: number;
-    name: string;
+    name: string | null;
     subject: string;
     grade: number;
     date: string;
@@ -13,7 +13,7 @@ export interface Trainee {
     // phone?:string | null;
     phone?:number | null;
     state?:string;
-    age:number;
+    age?:number;
 
   }
   
