@@ -1,4 +1,4 @@
-import { Component, effect, inject, input, OnChanges, SimpleChanges } from '@angular/core';
+import { AfterViewInit, Component, effect, inject, input, OnChanges, SimpleChanges } from '@angular/core';
 import { Trainee } from '../../models/trainee.model';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -19,9 +19,10 @@ import { DataTableContainer } from '../data-table/data-table-container.service';
   templateUrl: './details-panel.component.html',
   styleUrl: './details-panel.component.scss'
 })
-export class DetailsPanelComponent implements OnChanges {
+export class DetailsPanelComponent implements OnChanges, AfterViewInit {
 
   selectedTrainee = input<Trainee | null>();
+
   dataTableContainer = inject(DataTableContainer)
 
   detailsForm = new FormGroup({
@@ -39,11 +40,32 @@ export class DetailsPanelComponent implements OnChanges {
 
   constructor() {
     effect(() => {
-      console.log(this.selectedTrainee())
+      console.log('@input selectedTrainee: ',this.selectedTrainee());
+      // console.log(this.dataTableContainer.updatedTraineeValue());
+
     });
 
     this.bindFormData();
 
+  }
+  ngAfterViewInit(): void {
+    this.detailsForm.valueChanges.subscribe((updatedTraineeData) => {
+      // const selected = this.dataTableContainer.selectedTrainee();
+      // const updated = {...selected,...updatedTraineeData};
+      this.dataTableContainer.updatedTraineeValue.update(existing => ({
+        ...existing,
+        ...updatedTraineeData
+      }));
+      // this.dataTableContainer.updatedTraineeValue.set(updatedTraineeData);
+      // console.log(updatedTraineeData)
+      // const ex = this.selectedTrainee();
+      // this.dataTableContainer.updatedTraineeValue.update((existingTraineeData:any) => {
+      //   // console.log({ ...existingTraineeData, ... updatedTraineeData  })
+      //   const d =  { ...ex, ...updatedTraineeData};
+      //   console.log(d);
+      //   return d;
+      // });
+    })
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -74,18 +96,18 @@ export class DetailsPanelComponent implements OnChanges {
   // saveTrainee() {
   //   const formData = this.detailsForm.value;
   //   const currentAction = this.dataTableContainer.selectedTrainee().action;
-  
+
   //   if (currentAction === SELECT_ACTIONS.add_new_trainee) {
   //     // const newTrainee: Trainee = { ...formData, id: generateUniqueId() };
   //     const newTrainee: Trainee = { ...formData, id: 11111 };
   //     this.dataTableContainer.addNewTrainee(newTrainee);
   //   }
-  
+
   //   if (currentAction === SELECT_ACTIONS.update_existing_trainee) {
   //     const updatedTrainee: Trainee = { ...this.selectedTrainee, ...formData };
   //     this.dataTableContainer.updateTrainee(updatedTrainee);
   //   }
-  
+
   //   this.dataTableContainer.selectedTrainee.set({ action: SELECT_ACTIONS.initial, payload: null });
   // }
 

@@ -30,8 +30,8 @@
         }
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr [class.selected-row]="row.id===selectedTrainee().payload?.id" mat-row (click)="selectedRowHandler(row)"
-          *matRowDef="let row; columns: displayedColumns;"></tr>
+        <tr [class.selected-row]="row._index===selectedTrainee().payload?._index" mat-row  (click)="selectedRowHandler(row,i)"
+          *matRowDef="let row; let i = index; columns: displayedColumns;"></tr>
 
       </table>
       <mat-paginator (page)="pageSelected($event)" [pageSizeOptions]="[10, 20,25, 100]"

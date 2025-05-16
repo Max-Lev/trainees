@@ -10,7 +10,7 @@ export class TraineeService {
 
   // === Signal State ===
   private trainees = signal<Trainee[]>([]);
-  
+
   private dataPageState = signal({
     filter: '',
     selectedTrainee: null,
@@ -47,6 +47,23 @@ export class TraineeService {
       next: data => this.trainees.set(data),
       error: err => console.error('Failed to load trainees', err)
     });
+  }
+
+  updateTrainee(updatedtrainee: Trainee) {
+    // this.trainees.update((traineesList)=>traineesList.map(existingTrainee => existingTrainee.id === updatedtrainee.id ? updatedtrainee : existingTrainee))
+
+    this.trainees.update((traineesList) => traineesList.map((existingTrainee: Trainee, listIndex: number) => {
+
+      // if (existingTrainee.id === updatedtrainee.id) {
+      if (listIndex === updatedtrainee._index) {
+        return updatedtrainee;
+      } else {
+        return existingTrainee;
+      }
+
+    }));
+    console.log(this.trainees())
+
   }
 
   getTrainee(id: number, subject: string): Trainee | undefined {

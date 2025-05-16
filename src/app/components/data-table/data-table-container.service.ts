@@ -1,6 +1,7 @@
-import { Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { Trainee } from '../../models/trainee.model';
 import { SELECT_ACTIONS } from '../../models/data.actions';
+import { TraineeService } from '../../providers/trainee.service';
 
 @Injectable({
   providedIn: 'root'
@@ -8,6 +9,8 @@ import { SELECT_ACTIONS } from '../../models/data.actions';
 export class DataTableContainer {
 
   constructor() { }
+
+  traineeService = inject(TraineeService);
 
   trainees = signal<Trainee[]>([]);
 
@@ -20,12 +23,12 @@ export class DataTableContainer {
   pageState = signal<number | null>(null);
 
   // This function toggles the selection of a trainee
-  toggleSelection(value: { action: string; payload: Trainee; }) {
+  toggleSelection(value: { action: string; payload: Trainee; index?: number }) {
     // Get the currently selected trainee
-    const selected: { action: string; payload: Trainee | null; } = this.selectedTrainee();
+    const selected = this.selectedTrainee();
     // If the selected trainee is the same as the one being toggled, deselect it
     if (selected.payload?.id === value.payload.id) {
-      // (selected) ? this.selectedTrainee.set({ action: SELECT_ACTIONS.deselect_row, payload: null }) :
+
       (selected) ? this.selectedTrainee.set({ action: SELECT_ACTIONS.initial, payload: null }) :
         // Otherwise, select the trainee
         this.selectedTrainee.set({ action: SELECT_ACTIONS.select_row, payload: value.payload });
@@ -38,8 +41,26 @@ export class DataTableContainer {
     console.log(this.selectedTrainee());
   }
 
-  // Function to update a trainee
+  updatedTraineeValue = signal<{
+    id: number | null,
+    name: string,
+    grade: number | null,
+    email: string | null,
+    dateJoined: string | null,
+    address: string | null,
+    city: string | null,
+    country: string | null,
+    zip: number | null,
+    subject: string
+  } | null | any>(null);
+
   updateTrainee(updated: Trainee) {
+    this.traineeService.updateTrainee(updated);
+    this.selectedTrainee.set({ action: SELECT_ACTIONS.select_row, payload: updated });
+  }
+
+  // Function to update a trainee
+  /*updateTrainee(updated: Trainee) {
 
     // Get all trainees
     const allTrainees = this.trainees();
@@ -62,10 +83,12 @@ export class DataTableContainer {
     // Update the trainee list
     this.trainees.update((traineesList: Trainee[]) => traineesList.map(trainee => trainee.id === findToUpdate?.id ? { ...trainee, ...updated } : trainee));
 
+    this.traineeService.trainees.set(this.trainees());
+
     // Log the updated trainee list
     console.log(this.trainees());
 
-  }
+  }*/
 
 
 

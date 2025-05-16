@@ -10,10 +10,10 @@ export interface Trainee {
     city?: string;
     country?: string;
     zip?: number;
-    // phone?:string | null;
     phone?:number | null;
     state?:string;
     age?:number;
+    _index?:number;
 
   }
   

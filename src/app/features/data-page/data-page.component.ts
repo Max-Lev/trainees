@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, inject, Input, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
+import { AfterViewInit, Component, effect, inject, Input, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
 import { Trainee } from '../../models/trainee.model';
 import { TraineeService } from '../../providers/trainee.service';
 import { DataTableComponent } from '../../components/data-table/data-table.component';
@@ -19,7 +19,12 @@ export class DataPageComponent implements OnChanges, AfterViewInit,OnDestroy {
   @Input() traineesResolver: Trainee[] = [];
 
   constructor() {
-    
+      effect(()=>{
+        /**
+         * simulate real world data update scenatio
+         */
+        this.traineesResolver = this.traineeService.trainees$();
+      })
   }
   
   ngOnChanges(changes: SimpleChanges): void {
