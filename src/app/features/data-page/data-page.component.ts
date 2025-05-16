@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, inject, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { AfterViewInit, Component, inject, Input, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
 import { Trainee } from '../../models/trainee.model';
 import { TraineeService } from '../../providers/trainee.service';
 import { DataTableComponent } from '../../components/data-table/data-table.component';
@@ -12,7 +12,7 @@ import { DataTableComponent } from '../../components/data-table/data-table.compo
   templateUrl: './data-page.component.html',
   styleUrl: './data-page.component.scss'
 })
-export class DataPageComponent implements OnChanges, AfterViewInit {
+export class DataPageComponent implements OnChanges, AfterViewInit,OnDestroy {
 
   traineeService = inject(TraineeService);
 
@@ -21,7 +21,7 @@ export class DataPageComponent implements OnChanges, AfterViewInit {
   constructor() {
     
   }
-
+  
   ngOnChanges(changes: SimpleChanges): void {
     console.log('DataPageComponent ',changes)
   }
@@ -29,4 +29,9 @@ export class DataPageComponent implements OnChanges, AfterViewInit {
   ngAfterViewInit(): void {
 
   }
+
+  ngOnDestroy(): void {
+    console.log('DataPageComponent ngOnDestroy')
+  }
+
 }

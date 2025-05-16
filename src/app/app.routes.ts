@@ -8,7 +8,8 @@ export const routes: Routes = [
         path: 'data', component: DataPageComponent,
         resolve: {
             traineesResolver: traineesResolver
-        }
+        },
+        data: { reuseComponent: true }
     },
     {
         path: 'analysis', loadComponent: () => import('./features/analysis-page/analysis-page.component').then(m => m.AnalysisPageComponent)
