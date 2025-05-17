@@ -1,5 +1,4 @@
 <div class="container">
-
   <form [formGroup]="form" class="filter-row">
     <mat-form-field class="filter-field">
       <mat-label>Filter</mat-label>
@@ -7,15 +6,18 @@
     </mat-form-field>
 
     <div class="button-container">
-      <button (click)="addTrainee()" mat-flat-button color="primary">Add</button>
+      <button (click)="addTrainee()" mat-flat-button color="primary">
+        {{activeActionState() === SELECT_ACTIONS.select_row ? 'Save' : 
+          activeActionState() === SELECT_ACTIONS.open_panel ? 'Save New' : 'Add'}}
+      </button>
     </div>
+    
     <div class="button-container">
-      <button [disabled]="isRemoveBtnDisabled()" mat-flat-button color="primary">Remove</button>
+      <button [disabled]="isRemoveBtnDisabled()" (click)="removeTrainee()" mat-flat-button color="warn">Remove</button>
     </div>
   </form>
 
   <div class="table-container">
-
     <div class="table-wrapper">
       <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 demo-table">
         @for (column of columns; track column) {
@@ -30,22 +32,31 @@
         }
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr [class.selected-row]="row._index===selectedTrainee().payload?._index" mat-row  (click)="selectedRowHandler(row,i)"
-          *matRowDef="let row; let i = index; columns: displayedColumns;"></tr>
+        <tr [class.selected-row]="row._index === selectedTrainee().payload?._index" 
+            mat-row  
+            (click)="selectedRowHandler(row)"
+            *matRowDef="let row; columns: displayedColumns;">
+        </tr>
 
+        <tr *matNoDataRow>
+          <td [attr.colspan]="displayedColumns.length" class="no-data-row">
+            No data matching the filter
+          </td>
+        </tr>
       </table>
-      <mat-paginator (page)="pageSelected($event)" [pageSizeOptions]="[10, 20,25, 100]"
-        aria-label="Select page of users"></mat-paginator>
+      
+      <mat-paginator 
+        (page)="pageSelected($event)" 
+        [pageSizeOptions]="[10, 20, 25, 100]"
+        aria-label="Select page of trainees">
+      </mat-paginator>
     </div>
-
   </div>
-
 </div>
 
-@if(selectedTrainee().action===SELECT_ACTIONS.select_row ||
-selectedTrainee().action===SELECT_ACTIONS.open_panel){
-<!-- selectedTrainee().action===SELECT_ACTIONS.add_trainee){ -->
-<div>
-  <app-details-panel [selectedTrainee]="selectedTrainee().payload"></app-details-panel>
-</div>
+@if(selectedTrainee().action === SELECT_ACTIONS.select_row ||
+    selectedTrainee().action === SELECT_ACTIONS.open_panel) {
+  <div class="details-panel-container">
+    <app-details-panel [selectedTrainee]="selectedTrainee().payload"></app-details-panel>
+  </div>
 }

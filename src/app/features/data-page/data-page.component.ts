@@ -23,7 +23,8 @@ export class DataPageComponent implements OnChanges, AfterViewInit,OnDestroy {
         /**
          * simulate real world data update scenatio
          */
-        this.traineesResolver = this.traineeService.trainees$();
+        // this.traineesResolver = this.traineeService.trainees$();
+        this.traineesResolver = this.traineeService.trainees()
       })
   }
   

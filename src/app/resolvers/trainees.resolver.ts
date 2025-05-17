@@ -8,7 +8,7 @@ export const traineesResolver: ResolveFn<Trainee[]> = (route, state) => {
   const service = inject(TraineeService);
   return new Promise<Trainee[]>((resolve) => {
     const stop = effect(() => {
-      const data = service.trainees$();
+      const data = service.trainees()
       if (data.length > 0) {
         resolve(data);
         stop.destroy();

@@ -1,6 +1,6 @@
 import {
-  AfterViewInit, ChangeDetectorRef, Component, computed, effect, inject, Input,
-  OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild
+  AfterViewInit, Component, computed, effect, inject, Input,
+  OnDestroy, OnInit, ViewChild
 } from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
@@ -12,9 +12,11 @@ import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/p
 import { DataTableContainer } from './data-table-container.service';
 import { FilterPredicateUtilService } from './filter-predicate-util.service';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { debounceTime } from 'rxjs';
+import { debounceTime, takeUntil } from 'rxjs';
 import { DetailsPanelComponent } from '../details-panel/details-panel.component';
 import { SELECT_ACTIONS } from '../../models/data.actions';
+import { Subject } from 'rxjs';
+
 @Component({
   selector: 'app-data-table',
   imports: [
@@ -28,251 +30,147 @@ import { SELECT_ACTIONS } from '../../models/data.actions';
   templateUrl: './data-table.component.html',
   styleUrl: './data-table.component.scss'
 })
-export class DataTableComponent implements OnChanges, OnInit, AfterViewInit, OnDestroy {
-
-  cdr = inject(ChangeDetectorRef);
-
-  dataTableContainer = inject(DataTableContainer);
-
-  filterPredicateUtilService = inject(FilterPredicateUtilService);
+export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
+  private destroy$ = new Subject<void>();
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
+  // Services
+  dataTableContainer = inject(DataTableContainer);
+  filterPredicateUtilService = inject(FilterPredicateUtilService);
+
+  // Table configuration
   columns = DATA_COLUMNS;
-
   displayedColumns = DATA_COLUMNS.map(c => c.columnDef);
-
   dataSource = new MatTableDataSource<Trainee>([]);
 
+  // Form for filter and actions
   form = new FormGroup({
-    search: new FormControl<string | null>(this.dataTableContainer.filterValue()),
-    addBtn: new FormControl<string | null>(''),
-    removeBtn: new FormControl<string | null>(''),
+    search: new FormControl<string>(this.dataTableContainer.filterValue())
   });
 
-  // When you get new input
+  // Action states
+  SELECT_ACTIONS = SELECT_ACTIONS;
+  selectedTrainee = computed(() => this.dataTableContainer.selectedTrainee());
+
+  // Computed properties for UI states
+  isRemoveBtnDisabled = computed(() =>
+    this.dataTableContainer.selectedTrainee().action !== SELECT_ACTIONS.select_row
+  );
+
+  activeActionState = computed(() =>
+    this.dataTableContainer.selectedTrainee().action
+  );
+
+  // When you get new input data
   @Input() set trainees(value: Trainee[]) {
-    value = value.map((val, index) => val = { ...val, ...{ _index: index } });
-    console.log(value)
-    this.dataTableContainer.trainees.set(value);
+    if (!value) return;
+
+    // Add index property to each trainee
+    const indexedTrainees = value.map((val, index) => ({ ...val, _index: index }));
+    this.dataTableContainer.trainees.set(indexedTrainees);
   }
 
-  // Use this signal directly from service
+  // Get trainees directly from the container
   get trainees(): Trainee[] {
     return this.dataTableContainer.trainees();
   }
 
-  SELECT_ACTIONS = SELECT_ACTIONS;
-  // selectedTrainee = this.dataTableContainer.selectedTrainee;
-  selectedTrainee = computed(() => this.dataTableContainer.selectedTrainee());
-
-  isRemoveBtnDisabled = computed(() => {
-    return this.dataTableContainer.selectedTrainee().action === SELECT_ACTIONS.select_row ? false : true;
-  });
-
-  activeActionState = computed(() => {
-    return this.dataTableContainer.selectedTrainee().action;
-  });
-
-
-
   constructor() {
-
+    // Initialize custom filter predicate
     this.setCustomFilterPredicate();
+
+    // Connect data source to trainees signal
     this.setTableDataSource();
-    this.searchInputState();
-
-    effect(() => {
-      // console.log('selectedTrainee: ', this.selectedTrainee())
-      // console.log('dataTableContainer.selectedTrainee: ', this.dataTableContainer.selectedTrainee())
-      // console.log('activeActionState: ', this.activeActionState())
-      // console.log('dataTableContainer trainees: ', this.dataTableContainer.trainees())
-      // console.log('dataTableContainer updatedTraineeValue: ', this.dataTableContainer.updatedTraineeValue())
-      // console.log('_trainees: ', this._trainees())
-    });
-
-    // effect(() => {
-    //   this._trainees.set(this.dataTableContainer.trainees());
-    // });
-
   }
 
   ngOnInit(): void {
-    // this.dataTableContainer.selectedTrainee.set(
-    //   {
-    //     "action": "SELECT_ROW_ACTION",
-    //     "payload": {
-    //       "id": 5,
-    //       "name": "Jane Doe",
-    //       "subject": "Biology",
-    //       "grade": 58,
-    //       "date": "2023-01-25",
-    //       "email": "jane@example.com",
-    //       "dateJoined": "2022-09-05",
-    //       "address": "456 Park Ave",
-    //       "city": "New York",
-    //       "country": "USA",
-    //       "zip": 10001
-    //     }
-    //   }
-    // )
-  }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes)
   }
 
   ngAfterViewInit(): void {
-    this.setPaginatorDataSource();
+    // Connect paginator to data source
+    this.dataSource.paginator = this.paginator;
 
-    this.form.controls.search.valueChanges.pipe(debounceTime(1000)).subscribe((filterValue: string | null) => {
+    // Restore paginator state if available
+    const savedPageState = this.dataTableContainer.pageState();
+    if (savedPageState) {
+      this.paginator.pageIndex = savedPageState.pageIndex;
+      this.paginator.pageSize = savedPageState.pageSize;
+    }
 
-      this.dataTableContainer.filterValue.set(filterValue);
-      if (filterValue) {
-        this.dataSource.filter = filterValue.trim().toLowerCase();
-      } else {
-        this.dataSource.filter = '';
-      }
+    // Listen for search input changes
+    this.form.controls.search.valueChanges.pipe(
+      debounceTime(500),
+      takeUntil(this.destroy$)
+    ).subscribe((filterValue: string | null) => {
+      const value = filterValue || '';
+      this.dataTableContainer.setFilter(value);
+      this.dataSource.filter = value.trim().toLowerCase();
     });
 
-    this.paginationState();
-
-    // this._trainees.set(this.dataTableContainer.trainees());
-
+    // Restore filter if available
+    const savedFilter = this.dataTableContainer.filterValue();
+    if (savedFilter) {
+      this.form.controls.search.setValue(savedFilter, { emitEvent: false });
+      this.dataSource.filter = savedFilter.trim().toLowerCase();
+    }
   }
 
   ngOnDestroy(): void {
-    console.log('destroyed')
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
+  // Set up data source with reactive signal data
   setTableDataSource() {
     effect(() => {
-      // this.dataSource.data = this._trainees();
       this.dataSource.data = this.dataTableContainer.trainees();
     });
   }
 
-  setPaginatorDataSource() {
-    this.dataSource.paginator = this.paginator;
-  }
-
+  // Set up custom filter predicate
   setCustomFilterPredicate() {
     this.dataSource.filterPredicate = this.filterPredicateUtilService.customFilterPredicate();
   }
 
-  searchInputState() {
-    effect(() => {
-      this.dataSource.filter = this.dataTableContainer.filterValue() ?? '';
+  // Handle pagination events
+  pageSelected(event: PageEvent) {
+    this.dataTableContainer.setPageState({
+      pageIndex: event.pageIndex,
+      pageSize: event.pageSize
     });
   }
 
-  pageSelected($event: PageEvent) {
-    this.dataTableContainer.pageState.set($event.pageSize);
+  // Handle row selection
+  selectedRowHandler(row: Trainee) {
+    this.dataTableContainer.toggleSelection({
+      action: SELECT_ACTIONS.select_row,
+      payload: row
+    });
   }
 
-  paginationState() {
-    this.paginator.pageSize = this.dataTableContainer.pageState() ?? 0;
-  }
+  // Add a new trainee
+  addTrainee() {
+    const currentAction = this.activeActionState();
 
-
-  selectedRowHandler(row: Trainee, index?: number) {
-
-    this.dataTableContainer.toggleSelection({ action: SELECT_ACTIONS.select_row, payload: row, index });
-    // this.addNewTraineeState = false;
-  }
-
-
-  // prevAction: string = '';
-  addTrainee(action = SELECT_ACTIONS.open_panel) {
-    // this.dataTableContainer.selectedTrainee.set({
-    //   action: SELECT_ACTIONS.open_details_panel, payload: null
-    // });
-    console.log(this.dataTableContainer.selectedTrainee().action);
-
-    // if (this.activeActionState() === SELECT_ACTIONS.open_panel) {
-
-    //   let newTraineeValue = this.dataTableContainer.newTraineeValue();
-    //   newTraineeValue = {
-    //     ...newTraineeValue,
-    //     ...{
-    //       id: 25,
-    //       _index: 25
-    //     }
-    //   };
-
-    //   // this.selectedRowHandler(newTraineeValue as any, this.dataTableContainer.trainees().length + 1);
-
-    //   this.dataTableContainer.addNewTrainee(newTraineeValue);
-
-    //   this.dataTableContainer.toggleSelection({
-    //     action: SELECT_ACTIONS.select_row,
-    //     payload: newTraineeValue as any,
-    //     index: 25
-    //   });
-    // }
-
-    if (this.activeActionState() === SELECT_ACTIONS.open_panel) {
-      let newTraineeValue = this.dataTableContainer.newTraineeValue();
-      // newTraineeValue = {
-      //   ...newTraineeValue,
-      //   id: 26,
-      //   _index: 26
-      // };
-
-      this.dataTableContainer.addNewTrainee(newTraineeValue);
-
-      // this.dataTableContainer.toggleSelection({
-      //   action: SELECT_ACTIONS.select_row,
-      //   payload: newTraineeValue as any,
-      //   // index: 26
-      // });
-    }
-
-    //no selection on the grid
-    if (action) {
-      this.dataTableContainer.selectedTrainee.set({ action: SELECT_ACTIONS.open_panel, payload: null });
-    }
-
-    // if (this.activeActionState() === SELECT_ACTIONS.add_new_trainee) {
-    //   const newTraineeValue = this.dataTableContainer.newTraineeValue();
-    //   this.dataTableContainer.addNewTrainee(newTraineeValue);
-    //   ;
-    // }
-
-    if (this.activeActionState() === SELECT_ACTIONS.add_new_trainee) {
-
-    }
-
-    if (this.activeActionState() === SELECT_ACTIONS.select_row) {
-
-      // const { payload } = this.dataTableContainer.selectedTrainee();
+    if (currentAction === SELECT_ACTIONS.open_panel) {
+      // Save the new trainee
+      this.dataTableContainer.addNewTrainee();
+    } else if (currentAction === SELECT_ACTIONS.select_row) {
+      // Save updates to existing trainee
       const updatedTraineeValue = this.dataTableContainer.updatedTraineeValue();
-      // console.log('updatedTraineeValue', updatedTraineeValue)
-
-      // const updated = { ...payload, ...updatedTraineeValue };
-      // console.log('updated', updated)
-
-      // this.dataTableContainer.updateTrainee(updated);
-      this.dataTableContainer.updateTrainee(updatedTraineeValue);
-
-
+      this.dataTableContainer.updateTrainee(updatedTraineeValue || {});
+    } else {
+      // Open the add panel if not already open
+      this.dataTableContainer.openAddPanel();
     }
-
-
-
-    //after initial not selection action
-    // if (this.dataTableContainer.selectedTrainee().action === SELECT_ACTIONS.add_trainee) {
-    //   
-    // }
-
-    // //trainee selected
-    // if (this.dataTableContainer.selectedTrainee().action === SELECT_ACTIONS.select_row) {
-    //   this.dataTableContainer.selectedTrainee.set({ action: SELECT_ACTIONS.update_existing_trainee, payload: null });
-    //   
-    // }
-
   }
 
-
-
+  // Remove the selected trainee
+  removeTrainee() {
+    if (this.selectedTrainee().payload) {
+      this.dataTableContainer.removeTrainee();
+    }
+  }
 }

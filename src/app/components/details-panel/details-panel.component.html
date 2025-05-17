@@ -1,58 +1,77 @@
-<mat-card class="form-card">
-    <!-- (ngSubmit)="onSubmit()" -->
-    <form [formGroup]="detailsForm">
-  
-      <mat-form-field appearance="outline">
-        <mat-label>ID</mat-label>
-        <input matInput formControlName="id" type="number" />
-      </mat-form-field>
-
-      <mat-form-field appearance="outline">
-        <mat-label>Name</mat-label>
-        <input matInput formControlName="name" />
-      </mat-form-field>
-  
-      <mat-form-field appearance="outline">
-        <mat-label>Grade</mat-label>
-        <input matInput type="number" formControlName="grade" />
-      </mat-form-field>
-
-      <mat-form-field appearance="outline">
-        <mat-label>Email</mat-label>
-        <input matInput type="email" formControlName="email" />
-      </mat-form-field>
-
-      <mat-form-field appearance="outline">
-        <mat-label>Date Joined</mat-label>
-        <input matInput type="date" formControlName="dateJoined" />
-      </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>Address</mat-label>
-          <input matInput formControlName="address" />
-        </mat-form-field>
-  
-        <mat-form-field appearance="outline">
-          <mat-label>City</mat-label>
-          <input matInput formControlName="city" />
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>Country</mat-label>
-          <input matInput formControlName="country" />
-        </mat-form-field>
-  
-        <mat-form-field appearance="outline">
-          <mat-label>ZIP Code</mat-label>
-          <input matInput type="number" formControlName="zip" />
-        </mat-form-field>
-      <!-- </div> -->
-  
-      <mat-form-field appearance="outline">
-        <mat-label>Subject</mat-label>
-        <input matInput formControlName="subject" />
-      </mat-form-field>
-  
-    </form>
+<div class="details-card">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        {{selectedTrainee() ? 'Edit Trainee Details' : 'Add New Trainee'}}
+      </mat-card-title>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <form [formGroup]="detailsForm" class="details-form">
+        <!-- Hidden ID field -->
+        <input type="hidden" formControlName="id">
+        
+        <!-- Basic Info Section -->
+        <div class="form-section">
+          <h3>Basic Information</h3>
+          
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Name</mat-label>
+            <input matInput formControlName="name" placeholder="Enter full name">
+          </mat-form-field>
+          
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Grade</mat-label>
+              <input matInput type="number" formControlName="grade" placeholder="0-100">
+            </mat-form-field>
+            
+            <mat-form-field appearance="outline">
+              <mat-label>Subject</mat-label>
+              <input matInput formControlName="subject" placeholder="Enter subject">
+            </mat-form-field>
+          </div>
+          
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Email</mat-label>
+              <input matInput formControlName="email" placeholder="email@example.com">
+            </mat-form-field>
+            
+            <mat-form-field appearance="outline">
+              <mat-label>Date Joined</mat-label>
+              <input matInput formControlName="dateJoined" type="date">
+            </mat-form-field>
+          </div>
+        </div>
+        
+        <!-- Address Section -->
+        <div class="form-section">
+          <h3>Address Information</h3>
+          
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Address</mat-label>
+            <input matInput formControlName="address" placeholder="Street address">
+          </mat-form-field>
+          
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>City</mat-label>
+              <input matInput formControlName="city" placeholder="City">
+            </mat-form-field>
+            
+            <mat-form-field appearance="outline">
+              <mat-label>Country</mat-label>
+              <input matInput formControlName="country" placeholder="Country">
+            </mat-form-field>
+          </div>
+          
+          <mat-form-field appearance="outline">
+            <mat-label>ZIP / Postal Code</mat-label>
+            <input matInput type="number" formControlName="zip" placeholder="ZIP code">
+          </mat-form-field>
+        </div>
+      </form>
+    </mat-card-content>
   </mat-card>
-  
+</div>

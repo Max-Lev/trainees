@@ -7,96 +7,96 @@ import { TraineeService } from '../../providers/trainee.service';
   providedIn: 'root'
 })
 export class DataTableContainer {
-
-  constructor() { }
-
   traineeService = inject(TraineeService);
 
+  // Core data state
   trainees = signal<Trainee[]>([]);
-
-  filteredTrainees = signal<Trainee[]>([]);
-
-  selectedTrainee = signal<{ action: string, payload: Trainee | null }>({ action: SELECT_ACTIONS.initial, payload: null });
-
-  filterValue = signal<string | null>('');
-
-  pageState = signal<number | null>(null);
-
-  // This function toggles the selection of a trainee
-  toggleSelection(value: { action: string; payload: Trainee; index?: number }) {
-    // Get the currently selected trainee
+  
+  // UI state
+  selectedTrainee = signal<{ action: string, payload: Trainee | null }>({ 
+    action: SELECT_ACTIONS.initial, 
+    payload: null 
+  });
+  
+  // Filter and pagination state - persistent across navigation
+  filterValue = signal<string>('');
+  pageState = signal<{pageIndex: number, pageSize: number}>({ pageIndex: 0, pageSize: 10 });
+  
+  // Form values for add/update operations
+  updatedTraineeValue = signal<Partial<Trainee> | null>(null);
+  newTraineeValue = signal<Partial<Trainee> | null>(null);
+  
+  // Utility function to toggle selection
+  toggleSelection(value: { action: string; payload: Trainee | null; index?: number }) {
     const selected = this.selectedTrainee();
-    // If the selected trainee is the same as the one being toggled, deselect it
-    console.log(selected.payload?.id, value.payload.id)
-    if (selected.payload?.id === value.payload.id) {
-
-      if (selected) {
-        debugger
-        this.selectedTrainee.set({ action: SELECT_ACTIONS.initial, payload: null })
-      } else {
-        debugger;
-        this.selectedTrainee.set({ action: SELECT_ACTIONS.select_row, payload: value.payload });
-      }
-
-      // (selected) ? this.selectedTrainee.set({ action: SELECT_ACTIONS.initial, payload: null }) :
-      //   // Otherwise, select the trainee
-      //   this.selectedTrainee.set({ action: SELECT_ACTIONS.select_row, payload: value.payload });
-    }
-    else {
-
+    
+    // If clicking the same row, toggle selection off
+    if (selected.payload?._index === value.payload?._index) {
+      this.selectedTrainee.set({ action: SELECT_ACTIONS.initial, payload: null });
+    } else {
       // Otherwise, select the trainee
       this.selectedTrainee.set({ action: SELECT_ACTIONS.select_row, payload: value.payload });
     }
-    // Log the currently selected trainee
-    console.log(this.selectedTrainee());
   }
 
-  updatedTraineeValue = signal<Partial<Trainee> | null>(null);
-  newTraineeValue = signal<Partial<Trainee> | null>(null);
-
-  // updateTrainee(updated: Trainee) {
-  updateTrainee(updated: any) {
-    const selected = this.selectedTrainee().payload;
-    const updatedTrainee = { ...selected, ...updated };
-    this.traineeService.updateTrainee(updatedTrainee);
-    this.selectedTrainee.set({ action: SELECT_ACTIONS.select_row, payload: updatedTrainee });
-  }
-
-  addNewTrainee(newTrainee: Partial<Trainee> | null) {
-    this.traineeService.addTrainee(newTrainee);
-  }
-
-  // Function to update a trainee
-  /*updateTrainee(updated: Trainee) {
-
-    // Get all trainees
-    const allTrainees = this.trainees();
-
-    // Get the ID of the selected trainee
-    const selectedTraineeID = this.selectedTrainee().payload?.id;
-
-    // Find the trainee to update
-    const findToUpdate = allTrainees.find(trainee => trainee.id === selectedTraineeID);
-
-    // Log the trainee to update
-    console.log(findToUpdate);
+  // Update an existing trainee
+  updateTrainee(updated: Partial<Trainee>) {
+    if (!updated || !this.selectedTrainee().payload) return;
     
-    // If the ID of the updated trainee is not the same as the ID of the trainee to update
-    if(updated.id!==findToUpdate?.id){
-      // Set the updated trainee
-      this.selectedTrainee.set({ action: SELECT_ACTIONS.update_existing_trainee, payload: updated });
-    }
+    const selectedTrainee = this.selectedTrainee().payload;
+    const updatedTrainee = { ...selectedTrainee, ...updated };
+    
+    this.traineeService.updateTrainee(updatedTrainee as any);
+    this.selectedTrainee.set({ action: SELECT_ACTIONS.select_row, payload: updatedTrainee as any });
+    this.updatedTraineeValue.set(null);
+  }
 
-    // Update the trainee list
-    this.trainees.update((traineesList: Trainee[]) => traineesList.map(trainee => trainee.id === findToUpdate?.id ? { ...trainee, ...updated } : trainee));
-
-    this.traineeService.trainees.set(this.trainees());
-
-    // Log the updated trainee list
-    console.log(this.trainees());
-
-  }*/
-
-
-
+  // Add a new trainee
+  addNewTrainee() {
+    const newTrainee = this.newTraineeValue();
+    if (!newTrainee) return;
+    
+    // Generate a unique ID (in a real app this might come from the backend)
+    const maxId = Math.max(...this.trainees().map(t => t.id || 0), 0);
+    const traineeWithId = { 
+      ...newTrainee, 
+      id: maxId + 1,
+      _index: this.trainees().length
+    };
+    
+    this.traineeService.addTrainee(traineeWithId);
+    
+    // Select the newly added trainee
+    this.selectedTrainee.set({ 
+      action: SELECT_ACTIONS.select_row, 
+      payload: traineeWithId as Trainee 
+    });
+    
+    this.newTraineeValue.set(null);
+  }
+  
+  // Remove a trainee
+  removeTrainee(trainee: Trainee | null = null) {
+    const traineeToRemove = trainee || this.selectedTrainee().payload;
+    if (!traineeToRemove || !traineeToRemove.id) return;
+    
+    this.traineeService.removeTrainee(traineeToRemove);
+    this.selectedTrainee.set({ action: SELECT_ACTIONS.initial, payload: null });
+  }
+  
+  // Open the panel for adding a new trainee
+  openAddPanel() {
+    this.selectedTrainee.set({ action: SELECT_ACTIONS.open_panel, payload: null });
+    this.newTraineeValue.set({});
+  }
+  
+  // Update filter state
+  setFilter(value: string) {
+    this.filterValue.set(value);
+  }
+  
+  // Update pagination state
+  setPageState(state: {pageIndex: number, pageSize: number}) {
+    this.pageState.set(state);
+  }
 }
