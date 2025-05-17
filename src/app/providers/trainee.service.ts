@@ -53,10 +53,10 @@ export class TraineeService {
     // this.trainees.update((traineesList)=>traineesList.map(existingTrainee => existingTrainee.id === updatedtrainee.id ? updatedtrainee : existingTrainee))
 
     this.trainees.update((traineesList) => traineesList.map((existingTrainee: Trainee, listIndex: number) => {
-
+      
       // if (existingTrainee.id === updatedtrainee.id) {
       if (listIndex === updatedtrainee._index) {
-        return updatedtrainee;
+        return {...existingTrainee,...updatedtrainee};
       } else {
         return existingTrainee;
       }
@@ -64,6 +64,10 @@ export class TraineeService {
     }));
     console.log(this.trainees())
 
+  }
+
+  addTrainee(newTrainee: any) {
+    this.trainees.update((traineesList) => [...traineesList, newTrainee]);
   }
 
   getTrainee(id: number, subject: string): Trainee | undefined {
@@ -118,119 +122,119 @@ export class TraineeService {
 
   // === Chart Data Logic ===
 
-  getChartData(chartType: ChartType, selectedIds: number[], selectedSubjects: string[]): ChartData {
-    const trainees = this.trainees();
+  // getChartData(chartType: ChartType, selectedIds: number[], selectedSubjects: string[]): ChartData {
+  //   const trainees = this.trainees();
 
-    switch (chartType) {
-      case ChartType.TRAINEE_GRADES:
-        return {
-          id: 1,
-          type: 'bar',
-          title: 'Chart 1: Trainee Grades by Subject',
-          data: this.getTraineeGradesData(trainees, selectedIds)
-        };
-      case ChartType.TRAINEE_SUBJECTS:
-        return {
-          id: 2,
-          type: 'pie',
-          title: 'Chart 2: Trainee Subject Distribution',
-          data: this.getTraineeSubjectsData(trainees, selectedIds)
-        };
-      case ChartType.SUBJECT_AVERAGES:
-        return {
-          id: 3,
-          type: 'line',
-          title: 'Chart 3: Subject Average Grades',
-          data: this.getSubjectAveragesData(trainees, selectedSubjects)
-        };
-      default:
-        return {
-          id: 0,
-          type: 'bar',
-          title: 'Unknown Chart',
-          data: {}
-        };
-    }
-  }
+  //   switch (chartType) {
+  //     case ChartType.TRAINEE_GRADES:
+  //       return {
+  //         id: 1,
+  //         type: 'bar',
+  //         title: 'Chart 1: Trainee Grades by Subject',
+  //         data: this.getTraineeGradesData(trainees, selectedIds)
+  //       };
+  //     case ChartType.TRAINEE_SUBJECTS:
+  //       return {
+  //         id: 2,
+  //         type: 'pie',
+  //         title: 'Chart 2: Trainee Subject Distribution',
+  //         data: this.getTraineeSubjectsData(trainees, selectedIds)
+  //       };
+  //     case ChartType.SUBJECT_AVERAGES:
+  //       return {
+  //         id: 3,
+  //         type: 'line',
+  //         title: 'Chart 3: Subject Average Grades',
+  //         data: this.getSubjectAveragesData(trainees, selectedSubjects)
+  //       };
+  //     default:
+  //       return {
+  //         id: 0,
+  //         type: 'bar',
+  //         title: 'Unknown Chart',
+  //         data: {}
+  //       };
+  //   }
+  // }
 
-  private getTraineeGradesData(trainees: Trainee[], selectedIds: number[]) {
-    const filtered = trainees.filter(t => selectedIds.includes(t.id));
-    const subjects = [...new Set(filtered.map(t => t.subject))];
+  // private getTraineeGradesData(trainees: Trainee[], selectedIds: number[]) {
+  //   const filtered = trainees.filter(t => selectedIds.includes(t.id));
+  //   const subjects = [...new Set(filtered.map(t => t.subject))];
 
-    const datasets = selectedIds.map(id => {
-      const traineeData = filtered.filter(t => t.id === id);
-      const trainee = traineeData[0];
-      return {
-        label: trainee ? trainee.name : `Trainee ${id}`,
-        data: subjects.map(subject => {
-          const match = traineeData.find(t => t.subject === subject);
-          return match ? match.grade : 0;
-        })
-      };
-    });
+  //   const datasets = selectedIds.map(id => {
+  //     const traineeData = filtered.filter(t => t.id === id);
+  //     const trainee = traineeData[0];
+  //     return {
+  //       label: trainee ? trainee.name : `Trainee ${id}`,
+  //       data: subjects.map(subject => {
+  //         const match = traineeData.find(t => t.subject === subject);
+  //         return match ? match.grade : 0;
+  //       })
+  //     };
+  //   });
 
-    return { labels: subjects, datasets };
-  }
+  //   return { labels: subjects, datasets };
+  // }
 
-  private getTraineeSubjectsData(trainees: Trainee[], selectedIds: number[]) {
-    const filtered = trainees.filter(t => selectedIds.includes(t.id));
-    const subjects = [...new Set(filtered.map(t => t.subject))];
+  // private getTraineeSubjectsData(trainees: Trainee[], selectedIds: number[]) {
+  //   const filtered = trainees.filter(t => selectedIds.includes(t.id));
+  //   const subjects = [...new Set(filtered.map(t => t.subject))];
 
-    const subjectCounts = subjects.map(subject => ({
-      subject,
-      count: filtered.filter(t => t.subject === subject).length
-    }));
+  //   const subjectCounts = subjects.map(subject => ({
+  //     subject,
+  //     count: filtered.filter(t => t.subject === subject).length
+  //   }));
 
-    return {
-      labels: subjects,
-      datasets: [{
-        data: subjectCounts.map(sc => sc.count),
-        backgroundColor: [
-          '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
-          '#FF9F40', '#8AC249', '#EA80FC', '#00E5FF', '#FF4081'
-        ]
-      }]
-    };
-  }
+  //   return {
+  //     labels: subjects,
+  //     datasets: [{
+  //       data: subjectCounts.map(sc => sc.count),
+  //       backgroundColor: [
+  //         '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+  //         '#FF9F40', '#8AC249', '#EA80FC', '#00E5FF', '#FF4081'
+  //       ]
+  //     }]
+  //   };
+  // }
 
-  private getSubjectAveragesData(trainees: Trainee[], selectedSubjects: string[]) {
-    const filtered = trainees.filter(t => selectedSubjects.includes(t.subject));
+  // private getSubjectAveragesData(trainees: Trainee[], selectedSubjects: string[]) {
+  //   const filtered = trainees.filter(t => selectedSubjects.includes(t.subject));
 
-    const subjectAverages = selectedSubjects.map(subject => {
-      const subjectTests = filtered.filter(t => t.subject === subject);
-      const average = subjectTests.reduce((sum, t) => sum + t.grade, 0) / subjectTests.length || 0;
-      return { subject, average };
-    });
+  //   const subjectAverages = selectedSubjects.map(subject => {
+  //     const subjectTests = filtered.filter(t => t.subject === subject);
+  //     const average = subjectTests.reduce((sum, t) => sum + t.grade, 0) / subjectTests.length || 0;
+  //     return { subject, average };
+  //   });
 
-    return {
-      labels: selectedSubjects,
-      datasets: [{
-        label: 'Average Grade',
-        data: subjectAverages.map(sa => sa.average),
-        borderColor: '#4BC0C0',
-        fill: false
-      }]
-    };
-  }
+  //   return {
+  //     labels: selectedSubjects,
+  //     datasets: [{
+  //       label: 'Average Grade',
+  //       data: subjectAverages.map(sa => sa.average),
+  //       borderColor: '#4BC0C0',
+  //       fill: false
+  //     }]
+  //   };
+  // }
 
   // === Monitor Logic ===
-  getTraineesMonitorData(): TraineeMonitor[] {
-    const trainees = this.trainees();
-    const traineeIds = [...new Set(trainees.map(t => t.id))];
+//   getTraineesMonitorData(): TraineeMonitor[] {
+//     const trainees = this.trainees();
+//     const traineeIds = [...new Set(trainees.map(t => t.id))];
 
-    return traineeIds.map(id => {
-      const traineeTests = trainees.filter(t => t.id === id);
-      const name = traineeTests[0]?.name || 'Unknown';
-      const averageGrade = traineeTests.reduce((sum, t) => sum + t.grade, 0) / traineeTests.length;
-      return {
-        id,
-        name,
-        averageGrade,
-        passed: averageGrade >= 65
-      };
-    });
-  }
-}
+//     return traineeIds.map(id => {
+//       const traineeTests = trainees.filter(t => t.id === id);
+//       const name = traineeTests[0]?.name || 'Unknown';
+//       const averageGrade = traineeTests.reduce((sum, t) => sum + t.grade, 0) / traineeTests.length;
+//       return {
+//         id,
+//         name,
+//         averageGrade,
+//         passed: averageGrade >= 65
+//       };
+//     });
+//   }
+// }
 
 
 // import { inject, Injectable } from '@angular/core';
@@ -489,4 +493,4 @@ export class TraineeService {
 //       ...state
 //     });
 //   }
-// }
+}

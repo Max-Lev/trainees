@@ -27,13 +27,23 @@ export class DataTableContainer {
     // Get the currently selected trainee
     const selected = this.selectedTrainee();
     // If the selected trainee is the same as the one being toggled, deselect it
+    console.log(selected.payload?.id, value.payload.id)
     if (selected.payload?.id === value.payload.id) {
 
-      (selected) ? this.selectedTrainee.set({ action: SELECT_ACTIONS.initial, payload: null }) :
-        // Otherwise, select the trainee
+      if (selected) {
+        debugger
+        this.selectedTrainee.set({ action: SELECT_ACTIONS.initial, payload: null })
+      } else {
+        debugger;
         this.selectedTrainee.set({ action: SELECT_ACTIONS.select_row, payload: value.payload });
+      }
+
+      // (selected) ? this.selectedTrainee.set({ action: SELECT_ACTIONS.initial, payload: null }) :
+      //   // Otherwise, select the trainee
+      //   this.selectedTrainee.set({ action: SELECT_ACTIONS.select_row, payload: value.payload });
     }
     else {
+
       // Otherwise, select the trainee
       this.selectedTrainee.set({ action: SELECT_ACTIONS.select_row, payload: value.payload });
     }
@@ -41,22 +51,19 @@ export class DataTableContainer {
     console.log(this.selectedTrainee());
   }
 
-  updatedTraineeValue = signal<{
-    id: number | null,
-    name: string,
-    grade: number | null,
-    email: string | null,
-    dateJoined: string | null,
-    address: string | null,
-    city: string | null,
-    country: string | null,
-    zip: number | null,
-    subject: string
-  } | null | any>(null);
+  updatedTraineeValue = signal<Partial<Trainee> | null>(null);
+  newTraineeValue = signal<Partial<Trainee> | null>(null);
 
-  updateTrainee(updated: Trainee) {
-    this.traineeService.updateTrainee(updated);
-    this.selectedTrainee.set({ action: SELECT_ACTIONS.select_row, payload: updated });
+  // updateTrainee(updated: Trainee) {
+  updateTrainee(updated: any) {
+    const selected = this.selectedTrainee().payload;
+    const updatedTrainee = { ...selected, ...updated };
+    this.traineeService.updateTrainee(updatedTrainee);
+    this.selectedTrainee.set({ action: SELECT_ACTIONS.select_row, payload: updatedTrainee });
+  }
+
+  addNewTrainee(newTrainee: Partial<Trainee> | null) {
+    this.traineeService.addTrainee(newTrainee);
   }
 
   // Function to update a trainee

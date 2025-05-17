@@ -43,7 +43,8 @@
 </div>
 
 @if(selectedTrainee().action===SELECT_ACTIONS.select_row ||
-selectedTrainee().action===SELECT_ACTIONS.add_trainee){
+selectedTrainee().action===SELECT_ACTIONS.open_panel){
+<!-- selectedTrainee().action===SELECT_ACTIONS.add_trainee){ -->
 <div>
   <app-details-panel [selectedTrainee]="selectedTrainee().payload"></app-details-panel>
 </div>

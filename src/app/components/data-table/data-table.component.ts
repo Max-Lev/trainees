@@ -53,6 +53,7 @@ export class DataTableComponent implements OnChanges, OnInit, AfterViewInit, OnD
   // When you get new input
   @Input() set trainees(value: Trainee[]) {
     value = value.map((val, index) => val = { ...val, ...{ _index: index } });
+    console.log(value)
     this.dataTableContainer.trainees.set(value);
   }
 
@@ -82,11 +83,11 @@ export class DataTableComponent implements OnChanges, OnInit, AfterViewInit, OnD
     this.searchInputState();
 
     effect(() => {
-      console.log('selectedTrainee: ', this.selectedTrainee())
-      console.log('dataTableContainer.selectedTrainee: ', this.dataTableContainer.selectedTrainee())
-      console.log('activeActionState: ', this.activeActionState())
-      console.log('dataTableContainer trainees: ', this.dataTableContainer.trainees())
-      console.log('dataTableContainer updatedTraineeValue: ', this.dataTableContainer.updatedTraineeValue())
+      // console.log('selectedTrainee: ', this.selectedTrainee())
+      // console.log('dataTableContainer.selectedTrainee: ', this.dataTableContainer.selectedTrainee())
+      // console.log('activeActionState: ', this.activeActionState())
+      // console.log('dataTableContainer trainees: ', this.dataTableContainer.trainees())
+      // console.log('dataTableContainer updatedTraineeValue: ', this.dataTableContainer.updatedTraineeValue())
       // console.log('_trainees: ', this._trainees())
     });
 
@@ -175,39 +176,85 @@ export class DataTableComponent implements OnChanges, OnInit, AfterViewInit, OnD
 
 
   selectedRowHandler(row: Trainee, index?: number) {
-    debugger
+
     this.dataTableContainer.toggleSelection({ action: SELECT_ACTIONS.select_row, payload: row, index });
     // this.addNewTraineeState = false;
   }
 
 
   // prevAction: string = '';
-  addTrainee() {
+  addTrainee(action = SELECT_ACTIONS.open_panel) {
     // this.dataTableContainer.selectedTrainee.set({
     //   action: SELECT_ACTIONS.open_details_panel, payload: null
     // });
     console.log(this.dataTableContainer.selectedTrainee().action);
 
+    // if (this.activeActionState() === SELECT_ACTIONS.open_panel) {
+
+    //   let newTraineeValue = this.dataTableContainer.newTraineeValue();
+    //   newTraineeValue = {
+    //     ...newTraineeValue,
+    //     ...{
+    //       id: 25,
+    //       _index: 25
+    //     }
+    //   };
+
+    //   // this.selectedRowHandler(newTraineeValue as any, this.dataTableContainer.trainees().length + 1);
+
+    //   this.dataTableContainer.addNewTrainee(newTraineeValue);
+
+    //   this.dataTableContainer.toggleSelection({
+    //     action: SELECT_ACTIONS.select_row,
+    //     payload: newTraineeValue as any,
+    //     index: 25
+    //   });
+    // }
+
+    if (this.activeActionState() === SELECT_ACTIONS.open_panel) {
+      let newTraineeValue = this.dataTableContainer.newTraineeValue();
+      // newTraineeValue = {
+      //   ...newTraineeValue,
+      //   id: 26,
+      //   _index: 26
+      // };
+
+      this.dataTableContainer.addNewTrainee(newTraineeValue);
+
+      // this.dataTableContainer.toggleSelection({
+      //   action: SELECT_ACTIONS.select_row,
+      //   payload: newTraineeValue as any,
+      //   // index: 26
+      // });
+    }
+
     //no selection on the grid
-    // if(this.dataTableContainer.selectedTrainee().action===SELECT_ACTIONS.initial){
-    if (this.activeActionState() === SELECT_ACTIONS.initial || this.activeActionState() === SELECT_ACTIONS.deselect_row) {
-      this.dataTableContainer.selectedTrainee.set({ action: SELECT_ACTIONS.add_trainee, payload: null });
-      debugger
+    if (action) {
+      this.dataTableContainer.selectedTrainee.set({ action: SELECT_ACTIONS.open_panel, payload: null });
+    }
+
+    // if (this.activeActionState() === SELECT_ACTIONS.add_new_trainee) {
+    //   const newTraineeValue = this.dataTableContainer.newTraineeValue();
+    //   this.dataTableContainer.addNewTrainee(newTraineeValue);
+    //   ;
+    // }
+
+    if (this.activeActionState() === SELECT_ACTIONS.add_new_trainee) {
+
     }
 
     if (this.activeActionState() === SELECT_ACTIONS.select_row) {
-      debugger;
-      
-      const { payload } = this.dataTableContainer.selectedTrainee();
 
+      // const { payload } = this.dataTableContainer.selectedTrainee();
       const updatedTraineeValue = this.dataTableContainer.updatedTraineeValue();
-      console.log('updatedTraineeValue', updatedTraineeValue)
+      // console.log('updatedTraineeValue', updatedTraineeValue)
 
-      const updated = { ...payload, ...updatedTraineeValue };
-      console.log('updated', updated)
-      
-      this.dataTableContainer.updateTrainee(updated);
-      
+      // const updated = { ...payload, ...updatedTraineeValue };
+      // console.log('updated', updated)
+
+      // this.dataTableContainer.updateTrainee(updated);
+      this.dataTableContainer.updateTrainee(updatedTraineeValue);
+
 
     }
 
@@ -215,13 +262,13 @@ export class DataTableComponent implements OnChanges, OnInit, AfterViewInit, OnD
 
     //after initial not selection action
     // if (this.dataTableContainer.selectedTrainee().action === SELECT_ACTIONS.add_trainee) {
-    //   debugger
+    //   
     // }
 
     // //trainee selected
     // if (this.dataTableContainer.selectedTrainee().action === SELECT_ACTIONS.select_row) {
     //   this.dataTableContainer.selectedTrainee.set({ action: SELECT_ACTIONS.update_existing_trainee, payload: null });
-    //   debugger
+    //   
     // }
 
   }

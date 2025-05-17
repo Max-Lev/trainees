@@ -49,22 +49,20 @@ export class DetailsPanelComponent implements OnChanges, AfterViewInit {
 
   }
   ngAfterViewInit(): void {
-    this.detailsForm.valueChanges.subscribe((updatedTraineeData) => {
-      // const selected = this.dataTableContainer.selectedTrainee();
-      // const updated = {...selected,...updatedTraineeData};
-      this.dataTableContainer.updatedTraineeValue.update(existing => ({
-        ...existing,
-        ...updatedTraineeData
-      }));
-      // this.dataTableContainer.updatedTraineeValue.set(updatedTraineeData);
-      // console.log(updatedTraineeData)
-      // const ex = this.selectedTrainee();
-      // this.dataTableContainer.updatedTraineeValue.update((existingTraineeData:any) => {
-      //   // console.log({ ...existingTraineeData, ... updatedTraineeData  })
-      //   const d =  { ...ex, ...updatedTraineeData};
-      //   console.log(d);
-      //   return d;
-      // });
+    this.detailsForm.valueChanges.subscribe((value) => {
+      
+      const action = this.dataTableContainer.selectedTrainee().action;
+      if(action===SELECT_ACTIONS.select_row){
+        
+        this.dataTableContainer.updatedTraineeValue.update(_ => value as any);
+      }else{
+        // this.dataTableContainer.selectedTrainee.set({ action: SELECT_ACTIONS.add_new_trainee, payload: null});
+        this.dataTableContainer.newTraineeValue.set(value as any);
+        // this.detailsForm.reset();
+        
+      }
+      
+      
     })
   }
 
@@ -78,11 +76,11 @@ export class DetailsPanelComponent implements OnChanges, AfterViewInit {
       const trainee = this.selectedTrainee();
       if (trainee) {
         this.detailsForm.patchValue({
-          id: trainee.id ?? '', name: trainee.name ?? '', grade: trainee.grade ?? null,
+          id: trainee.id ?? null, name: trainee.name ?? '', grade: trainee.grade ?? null,
           email: trainee.email ?? '', dateJoined: trainee.dateJoined, address: trainee?.address ?? '',
           city: trainee?.city ?? '', country: trainee?.country ?? '', zip: trainee.zip ?? null, subject: trainee.subject ?? ''
         });
-      } else {
+      } else if(this.dataTableContainer.selectedTrainee().action === SELECT_ACTIONS.initial){
         this.detailsForm.reset({
           id: null, name: '', grade: null, email: '',
           dateJoined: null, address: '', city: '',
