@@ -96,6 +96,7 @@ export class DataTableContainer {
   
   // Update pagination state
   setPageState(state: {pageIndex: number, pageSize: number}) {
+    console.log('setPageState', state);
     this.pageState.set(state);
   }
 }

@@ -1,5 +1,5 @@
 import {
-  AfterViewInit, Component, computed, effect, inject, Input,
+  AfterViewInit, ChangeDetectorRef, Component, computed, effect, inject, Input,
   OnDestroy, OnInit, ViewChild
 } from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -34,6 +34,8 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+
+  cdr = inject(ChangeDetectorRef);
 
   // Services
   dataTableContainer = inject(DataTableContainer);
@@ -89,15 +91,18 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
+
     // Connect paginator to data source
     this.dataSource.paginator = this.paginator;
-
-    // Restore paginator state if available
-    const savedPageState = this.dataTableContainer.pageState();
-    if (savedPageState) {
-      this.paginator.pageIndex = savedPageState.pageIndex;
-      this.paginator.pageSize = savedPageState.pageSize;
-    }
+    setTimeout(() => {
+      // Restore paginator state if available
+      const savedPageState = this.dataTableContainer.pageState();
+      if (savedPageState) {
+        this.paginator.pageIndex = savedPageState.pageIndex;
+        this.paginator.pageSize = savedPageState.pageSize;
+        this.paginator._changePageSize(this.paginator.pageSize);
+      }
+    });
 
     // Listen for search input changes
     this.form.controls.search.valueChanges.pipe(
