@@ -17,7 +17,6 @@
                 <div class="line-chart-placeholder">
 
                     @for (id of selectedIds; track $index) {
-                    <!-- *ngFor="let id of selectedIds; let i = index" -->
                     <div class="chart-line" [style.height.px]="60 + ($index * 10)"
                         [style.background-color]="getLineColor($index)">
                     </div>

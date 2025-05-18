@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, computed, effect, inject } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -11,6 +11,8 @@ import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop';
 import { ChartGradesAverageStudetnsComponent } from '../../components/charts/chart-grades-avg-students/chart-grades-avg-students.component';
 import { ChartStudentsAveragesComponent } from '../../components/charts/chart-students-averages/chart-students-averages.component';
 import { ChartGradesAvgSubjectComponent } from '../../components/charts/chart-grades-avg-subject/chart-grades-avg-subject.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-analysis-page',
@@ -23,26 +25,28 @@ import { ChartGradesAvgSubjectComponent } from '../../components/charts/chart-gr
     MatCardModule,
     MatSelectModule,
     MatButtonModule,
-
-    // CdkDrag,
-    // CdkDropList,
+    MatFormFieldModule, MatSelectModule, MatInputModule, FormsModule,
     DragDropModule,
     ChartGradesAverageStudetnsComponent,
     ChartStudentsAveragesComponent,
     ChartGradesAvgSubjectComponent
-    // ChartComponent,
-    // Chart1Component,
-    // Chart2Component,
-    // Chart3Component
   ],
   templateUrl: './analysis-page.component.html',
   styleUrl: './analysis-page.component.scss'
 })
 export class AnalysisPageComponent {
-  stateService = inject(AnalysisStateService);
+  analysisStateService = inject(AnalysisStateService);
+
+  availableIds = this.analysisStateService.availableIds;
+
+  constructor(){
+    effect(()=>{
+      console.log(this.availableIds())
+    })
+  }
   
   drop(event: CdkDragDrop<any[]>) {
-    this.stateService.reorderCharts(event.previousIndex, event.currentIndex);
+    this.analysisStateService.reorderCharts(event.previousIndex, event.currentIndex);
   }
   
   onHiddenChartDragEnded(event: any, chart: any) {
@@ -69,7 +73,7 @@ export class AnalysisPageComponent {
     });
     
     if (droppedOnChart && targetIndex !== -1) {
-      this.stateService.swapChart(chart, targetIndex);
+      this.analysisStateService.swapChart(chart, targetIndex);
     }
   }
 }

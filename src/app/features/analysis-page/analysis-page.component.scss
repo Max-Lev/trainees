@@ -1,5 +1,5 @@
 .analysis-container {
-    max-width: 1200px;
+    // max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
   }
@@ -12,6 +12,7 @@
     display: flex;
     align-items: center;
     margin-bottom: 10px;
+    max-width: 30%;
   }
   
   .filter-row label {

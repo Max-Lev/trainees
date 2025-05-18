@@ -3,16 +3,16 @@ import { DataPageComponent } from './features/data-page/data-page.component';
 import { traineesResolver } from './resolvers/trainees.resolver';
 
 export const routes: Routes = [
-    { path: '', redirectTo: '/data', pathMatch: 'full' },
+    { path: '', redirectTo: '/data', pathMatch: 'full'},
     {
         path: 'data', component: DataPageComponent,
         resolve: {
             traineesResolver: traineesResolver
         },
-        // data: { reuseComponent: true }
     },
     {
-        path: 'analysis', loadComponent: () => import('./features/analysis-page/analysis-page.component').then(m => m.AnalysisPageComponent)
+        path: 'analysis', loadComponent: () => import('./features/analysis-page/analysis-page.component').then(m => m.AnalysisPageComponent),
+        
     },
     {
         path: 'monitor', loadComponent: () => import('./features/monitor-page/monitor-page.component').then(m => m.MonitorPageComponent)

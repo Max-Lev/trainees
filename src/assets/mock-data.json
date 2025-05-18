@@ -14,6 +14,38 @@
     "zip": "02108",
     "age": 32,
     "phone": "617-555-1234"
+  },
+  {
+    "id": 2,
+    "name": "Jane Doe",
+    "subject": "Physics",
+    "grade": 72,
+    "date": "2023-01-18",
+    "email": "jane@example.com",
+    "dateJoined": "2022-09-05",
+    "address": "456 Park Ave",
+    "city": "New York",
+    "state": "NY",
+    "country": "USA",
+    "zip": "10001",
+    "age": 24,
+    "phone": "212-555-9876"
+  },
+  {
+    "id": 3,
+    "name": "John Smith",
+    "subject": "Chemistry",
+    "grade": 64,
+    "date": "2023-01-22",
+    "email": "john@example.com",
+    "dateJoined": "2022-09-01",
+    "address": "123 Main St",
+    "city": "Boston",
+    "state": "MA",
+    "country": "USA",
+    "zip": "02108",
+    "age": 31,
+    "phone": "617-555-2345"
   }
 ]
  
