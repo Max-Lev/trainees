@@ -35,8 +35,10 @@
                (cdkDropListDropped)="drop($event)">
             <div class="chart-box" *ngFor="let chart of stateService.visibleCharts()" cdkDrag>
               <div [ngSwitch]="chart.id">
-                <app-chart *ngSwitchCase="'chart1'" [selectedIds]="stateService.selectedIds()"></app-chart>
-                
+                <app-chart-grades-average *ngSwitchCase="'chart1'" [selectedIds]="stateService.selectedIds()"></app-chart-grades-average>
+                <app-chart-students-averages *ngSwitchCase="'chart2'" [selectedIds]="stateService.selectedIds()"></app-chart-students-averages>
+                <app-chart-grades-avg-subject *ngSwitchCase="'chart3'" [selectedSubjects]="stateService.selectedSubjects()"></app-chart-grades-avg-subject>
+                <!-- <app-chart *ngSwitchCase="'chart1'" [selectedIds]="stateService.selectedIds()"></app-chart> -->
                 <!-- <app-chart1 *ngSwitchCase="'chart1'" [selectedIds]="stateService.selectedIds()"></app-chart1>
                 <app-chart2 *ngSwitchCase="'chart2'" [selectedIds]="stateService.selectedIds()"></app-chart2>
                 <app-chart3 *ngSwitchCase="'chart3'" [selectedSubjects]="stateService.selectedSubjects()"></app-chart3> -->

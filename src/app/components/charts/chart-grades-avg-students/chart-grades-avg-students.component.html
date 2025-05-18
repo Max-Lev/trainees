@@ -1,18 +1,33 @@
 <div class="chart-container">
     <h3>Chart 1: Grades average over time for students with ID</h3>
     <div class="chart-content">
-        <p *ngIf="selectedIds.length === 0">Please select at least one student ID to show data</p>
-        <div *ngIf="selectedIds.length > 0">
+        
+        @if(selectedIds.length === 0){
+        <p>Please select at least one student ID to show data</p>
+        }
+
+        @if(selectedIds.length > 0){
+        <div>
+
             <p>Showing grade averages over time for students: {{selectedIds.join(', ')}}</p>
             <div class="chart-placeholder">
                 <!-- Chart content would be rendered here using a charting library -->
                 <!-- This is a placeholder for demonstration -->
+
                 <div class="line-chart-placeholder">
-                    <div *ngFor="let id of selectedIds; let i = index" class="chart-line"
-                        [style.height.px]="60 + (i * 10)" [style.background-color]="getLineColor(i)">
+
+                    @for (id of selectedIds; track $index) {
+                    <!-- *ngFor="let id of selectedIds; let i = index" -->
+                    <div class="chart-line" [style.height.px]="60 + ($index * 10)"
+                        [style.background-color]="getLineColor($index)">
                     </div>
+                    }
+
                 </div>
+
             </div>
         </div>
+        }
+
     </div>
 </div>

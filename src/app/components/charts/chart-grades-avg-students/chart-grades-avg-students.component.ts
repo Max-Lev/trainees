@@ -1,17 +1,14 @@
-import { NgFor, NgIf } from '@angular/common';
 import { Component, Input } from '@angular/core';
 
 @Component({
-  selector: 'app-chart',
+  selector: 'app-chart-grades-average',
   standalone: true,
-  imports: [
-    NgIf,
-    NgFor
-  ],
-  templateUrl: './chart.component.html',
-  styleUrl: './chart.component.scss'
+  imports: [],
+  templateUrl: './chart-grades-avg-students.component.html',
+  styleUrl: './chart-grades-avg-students.component.scss'
 })
-export class ChartComponent {
+export class ChartGradesAverageStudetnsComponent {
+
   @Input() selectedIds: string[] = [];
   
   // Simple function to generate different colors for different lines
@@ -19,4 +16,5 @@ export class ChartComponent {
     const colors = ['#3f51b5', '#f44336', '#4caf50', '#ff9800', '#2196f3'];
     return colors[index % colors.length];
   }
+
 }
