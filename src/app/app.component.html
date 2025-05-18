@@ -1,53 +1,18 @@
-<!-- <div class="app-container">
-  <nav mat-tab-nav-bar [style.backgroundColor]="'primary'" class="app-tabs">
+
+
+<div class="app-container">
+  <nav mat-tab-nav-bar [tabPanel]="dummyPanel" class="app-tabs" mat-align-tabs="start">
     @for (tab of tabs; track tab.label) {
-    <a mat-tab-link [routerLink]="tab.path" routerLinkActive #rla="routerLinkActive" [active]="rla.isActive"
-      [style.background-color]="rla.isActive ? 'yellow' : ''" [style.color]="rla.isActive ? 'black' : ''">
+    <a mat-tab-link [routerLink]="tab.path" routerLinkActive #rla="routerLinkActive" [active]="rla.isActive">
       {{tab.label}}
     </a>
     }
-  </nav> -->
-  <!-- <div class="app-container">
-    <mat-tab-nav-bar class="app-tabs" mat-align-tabs="start">
-      @for (tab of tabs; track tab.label) {
-        <a mat-tab-link
-           [routerLink]="tab.path"
-           routerLinkActive #rla="routerLinkActive"
-           [active]="rla.isActive"
-           [style.background-color]="rla.isActive ? 'yellow' : ''"
-           [style.color]="rla.isActive ? 'black' : ''">
-          {{tab.label}}
-        </a>
-      }
-    </mat-tab-nav-bar>
-  
-    <div class="app-content">
-      <router-outlet></router-outlet>
-    </div>
-  </div> -->
+  </nav>
 
+  <!-- Hidden dummy panel to satisfy Angular Material -->
+  <mat-tab-nav-panel #dummyPanel style="display: none;"></mat-tab-nav-panel>
 
-  <div class="app-container">
-    <nav mat-tab-nav-bar [tabPanel]="dummyPanel" class="app-tabs" mat-align-tabs="start">
-      @for (tab of tabs; track tab.label) {
-        <a mat-tab-link
-           [routerLink]="tab.path"
-           routerLinkActive #rla="routerLinkActive"
-           [active]="rla.isActive"
-           
-           >
-           <!-- [style.background-color]="rla.isActive ? 'yellow' : ''"
-           [style.color]="rla.isActive ? 'black' : ''" -->
-          {{tab.label}}
-        </a>
-      }
-    </nav>
-  
-    <!-- Hidden dummy panel to satisfy Angular Material -->
-    <mat-tab-nav-panel #dummyPanel style="display: none;"></mat-tab-nav-panel>
-  
-    <div class="app-content">
-      <router-outlet></router-outlet>
-    </div>
+  <div class="app-content">
+    <router-outlet></router-outlet>
   </div>
-  
+</div>
