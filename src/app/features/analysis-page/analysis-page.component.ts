@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, computed, effect, inject } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -6,19 +6,21 @@ import { MatCardModule } from '@angular/material/card';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTabsModule } from '@angular/material/tabs';
 import { AnalysisStateService } from './analysis-state.service';
-// import { ChartComponent } from '../../components/chart/chart.component';
 import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop';
 import { ChartGradesAverageStudetnsComponent } from '../../components/charts/chart-grades-avg-students/chart-grades-avg-students.component';
 import { ChartStudentsAveragesComponent } from '../../components/charts/chart-students-averages/chart-students-averages.component';
 import { ChartGradesAvgSubjectComponent } from '../../components/charts/chart-grades-avg-subject/chart-grades-avg-subject.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { NgFor, NgSwitch, NgSwitchCase } from '@angular/common';
 
 @Component({
   selector: 'app-analysis-page',
   standalone: true,
   imports: [
-    CommonModule,
+    NgSwitch,
+    NgSwitchCase,
+    NgFor,
     FormsModule,
     ReactiveFormsModule,
     MatTabsModule,
@@ -38,6 +40,7 @@ export class AnalysisPageComponent {
   analysisStateService = inject(AnalysisStateService);
 
   availableIds = this.analysisStateService.availableIds;
+  availableSubjects = this.analysisStateService.availableSubjects;
 
   constructor(){
     effect(()=>{

@@ -1,16 +1,17 @@
-import { CommonModule } from '@angular/common';
+import { NgFor, NgIf } from '@angular/common';
 import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-chart-grades-avg-subject',
   standalone: true,
-  imports: [CommonModule],
+  imports: [NgFor,NgIf],
   templateUrl: './chart-grades-avg-subject.component.html',
   styleUrl: './chart-grades-avg-subject.component.scss'
 })
 export class ChartGradesAvgSubjectComponent {
 
   @Input() selectedSubjects: string[] = [];
+  
 
   // Simple function to generate different colors for different pie segments
   getPieColor(index: number): string {

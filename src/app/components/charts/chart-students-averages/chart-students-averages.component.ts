@@ -1,17 +1,25 @@
-import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { JsonPipe, NgFor, NgIf } from '@angular/common';
+import { Component, computed, effect, inject, Input } from '@angular/core';
+import { Trainee } from '../../../models/trainee.model';
+import { ChartsUtilService } from '../../../features/analysis-page/charts-util.service';
 
 @Component({
   selector: 'app-chart-students-averages',
   standalone: true,
   imports: [
-    CommonModule
+    NgFor,NgIf
   ],
   templateUrl: './chart-students-averages.component.html',
   styleUrl: './chart-students-averages.component.scss'
 })
 export class ChartStudentsAveragesComponent {
-  @Input() selectedIds: string[] = [];
+  
+  @Input() selectedTrainee: Trainee[] = [];
+  chartsUtilService = inject(ChartsUtilService);
+
+  get selectedIdNames(): string[]  {
+    return this.chartsUtilService.formatSelected(this.selectedTrainee);
+  }
 
   // Simple function to generate different colors for different bars
   getBarColor(index: number): string {

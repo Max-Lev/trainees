@@ -1,16 +1,17 @@
 <div class="chart-container">
   <h3>Chart 2: Students averages for students with chosen ID</h3>
   <div class="chart-content">
-    <p *ngIf="selectedIds.length === 0">Please select at least one student ID to show data</p>
-    <div *ngIf="selectedIds.length > 0">
-      <p>Showing student averages for: {{selectedIds.join(', ')}}</p>
+    <p *ngIf="selectedTrainee.length === 0">Please select at least one student ID to show data</p>
+    <div *ngIf="selectedTrainee.length > 0">
+      <p>Showing student averages for: {{selectedIdNames.join(', ')}}</p>
+
       <div class="chart-placeholder">
         <!-- Chart content would be rendered here using a charting library -->
         <!-- This is a placeholder for demonstration -->
         <div class="bar-chart-placeholder">
-          <div *ngFor="let id of selectedIds; let i = index" class="chart-bar" [style.height.px]="40 + (i * 20)"
-            [style.background-color]="getBarColor(i)">
-            <span>{{id}}</span>
+          <div *ngFor="let trainee of selectedTrainee; let i = index" class="chart-bar"
+            [style.height.px]="40 + (i * 20)" [style.background-color]="getBarColor(i)">
+            <span style="text-align: center;">{{trainee.id}}</span>
           </div>
         </div>
       </div>

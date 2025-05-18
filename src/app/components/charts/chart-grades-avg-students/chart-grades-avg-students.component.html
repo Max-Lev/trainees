@@ -2,21 +2,21 @@
     <h3>Chart 1: Grades average over time for students with ID</h3>
     <div class="chart-content">
         
-        @if(selectedIds.length === 0){
+        @if(selectedTrainee.length === 0){
         <p>Please select at least one student ID to show data</p>
         }
 
-        @if(selectedIds.length > 0){
+        @if(selectedTrainee.length > 0){
         <div>
 
-            <p>Showing grade averages over time for students: {{selectedIds.join(', ')}}</p>
+            <p>Showing grade averages over time for students: {{selectedIdNames.join(', ')}}</p>
             <div class="chart-placeholder">
                 <!-- Chart content would be rendered here using a charting library -->
                 <!-- This is a placeholder for demonstration -->
 
                 <div class="line-chart-placeholder">
 
-                    @for (id of selectedIds; track $index) {
+                    @for (id of selectedTrainee; track $index) {
                     <div class="chart-line" [style.height.px]="60 + ($index * 10)"
                         [style.background-color]="getLineColor($index)">
                     </div>

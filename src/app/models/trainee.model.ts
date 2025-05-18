@@ -14,6 +14,10 @@ export interface Trainee {
     state?:string;
     age?:number;
     _index?:number;
+    grades?: Record<string, number>;
+    // grades?:{
+    //   [key:string]: number
+    // }[]
 
   }
   

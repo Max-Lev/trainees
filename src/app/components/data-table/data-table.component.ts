@@ -24,7 +24,7 @@ import { Subject } from 'rxjs';
     MatTableModule, MatButtonModule,
     MatPaginator, MatPaginatorModule,
     ReactiveFormsModule,
-    DetailsPanelComponent,
+    // DetailsPanelComponent,
   ],
   standalone: true,
   templateUrl: './data-table.component.html',
@@ -40,6 +40,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
   // Services
   dataTableContainer = inject(DataTableContainer);
   filterPredicateUtilService = inject(FilterPredicateUtilService);
+  
 
   // Table configuration
   columns = DATA_COLUMNS;
@@ -84,6 +85,11 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // Connect data source to trainees signal
     this.setTableDataSource();
+
+    effect(()=>{
+      console.log(this.dataTableContainer.trainees())
+    })
+
   }
 
   ngOnInit(): void {

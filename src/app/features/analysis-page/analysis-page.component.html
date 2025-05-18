@@ -7,7 +7,7 @@
         <mat-select [multiple]="true" [value]="analysisStateService.selectedIds()"
           (selectionChange)="analysisStateService.updateSelectedIds($event.value)">
           <mat-option *ngFor="let id of analysisStateService.availableIds()" [value]="id">
-            {{id}}
+            {{id.id}} {{id.name}}
           </mat-option>
         </mat-select>
       </mat-form-field>
@@ -18,8 +18,8 @@
       <mat-label>Subjects:</mat-label>
         <mat-select [multiple]="true" [value]="analysisStateService.selectedSubjects()"
           (selectionChange)="analysisStateService.updateSelectedSubjects($event.value)">
-          <mat-option *ngFor="let subject of analysisStateService.availableSubjects()" [value]="subject">
-            {{subject}}
+          <mat-option *ngFor="let subject of availableSubjects()" [value]="subject.value">
+            {{subject.viewValue}}
           </mat-option>
         </mat-select>
       </mat-form-field>
@@ -32,9 +32,9 @@
         <div [ngSwitch]="chart.id">
           {{chart.id}}
           <app-chart-grades-average *ngSwitchCase="'chart1'"
-            [selectedIds]="analysisStateService.selectedIds()"></app-chart-grades-average>
+            [selectedTrainee]="analysisStateService.selectedIds()"></app-chart-grades-average>
           <app-chart-students-averages *ngSwitchCase="'chart2'"
-            [selectedIds]="analysisStateService.selectedIds()"></app-chart-students-averages>
+            [selectedTrainee]="analysisStateService.selectedIds()"></app-chart-students-averages>
           <app-chart-grades-avg-subject *ngSwitchCase="'chart3'"
             [selectedSubjects]="analysisStateService.selectedSubjects()"></app-chart-grades-avg-subject>
         </div>

@@ -2,6 +2,8 @@
 import { Injectable, signal, computed, inject, effect } from '@angular/core';
 import { DataTableContainer } from '../../components/data-table/data-table-container.service';
 import { TraineeService } from '../../providers/trainee.service';
+import { SubjectsService } from '../../providers/subjects.service';
+import { Trainee } from '../../models/trainee.model';
 
 export interface ChartInfo {
   id: string;
@@ -21,12 +23,13 @@ export class AnalysisStateService {
   // Available data
   private _availableIds = computed(() => {
     return this.traineeService.trainees().map(trainee => {
-      return trainee.id;
+      return trainee;
     });
-  })
-  private _availableSubjects = signal<string[]>(['Math', 'Science', 'English', 'History', 'Art']);
+  });
 
-
+  subjectsService = inject(SubjectsService);
+  private _availableSubjects = computed(() => this.subjectsService.subjects());
+  
   constructor() {
     // effect(() => {
     //   console.log(this._availableIds())
@@ -34,7 +37,7 @@ export class AnalysisStateService {
   }
 
   // Selected filters
-  private _selectedIds = signal<string[]>([]);
+  private _selectedIds = signal<Trainee[]>([]);
   private _selectedSubjects = signal<string[]>([]);
 
   // Chart configurations
@@ -47,7 +50,9 @@ export class AnalysisStateService {
   // Computed properties
   public availableIds = computed(() => this._availableIds());
   public availableSubjects = computed(() => this._availableSubjects());
-  public selectedIds = computed(() => this._selectedIds());
+  public selectedIds = computed(() => {
+    return this._selectedIds();
+  });
   public selectedSubjects = computed(() => this._selectedSubjects());
 
   public visibleCharts = computed(() => {
@@ -61,7 +66,8 @@ export class AnalysisStateService {
   });
 
   // Update methods
-  updateSelectedIds(ids: string[]) {
+  // updateSelectedIds(ids: string[]) {
+  updateSelectedIds(ids: Trainee[]) {
     this._selectedIds.set(ids);
   }
 

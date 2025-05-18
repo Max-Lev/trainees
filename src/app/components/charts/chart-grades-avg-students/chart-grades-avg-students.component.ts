@@ -1,4 +1,6 @@
-import { Component, Input } from '@angular/core';
+import { Component, inject, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Trainee } from '../../../models/trainee.model';
+import { ChartsUtilService } from '../../../features/analysis-page/charts-util.service';
 
 @Component({
   selector: 'app-chart-grades-average',
@@ -9,7 +11,13 @@ import { Component, Input } from '@angular/core';
 })
 export class ChartGradesAverageStudetnsComponent {
 
-  @Input() selectedIds: string[] = [];
+    @Input() selectedTrainee: Trainee[] = [];
+    chartsUtilService = inject(ChartsUtilService);
+  
+    get selectedIdNames(): string[]  {
+      return this.chartsUtilService.formatSelected(this.selectedTrainee);
+    }
+  
   
   // Simple function to generate different colors for different lines
   getLineColor(index: number): string {

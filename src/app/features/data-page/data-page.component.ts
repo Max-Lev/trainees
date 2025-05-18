@@ -31,8 +31,8 @@ export class DataPageComponent implements OnChanges, AfterViewInit, OnDestroy {
       /**
        * simulate real world data update scenatio
        */
-      // this.traineesResolver = this.traineeService.trainees$();
       this.traineesResolver = this.traineeService.trainees()
+      
     })
   }
 
@@ -41,7 +41,7 @@ export class DataPageComponent implements OnChanges, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-
+    this.dataTableContainer.selectedTrainee.set({action:SELECT_ACTIONS.open_panel,payload:null});
   }
 
   ngOnDestroy(): void {
