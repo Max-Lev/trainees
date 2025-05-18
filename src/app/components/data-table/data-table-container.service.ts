@@ -42,7 +42,6 @@ export class DataTableContainer {
   // Update an existing trainee
   updateTrainee(updated: Partial<Trainee>) {
     if (!updated || !this.selectedTrainee().payload) return;
-    
     const selectedTrainee = this.selectedTrainee().payload;
     const updatedTrainee = { ...selectedTrainee, ...updated };
     
@@ -60,7 +59,7 @@ export class DataTableContainer {
     const maxId = Math.max(...this.trainees().map(t => t.id || 0), 0);
     const traineeWithId = { 
       ...newTrainee, 
-      id: maxId + 1,
+      id: (!newTrainee.id) ? (maxId + 1) : newTrainee.id,
       _index: this.trainees().length
     };
     
