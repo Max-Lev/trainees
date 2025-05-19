@@ -13,13 +13,7 @@ export class DataTableContainer {
   trainees = signal<Trainee[]>([]);
 
   constructor() {
-    effect(() => {
-      const ids = this.trainees().map(trainee => {
-        console.log(trainee)
-        return trainee.id;
-      });
-      console.log(ids)
-    })
+    
   }
 
   // UI state
@@ -106,7 +100,6 @@ export class DataTableContainer {
 
   // Update pagination state
   setPageState(state: { pageIndex: number, pageSize: number }) {
-    console.log('setPageState', state);
     this.pageState.set(state);
   }
 }

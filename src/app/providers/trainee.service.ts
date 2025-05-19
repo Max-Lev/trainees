@@ -5,6 +5,7 @@ import { inject } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class TraineeService {
+
   private http = inject(HttpClient);
 
   // Core data state

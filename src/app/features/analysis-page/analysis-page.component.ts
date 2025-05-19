@@ -43,9 +43,7 @@ export class AnalysisPageComponent {
   availableSubjects = this.analysisStateService.availableSubjects;
 
   constructor(){
-    effect(()=>{
-      console.log(this.availableIds())
-    })
+    
   }
   
   drop(event: CdkDragDrop<any[]>) {

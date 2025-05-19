@@ -37,15 +37,16 @@ export class DataPageComponent implements OnChanges, AfterViewInit, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log('DataPageComponent ', changes)
+    
   }
 
   ngAfterViewInit(): void {
-    this.dataTableContainer.selectedTrainee.set({action:SELECT_ACTIONS.open_panel,payload:null});
+    //debug
+    // this.dataTableContainer.selectedTrainee.set({action:SELECT_ACTIONS.open_panel,payload:null});
   }
 
   ngOnDestroy(): void {
-    console.log('DataPageComponent ngOnDestroy')
+    
   }
 
 }

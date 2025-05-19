@@ -61,7 +61,7 @@ export class DetailsPanelComponent implements AfterViewInit {
     // Update the appropriate signal when form values change
     this.detailsForm.valueChanges.subscribe((value) => {
       const action = this.dataTableContainer.selectedTrainee().action;
-      console.log(value)
+      
       if (action === SELECT_ACTIONS.select_row) {
 
         this.dataTableContainer.updatedTraineeValue.set(value as any);
@@ -77,10 +77,6 @@ export class DetailsPanelComponent implements AfterViewInit {
 
   // Bind selected trainee data to the form
   bindFormData() {
-
-    effect(() => {
-      console.log(this.subjectOptions())
-    })
 
     effect(() => {
       const trainee = this.selectedTrainee();

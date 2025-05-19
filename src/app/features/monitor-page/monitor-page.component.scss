@@ -1,0 +1,27 @@
+.passed {
+    background-color: limegreen;
+    color: black;
+  }
+  
+  .failed {
+    background-color: red;
+    color: white;
+  }
+  
+  .filters {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+    flex-direction: column;
+    max-width: 35%;
+  }
+  .state-section {
+    display: flex;
+    align-content: center;
+    align-items: center;
+    justify-content: space-between;
+    h3{
+      margin: 0;
+    }
+  }

@@ -1,1 +1,55 @@
-<p>monitor-page works!</p>
+<div class="filters">
+  <mat-form-field>
+    <mat-label>IDs</mat-label>
+    <mat-select multiple [value]="state.selectedIds()" (valueChange)="state.selectedIds.set($event)">
+      @for (id of allIds; track $index) {
+      <mat-option [value]="id">{{ id }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Names</mat-label>
+    <input matInput [value]="state.nameFilter()" (input)="state.nameFilter.set($any($event.target).value)" />
+  </mat-form-field>
+
+  <div class="state-section">
+    <h3>State</h3>
+    <mat-checkbox [checked]="state.showPassed()" (change)="state.showPassed.set($event.checked)">Passed</mat-checkbox>
+    <mat-checkbox [checked]="state.showFailed()" (change)="state.showFailed.set($event.checked)">Failed</mat-checkbox>
+  </div>
+
+</div>
+
+<table mat-table [dataSource]="trainees()">
+  <ng-container matColumnDef="id">
+    <th mat-header-cell *matHeaderCellDef>ID</th>
+    <td mat-cell *matCellDef="let row" [ngClass]="{'passed': row.average >= 65, 'failed': row.average < 65}">
+      {{ row.id }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="name">
+    <th mat-header-cell *matHeaderCellDef>Name</th>
+    <td mat-cell *matCellDef="let row" [ngClass]="{'passed': row.average >= 65, 'failed': row.average < 65}">
+      {{ row.name }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="average">
+    <th mat-header-cell *matHeaderCellDef>Average</th>
+    <td mat-cell *matCellDef="let row" [ngClass]="{'passed': state.calculateAverage(row.grades) >= 65, 'failed': state.calculateAverage(row.grades) < 65}">
+      {{ state.calculateAverage(row.grades) }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="exams">
+    <th mat-header-cell *matHeaderCellDef>Exams</th>
+    <td mat-cell *matCellDef="let row" [ngClass]="{'passed': row.average >= 65, 'failed': row.average < 65}">
+      {{ state.countExams(row.grades) }}
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="columns"></tr>
+  <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+</table>

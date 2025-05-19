@@ -31,9 +31,7 @@ export class AnalysisStateService {
   private _availableSubjects = computed(() => this.subjectsService.subjects());
   
   constructor() {
-    // effect(() => {
-    //   console.log(this._availableIds())
-    // })
+    
   }
 
   // Selected filters
@@ -66,7 +64,6 @@ export class AnalysisStateService {
   });
 
   // Update methods
-  // updateSelectedIds(ids: string[]) {
   updateSelectedIds(ids: Trainee[]) {
     this._selectedIds.set(ids);
   }

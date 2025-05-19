@@ -13,7 +13,6 @@ import { DataTableContainer } from './data-table-container.service';
 import { FilterPredicateUtilService } from './filter-predicate-util.service';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, takeUntil } from 'rxjs';
-import { DetailsPanelComponent } from '../details-panel/details-panel.component';
 import { SELECT_ACTIONS } from '../../models/data.actions';
 import { Subject } from 'rxjs';
 
@@ -23,8 +22,7 @@ import { Subject } from 'rxjs';
     MatFormFieldModule, MatInputModule,
     MatTableModule, MatButtonModule,
     MatPaginator, MatPaginatorModule,
-    ReactiveFormsModule,
-    // DetailsPanelComponent,
+    ReactiveFormsModule
   ],
   standalone: true,
   templateUrl: './data-table.component.html',
@@ -40,7 +38,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
   // Services
   dataTableContainer = inject(DataTableContainer);
   filterPredicateUtilService = inject(FilterPredicateUtilService);
-  
+
 
   // Table configuration
   columns = DATA_COLUMNS;
@@ -85,10 +83,6 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // Connect data source to trainees signal
     this.setTableDataSource();
-
-    effect(()=>{
-      console.log(this.dataTableContainer.trainees())
-    })
 
   }
 

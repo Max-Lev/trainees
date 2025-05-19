@@ -1,7 +1,7 @@
 <div class="chart-container">
     <h3>Chart 1: Grades average over time for students with ID</h3>
     <div class="chart-content">
-        
+
         @if(selectedTrainee.length === 0){
         <p>Please select at least one student ID to show data</p>
         }
@@ -16,7 +16,7 @@
 
                 <div class="line-chart-placeholder">
 
-                    @for (id of selectedTrainee; track $index) {
+                    @for (trainee of selectedTrainee; track $index) {
                     <div class="chart-line" [style.height.px]="60 + ($index * 10)"
                         [style.background-color]="getLineColor($index)">
                     </div>

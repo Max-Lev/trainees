@@ -15,7 +15,7 @@
     "age": 32,
     "phone": "617-555-1234",
     "grades": {
-      "Mathematics": 95,
+      "Mathematics": 100,
       "Physics": 26,
       "Chemistry": 38,
       "Biology": 61,
@@ -26,9 +26,9 @@
       "Calculus": 62,
       "Economics": 100,
       "Computer Science": 53,
-      "History": 7,
+      "History": 100,
       "English Literature": 74,
-      "Art History": 0,
+      "Art History": 100,
       "Psychology": 33
     }
   },
@@ -48,20 +48,19 @@
     "age": 24,
     "phone": "212-555-9876",
     "grades": {
-      "Mathematics": 49,
       "Physics": 59,
-      "Chemistry": 4,
+      "Chemistry": 100,
       "Biology": 66,
       "Algebra": 75,
       "Geometry": 73,
       "Trigonometry": 83,
       "Statistics": 80,
       "Calculus": 98,
-      "Economics": 26,
-      "Computer Science": 5,
-      "History": 18,
+      "Economics": 100,
+      "Computer Science": 100,
+      "History": 100,
       "English Literature": 96,
-      "Art History": 26,
+      "Art History": 100,
       "Psychology": 74
     }
   },

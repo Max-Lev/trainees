@@ -11,7 +11,6 @@ export const traineesResolver: ResolveFn<Trainee[]> = (route, state) => {
       const data = service.trainees()
       if (data.length > 0) {
         resolve(data);
-        console.log(data)
         stop.destroy();
       }
     });
