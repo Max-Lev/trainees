@@ -6,6 +6,7 @@ import { Trainee } from '../../models/trainee.model';
 })
 export class FilterPredicateUtilService {
 
+   // This function returns a custom filter predicate function
    customFilterPredicate(): (data: Trainee, filter: string) => boolean {
       return (data: Trainee, filter: string): boolean => {
         const trimmed = filter.trim().toLowerCase();

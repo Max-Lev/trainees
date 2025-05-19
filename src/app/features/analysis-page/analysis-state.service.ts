@@ -17,6 +17,7 @@ export interface ChartInfo {
 })
 export class AnalysisStateService {
 
+  // Injecting services
   dataTableContainer = inject(DataTableContainer);
   traineeService = inject(TraineeService);
 
@@ -68,12 +69,16 @@ export class AnalysisStateService {
     this._selectedIds.set(ids);
   }
 
+  // This function updates the selected subjects by setting the subjects array to the _selectedSubjects set
   updateSelectedSubjects(subjects: string[]) {
+    // Set the _selectedSubjects set to the subjects array
     this._selectedSubjects.set(subjects);
   }
 
   reorderCharts(previousIndex: number, currentIndex: number) {
+    // Create a copy of the charts array
     const charts = [...this._charts()];
+    // Filter out the charts that are not visible
     const visibleCharts = charts.filter(chart => chart.visible);
 
     // Get the chart being moved
@@ -100,23 +105,33 @@ export class AnalysisStateService {
     this._charts.set(charts);
   }
 
+  // Function to swap the position of two charts
   swapChart(hiddenChart: ChartInfo, targetIndex: number) {
+    // Create a copy of the charts array
     const charts = [...this._charts()];
+    // Filter the visible charts from the copy
     const visibleCharts = charts.filter(chart => chart.visible);
 
+    // Check if the target index is within the range of the visible charts
     if (targetIndex >= 0 && targetIndex < visibleCharts.length) {
+      // Get the target chart from the visible charts
       const targetChart = visibleCharts[targetIndex];
 
       // Make the hidden chart visible and the target chart hidden
+      // Find the index of the hidden chart and the target chart in the copy
       const hiddenChartIndex = charts.findIndex(c => c.id === hiddenChart.id);
       const targetChartIndex = charts.findIndex(c => c.id === targetChart.id);
 
+      // Check if the hidden chart and target chart are found in the copy
       if (hiddenChartIndex !== -1 && targetChartIndex !== -1) {
+        // Set the hidden chart to be visible and set its position to the target chart's position
         charts[hiddenChartIndex].visible = true;
         charts[hiddenChartIndex].position = targetChart.position;
 
+        // Set the target chart to be hidden
         charts[targetChartIndex].visible = false;
 
+        // Update the charts array
         this._charts.set(charts);
       }
     }

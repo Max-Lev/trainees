@@ -29,8 +29,10 @@ import { Subject } from 'rxjs';
   styleUrl: './data-table.component.scss'
 })
 export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
+  // Create a subject to destroy observables
   private destroy$ = new Subject<void>();
 
+  // Get the paginator from the view
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   cdr = inject(ChangeDetectorRef);
@@ -128,8 +130,11 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // Set up data source with reactive signal data
+  // This function sets the data source for the table
   setTableDataSource() {
+    // This effect will run whenever the data table container changes
     effect(() => {
+      // Set the data source for the table to the trainees from the data table container
       this.dataSource.data = this.dataTableContainer.trainees();
     });
   }

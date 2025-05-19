@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, computed, effect, inject, input, signal, WritableSignal } from '@angular/core';
+import { AfterViewInit, Component, computed, effect, inject, input } from '@angular/core';
 import { Trainee } from '../../models/trainee.model';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';

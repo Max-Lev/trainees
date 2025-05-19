@@ -6,11 +6,15 @@ import { TraineeService } from '../../providers/trainee.service';
 @Injectable({ providedIn: 'root' })
 export class MonitorStateService {
 
+  // Inject the TraineeService
   traineeService = inject(TraineeService);
 
+  // Get all trainees from the TraineeService
   allTrainees = this.traineeService.trainees;
 
+  // Create a signal to store the selected trainee IDs
   selectedIds = signal<number[]>([]);
+  // Create a signal to store the name filter
   nameFilter = signal('');
   showPassed = signal(true);
   showFailed = signal(true);
@@ -20,6 +24,7 @@ export class MonitorStateService {
  
   }
 
+  // Calculate the average grade of a trainee
   calculateAverage(grades: Record<string, number>): number {
     const values = Object.values(grades ?? {}).filter(g => typeof g === 'number');
     if (values.length === 0) return 0;
@@ -27,10 +32,12 @@ export class MonitorStateService {
     return Math.round((sum / values.length) * 100) / 100; // rounded to 2 decimals
   }
 
+  // Count the number of exams a trainee has taken
   countExams(grades: Record<string, number>): number {
     return Object.values(grades ?? {}).filter(g => typeof g === 'number').length;
   }
 
+  // Create a computed value to filter the trainees based on the selected IDs, name filter, and pass/fail status
   readonly filteredTrainees = computed(() => {
     return this.allTrainees().filter((trainee: Trainee) => {
       const avg = this.calculateAverage(trainee.grades!);

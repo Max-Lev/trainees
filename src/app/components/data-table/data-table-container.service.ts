@@ -7,6 +7,7 @@ import { TraineeService } from '../../providers/trainee.service';
   providedIn: 'root'
 })
 export class DataTableContainer {
+  // Inject the TraineeService
   traineeService = inject(TraineeService);
 
   // Core data state
@@ -49,8 +50,11 @@ export class DataTableContainer {
     const selectedTrainee = this.selectedTrainee().payload;
     const updatedTrainee = { ...selectedTrainee, ...updated };
 
+    // Update the trainee in the TraineeService
     this.traineeService.updateTrainee(updatedTrainee as any);
+    // Update the selected trainee in the UI
     this.selectedTrainee.set({ action: SELECT_ACTIONS.select_row, payload: updatedTrainee as any });
+    // Reset the updatedTraineeValue
     this.updatedTraineeValue.set(null);
   }
 
@@ -67,6 +71,7 @@ export class DataTableContainer {
       _index: this.trainees().length
     };
 
+    // Add the new trainee to the TraineeService
     this.traineeService.addTrainee(traineeWithId);
 
     // Select the newly added trainee
@@ -75,6 +80,7 @@ export class DataTableContainer {
       payload: traineeWithId as Trainee
     });
 
+    // Reset the newTraineeValue
     this.newTraineeValue.set(null);
   }
 
@@ -83,7 +89,9 @@ export class DataTableContainer {
     const traineeToRemove = trainee || this.selectedTrainee().payload;
     if (!traineeToRemove || !traineeToRemove.id) return;
 
+    // Remove the trainee from the TraineeService
     this.traineeService.removeTrainee(traineeToRemove);
+    // Reset the selected trainee
     this.selectedTrainee.set({ action: SELECT_ACTIONS.initial, payload: null });
   }
 

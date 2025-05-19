@@ -27,18 +27,25 @@ import { IsFailedPipe } from '../../pipes/is-failed.pipe';
   styleUrl: './monitor-page.component.scss'
 })
 export class MonitorPageComponent implements AfterViewInit {
+  // Define columns for the data table
   columns = MONITOR_COLUMNS;
+  // Define displayed columns for the data table
   displayedColumns = MONITOR_COLUMNS.map(c => c.columnDef);;
+  // Get a reference to the MatPaginator component
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
+  // Inject the MonitorStateService and DataTableContainer
   state = inject(MonitorStateService);
   dataTableContainer = inject(DataTableContainer);
+  // Get all trainee ids
   allIds = this.state.allTrainees().map(t => t.id);
+  // Get filtered trainees
   trainees = this.state.filteredTrainees;
 
   dataSource = new MatTableDataSource<Trainee>([]);
   constructor() {
     effect(() => {
+    // Effect to update the data source with the filtered trainees
       this.dataSource.data = this.trainees();
     });
   }
@@ -60,6 +67,7 @@ export class MonitorPageComponent implements AfterViewInit {
 
 
     pageSelected(event: PageEvent) {
+    // Set the page state when a page is selected
       this.state.setPageState({
         pageIndex: event.pageIndex,
         pageSize: event.pageSize
