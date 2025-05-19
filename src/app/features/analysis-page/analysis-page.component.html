@@ -1,7 +1,7 @@
-
+<div class="container">
 <div class="analysis-content">
   <div class="filter-section">
-    <div class="filter-row">
+    <div class="filters">
       <mat-form-field>
         <mat-label>IDs:</mat-label>
         <mat-select [multiple]="true" [value]="analysisStateService.selectedIds()"
@@ -13,7 +13,7 @@
       </mat-form-field>
     </div>
 
-    <div class="filter-row">
+    <div class="filters">
       <mat-form-field>
       <mat-label>Subjects:</mat-label>
         <mat-select [multiple]="true" [value]="analysisStateService.selectedSubjects()"
@@ -48,4 +48,5 @@
       {{chart.title}}
     </div>
   </div>
+</div>
 </div>

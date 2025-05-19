@@ -27,3 +27,25 @@ export const DATA_COLUMNS:{ columnDef: string; header: string; cell: (element: T
       cell: (element: Trainee) => `${element.subject}`,
     }
   ];
+export const MONITOR_COLUMNS:{ columnDef: string; header: string; cell: (element: Trainee) => string; }[] = [
+    {
+      columnDef: 'id',
+      header: 'ID.',
+      cell: (element: Trainee) => `${element.id}`,
+    },
+    {
+      columnDef: 'name',
+      header: 'Name',
+      cell: (element: Trainee) => `${element.name}`,
+    },
+    {
+      columnDef: 'average',
+      header: 'Average',
+      cell: (element: Trainee) => `${element.average}`,
+    },
+    {
+      columnDef: 'exams',
+      header: 'Exams',
+      cell: (element: Trainee) => `${element.exams}`,
+    }
+  ];

@@ -1,27 +1,18 @@
 .passed {
-    background-color: limegreen;
-    color: black;
+  color: rgb(85, 204, 68);
+}
+
+.failed {
+  color: red;
+}
+
+.state-section {
+  display: flex;
+  align-content: center;
+  align-items: center;
+  justify-content: space-between;
+
+  h3 {
+    margin: 0;
   }
-  
-  .failed {
-    background-color: red;
-    color: white;
-  }
-  
-  .filters {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-    margin-bottom: 1rem;
-    flex-direction: column;
-    max-width: 35%;
-  }
-  .state-section {
-    display: flex;
-    align-content: center;
-    align-items: center;
-    justify-content: space-between;
-    h3{
-      margin: 0;
-    }
-  }
+}

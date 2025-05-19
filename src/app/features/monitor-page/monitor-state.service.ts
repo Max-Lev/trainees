@@ -14,6 +14,7 @@ export class MonitorStateService {
   nameFilter = signal('');
   showPassed = signal(true);
   showFailed = signal(true);
+  pageState = signal<{ pageIndex: number, pageSize: number }>({ pageIndex: 0, pageSize: 10 });
 
   constructor() {
  
@@ -40,4 +41,8 @@ export class MonitorStateService {
       return matchesId && matchesName && matchesState;
     });
   });
+
+  setPageState(state: { pageIndex: number, pageSize: number }) {
+    this.pageState.set(state);
+  }
 }
