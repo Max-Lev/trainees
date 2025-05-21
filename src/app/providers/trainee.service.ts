@@ -2,6 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import { Trainee } from '../models/trainee.model';
 import { HttpClient } from '@angular/common/http';
 import { inject } from '@angular/core';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class TraineeService {
@@ -17,7 +18,7 @@ export class TraineeService {
   }
 
   private loadTrainees(): void {
-    this.http.get<Trainee[]>('http://localhost:4200/assets/mock-data.json').subscribe({
+    this.http.get<Trainee[]>(environment.traineesAPI).subscribe({
       next: data => this.trainees.set(data),
       error: err => console.error('Failed to load trainees', err)
     });
