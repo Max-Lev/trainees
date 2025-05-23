@@ -1,32 +1,53 @@
 <div class="container">
-<div class="analysis-content">
-  <div class="filter-section">
-    <div class="filters">
-      <mat-form-field>
-        <mat-label>IDs:</mat-label>
-        <mat-select [multiple]="true" [value]="analysisStateService.selectedIds()"
-          (selectionChange)="analysisStateService.updateSelectedIds($event.value)">
-          <mat-option *ngFor="let id of analysisStateService.availableIds()" [value]="id">
-            {{id.id}} {{id.name}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
+  <div class="analysis-content">
+    <div class="filter-section">
+      <div class="filters">
+        <mat-form-field>
+          <mat-label>Trainees:</mat-label>
+          <mat-select [compareWith]="compareTrainees" [multiple]="true" [value]="_selectedTraineeSignal()"
+            (selectionChange)="idsChange($event)">
+            <mat-option *ngFor="let id of availableIds()" [value]="id">
+              <!-- {{id.id}}  -->
+              {{id.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="filters">
+        <mat-form-field>
+          <mat-label>Subjects:</mat-label>
+          <mat-select [multiple]="true" [value]="_selectedSubjects()" (selectionChange)="subjectChange($event)">
+            <mat-option *ngFor="let subject of availableSubjects()" [value]="subject.value">
+              {{subject.viewValue}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
     </div>
 
-    <div class="filters">
-      <mat-form-field>
-      <mat-label>Subjects:</mat-label>
-        <mat-select [multiple]="true" [value]="analysisStateService.selectedSubjects()"
-          (selectionChange)="analysisStateService.updateSelectedSubjects($event.value)">
-          <mat-option *ngFor="let subject of availableSubjects()" [value]="subject.value">
-            {{subject.viewValue}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-  </div>
+    <div class="charts-grid">
+      <div class="charts-container">
+        <div class="chart-box" *ngFor="let chart of analysisStateService.visibleCharts()" cdkDrag>
+          <div [ngSwitch]="chart.id">
+            {{chart.title}}
+            <app-chart-grades-average *ngSwitchCase="'chart1'" [studentsAverages]="_studentsAverages"
+              [xAxisLabel]="'Students'" [yAxisLabel]="'Average'"></app-chart-grades-average>
 
-  <div class="charts-grid">
+            <app-chart-subjects-avg *ngSwitchCase="'chart2'" [xAxisLabel]="'Subjects'" [yAxisLabel]="'Average'"
+              [subjectAverages]="_subjectAverages"></app-chart-subjects-avg>
+            <!-- <app-chart-grades-average *ngSwitchCase="'chart2'" [studentsAverages]="_subjectAverages"
+              [xAxisLabel]="'Subjects'" [yAxisLabel]="'Average'"></app-chart-grades-average> -->
+
+            <!-- <app-chart-students-averages *ngSwitchCase="'chart2'"
+              [selectedTrainee]="analysisStateService.selectedIds()"></app-chart-students-averages> -->
+            <!-- <app-chart-grades-avg-subject *ngSwitchCase="'chart3'"
+              [selectedSubjects]="analysisStateService.selectedSubjects()"></app-chart-grades-avg-subject> -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- <div class="charts-grid">
     <div cdkDropList cdkDropListOrientation="horizontal" class="charts-container" (cdkDropListDropped)="drop($event)">
       <div class="chart-box" *ngFor="let chart of analysisStateService.visibleCharts()" cdkDrag>
         <div [ngSwitch]="chart.id">
@@ -40,13 +61,13 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
 
-  <div class="hidden-charts">
+    <!-- <div class="hidden-charts">
     <div *ngFor="let chart of analysisStateService.hiddenCharts()" class="hidden-chart-button" cdkDrag
       (cdkDragEnded)="onHiddenChartDragEnded($event, chart)">
       {{chart.title}}
     </div>
+  </div> -->
   </div>
-</div>
 </div>

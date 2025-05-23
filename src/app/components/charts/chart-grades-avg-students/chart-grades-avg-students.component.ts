@@ -1,28 +1,45 @@
-import { Component, inject, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { Trainee } from '../../../models/trainee.model';
-import { ChartsUtilService } from '../../../features/analysis-page/charts-util.service';
+import { Component, OnChanges, Input, SimpleChanges } from "@angular/core";
+import { NgxChartsModule } from "@swimlane/ngx-charts";
 
 @Component({
   selector: 'app-chart-grades-average',
   standalone: true,
-  imports: [],
+  imports: [
+    NgxChartsModule
+  ],
   templateUrl: './chart-grades-avg-students.component.html',
   styleUrl: './chart-grades-avg-students.component.scss'
 })
-export class ChartGradesAverageStudetnsComponent {
+export class ChartGradesAverageStudetnsComponent implements OnChanges {
 
-    @Input() selectedTrainee: Trainee[] = [];
-    chartsUtilService = inject(ChartsUtilService);
+  // @Input() selectedTrainee: Trainee[] = [];
+
+  // averageUtilService = inject(AverageUtilService);
+
+  // private selectedTraineeSignal: WritableSignal<Trainee[]> = signal([]);
+
+  @Input({ required: true }) studentsAverages: { name: string; value: number; }[] = [];
   
-    get selectedIdNames(): string[]  {
-      return this.chartsUtilService.formatSelected(this.selectedTrainee);
-    }
-  
-  
-  // Simple function to generate different colors for different lines
-  getLineColor(index: number): string {
-    const colors = ['#3f51b5', '#f44336', '#4caf50', '#ff9800', '#2196f3'];
-    return colors[index % colors.length];
+  @Input() xAxisLabel = '';
+  @Input() yAxisLabel = '';
+
+  showXAxis = true;
+  showYAxis = true;
+  gradient = false;
+  showLegend = true;
+  showXAxisLabel = true;
+  showYAxisLabel = true;
+
+  constructor() {
+    
   }
+  ngOnChanges(changes: SimpleChanges): void {
+    
+  }
+
+  onSelect(event: any) {
+    
+  }
+
 
 }

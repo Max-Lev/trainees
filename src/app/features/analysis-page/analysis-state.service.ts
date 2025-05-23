@@ -1,6 +1,5 @@
 // analysis-state.service.ts
-import { Injectable, signal, computed, inject, effect } from '@angular/core';
-import { DataTableContainer } from '../../components/data-table/data-table-container.service';
+import { Injectable, signal, computed, inject, effect, WritableSignal } from '@angular/core';
 import { TraineeService } from '../../providers/trainee.service';
 import { SubjectsService } from '../../providers/subjects.service';
 import { Trainee } from '../../models/trainee.model';
@@ -18,41 +17,52 @@ export interface ChartInfo {
 export class AnalysisStateService {
 
   // Injecting services
-  dataTableContainer = inject(DataTableContainer);
+  analysisTraineeService = inject(TraineeService);
   traineeService = inject(TraineeService);
+
+  subjectsService = inject(SubjectsService);
+  private _availableSubjects = computed(() => this.subjectsService.subjects());
+  public availableSubjects = computed(() => this._availableSubjects());
+  public selectedSubjects = computed(() => this._selectedSubjects());
+  // Chart configurations
+  private _charts = signal<ChartInfo[]>([
+    { id: 'chart1', title: 'Trainees grades averages', visible: true, position: 0 },
+    { id: 'chart2', title: 'Subjects averages', visible: true, position: 1 },
+    // { id: 'chart3', title: 'Grades averages per subject', visible: false, position: 2 }
+  ]);
+
+
+  constructor() {
+    effect(() => {
+      console.log('selectedIds ', this.selectedIds())
+      console.log('_selectedIds ', this._selectedIds())
+      // console.log('availableIds',this.availableIds())
+      // console.log('_availableIds ',this._availableIds())
+    })
+  }
 
   // Available data
   private _availableIds = computed(() => {
+    // return this.analysisTraineeService.trainees().map(trainee => {
     return this.traineeService.trainees().map(trainee => {
       return trainee;
     });
   });
 
-  subjectsService = inject(SubjectsService);
-  private _availableSubjects = computed(() => this.subjectsService.subjects());
-  
-  constructor() {
-    
-  }
-
   // Selected filters
   private _selectedIds = signal<Trainee[]>([]);
   private _selectedSubjects = signal<string[]>([]);
 
-  // Chart configurations
-  private _charts = signal<ChartInfo[]>([
-    { id: 'chart1', title: 'Grades average over time for students with ID', visible: true, position: 0 },
-    { id: 'chart2', title: 'Students averages for students with chosen ID', visible: true, position: 1 },
-    { id: 'chart3', title: 'Grades averages per subject', visible: false, position: 2 }
-  ]);
-
   // Computed properties
-  public availableIds = computed(() => this._availableIds());
-  public availableSubjects = computed(() => this._availableSubjects());
+  public availableIds = computed(() => {
+    debugger
+    console.log(this._availableIds())
+    return this._availableIds();
+  });
+
   public selectedIds = computed(() => {
     return this._selectedIds();
   });
-  public selectedSubjects = computed(() => this._selectedSubjects());
 
   public visibleCharts = computed(() => {
     return this._charts()
@@ -65,14 +75,26 @@ export class AnalysisStateService {
   });
 
   // Update methods
-  updateSelectedIds(ids: Trainee[]) {
-    this._selectedIds.set(ids);
+  updateSelectedIds(trainees: Trainee[]) {
+    debugger
+    this._selectedIds.set(trainees);
+  }
+
+  // :WritableSignal<Trainee[]>
+  getSelectedIds() {
+    console.log(this._selectedIds())
+    // return this.selectedIds;
+    return this._selectedIds;
   }
 
   // This function updates the selected subjects by setting the subjects array to the _selectedSubjects set
   updateSelectedSubjects(subjects: string[]) {
     // Set the _selectedSubjects set to the subjects array
     this._selectedSubjects.set(subjects);
+  }
+
+  getSelectedSubjects(): WritableSignal<string[]> {
+    return this._selectedSubjects;
   }
 
   reorderCharts(previousIndex: number, currentIndex: number) {

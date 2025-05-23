@@ -3,7 +3,7 @@
   <mat-form-field>
     <mat-label>IDs</mat-label>
     <mat-select multiple [value]="state.selectedIds()" (valueChange)="state.selectedIds.set($event)">
-      @for (id of allIds; track $index) {
+      @for (id of allIds(); track $index) {
       <mat-option [value]="id">{{ id }}</mat-option>
       }
     </mat-select>
