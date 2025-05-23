@@ -2,7 +2,7 @@
 import { Component, effect, inject, signal, WritableSignal } from '@angular/core';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { AnalysisStateService } from './analysis-state.service';
-import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop';
+import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 import { ChartGradesAverageStudetnsComponent } from '../../components/charts/chart-grades-avg-students/chart-grades-avg-students.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -92,5 +92,9 @@ export class AnalysisPageComponent {
    */
   compareTrainees = (a: Trainee, b: Trainee) => a?.id === b?.id;
 
+  drop(event: CdkDragDrop<string[]>) {
+    console.log(event)
+    moveItemInArray(this.analysisStateService.visibleCharts(), event.previousIndex, event.currentIndex);
+  }
 
 }
