@@ -52,8 +52,8 @@ export class AnalysisPageComponent {
 
 
     effect(() => {
-      console.log('availableIds ', this.availableIds());
-      console.log('_selectedTraineeSignal ', this._selectedTraineeSignal());
+      // console.log('availableIds ', this.availableIds());
+      // console.log('_selectedTraineeSignal ', this._selectedTraineeSignal());
     });
 
     effect(() => {
@@ -70,14 +70,10 @@ export class AnalysisPageComponent {
         value: this.averageUtilService.calculateSubjectAverage(subject)
       }));
       this._subjectAverages = _subjectAverages;
-      console.log(_subjectAverages)
     });
   }
 
   idsChange($event: MatSelectChange) {
-    // debugger
-    // this._selectedTraineeSignal.set($event.value as Trainee[]);
-    // this.analysisStateService.updateSelectedIds($event.value)
     const validIds = this.availableIds();
     const selected = ($event.value as Trainee[]).filter(id =>
       validIds.some(v => v.id === id.id)

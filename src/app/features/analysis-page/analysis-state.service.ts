@@ -34,11 +34,14 @@ export class AnalysisStateService {
 
   constructor() {
     effect(() => {
-      console.log('selectedIds ', this.selectedIds())
-      console.log('_selectedIds ', this._selectedIds())
+      // console.log('selectedIds ', this.selectedIds())
+      // console.log('_selectedIds ', this._selectedIds())
       // console.log('availableIds',this.availableIds())
       // console.log('_availableIds ',this._availableIds())
-    })
+    });
+
+    this.watchSelectedIds();
+  
   }
 
   // Available data
@@ -55,8 +58,6 @@ export class AnalysisStateService {
 
   // Computed properties
   public availableIds = computed(() => {
-    debugger
-    console.log(this._availableIds())
     return this._availableIds();
   });
 
@@ -76,15 +77,39 @@ export class AnalysisStateService {
 
   // Update methods
   updateSelectedIds(trainees: Trainee[]) {
-    debugger
     this._selectedIds.set(trainees);
   }
 
   // :WritableSignal<Trainee[]>
   getSelectedIds() {
-    console.log(this._selectedIds())
-    // return this.selectedIds;
+    
+    /**
+     *this._selectedIds.update(selected =>
+      selected.filter(trainee =>
+        this._availableIds().some(t => t.id === trainee.id)
+      )
+    );
+    // Return the WritableSignal itself (not the value)
     return this._selectedIds;
+     */
+
+    return this._selectedIds;
+  }
+
+  watchSelectedIds() {
+    effect(() => {
+      const availableIds = this._availableIds();
+      const selected = this._selectedIds();
+
+      const filtered = selected.filter(trainee =>
+        availableIds.some(t => t.id === trainee.id)
+      );
+
+      if (filtered.length !== selected.length) {
+        this._selectedIds.set(filtered);
+      }
+      
+    }, { allowSignalWrites: true });
   }
 
   // This function updates the selected subjects by setting the subjects array to the _selectedSubjects set

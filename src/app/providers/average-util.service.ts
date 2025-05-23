@@ -17,8 +17,8 @@ export class AverageUtilService {
   constructor() { 
 
     effect(()=>{
-      console.log('selectedIds ',this.selectedIds());
-      console.log('allTrainees',this.allTrainees());
+      // console.log('selectedIds ',this.selectedIds());
+      // console.log('allTrainees',this.allTrainees());
     })
 
   }
