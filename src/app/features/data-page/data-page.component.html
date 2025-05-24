@@ -1,9 +1,7 @@
-<app-data-table [trainees]="traineesResolver" style="
-    display: flex;flex: 3;"></app-data-table>
+<app-data-table [trainees]="traineesResolver" style="display: flex;flex: 3;"></app-data-table>
 @if(selectedTrainee().action === SELECT_ACTIONS.select_row ||
-    selectedTrainee().action === SELECT_ACTIONS.open_panel) {
-  <div class="details-panel-container" style="
-      display: flex;flex: 1;">
-    <app-details-panel [selectedTrainee]="selectedTrainee().payload"></app-details-panel>
-  </div>
+selectedTrainee().action === SELECT_ACTIONS.open_panel) {
+<div class="details-panel-container" >
+  <app-details-panel [selectedTrainee]="selectedTrainee().payload"></app-details-panel>
+</div>
 }

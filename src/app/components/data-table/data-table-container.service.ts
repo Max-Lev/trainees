@@ -18,6 +18,8 @@ export class DataTableContainer {
     
   }
 
+  isAddBtnDisabled = signal<boolean>(false);
+
   // UI state
   selectedTrainee = signal<{ action: string, payload: Trainee | null }>({
     action: SELECT_ACTIONS.initial,

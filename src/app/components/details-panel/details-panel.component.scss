@@ -3,10 +3,56 @@
     margin-right: 1rem;
     form {
         display: flex;
-        align-items: center;
+        // align-items: center;
         flex-direction: column;
+        // .form-section,.form-row{
+            
+        //     display: flex;
+        //     flex-direction: column;
+            
+        // }
     }
     .mat-mdc-form-field-subscript-wrapper{
         display: none;
     }
+}
+
+
+.details-card {
+  margin-bottom: 16px;
+}
+
+.details-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+  // .personal{
+  //   display: flex;
+  //   ::ng-deep{
+  //     mat-form-field{
+  //       flex-direction: row;
+  //     } 
+  //   }
+  // }
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+  // gap: 8px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+mat-form-field {
+  flex: 1;
 }

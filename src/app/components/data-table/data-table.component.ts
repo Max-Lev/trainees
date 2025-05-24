@@ -61,6 +61,8 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dataTableContainer.selectedTrainee().action !== SELECT_ACTIONS.select_row
   );
 
+  isAddBtnDisabled = this.dataTableContainer.isAddBtnDisabled;
+
   activeActionState = computed(() =>
     this.dataTableContainer.selectedTrainee().action
   );

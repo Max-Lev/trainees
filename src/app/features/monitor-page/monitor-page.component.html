@@ -16,8 +16,8 @@
 
   <div class="state-section">
     <h3>State</h3>
-    <mat-checkbox [checked]="state.showPassed()" (change)="state.showPassed.set($event.checked)">Passed</mat-checkbox>
-    <mat-checkbox [checked]="state.showFailed()" (change)="state.showFailed.set($event.checked)">Failed</mat-checkbox>
+    <mat-checkbox [checked]="state.showPassed()" (change)="state.showPassed.set($event.checked)">Passed > 65</mat-checkbox>
+    <mat-checkbox [checked]="state.showFailed()" (change)="state.showFailed.set($event.checked)">65 < Failed</mat-checkbox>
   </div>
 
 </div>
