@@ -1,17 +1,21 @@
-:host{
+:host {
     display: flex;
-    .details-panel-container{
+
+    .details-panel-container {
         display: flex;
+        display: flex;
+        flex: 1;
+        min-width: 488px;
     }
 
-    // .details-panel-container {
-    //     position: fixed;
-    //     top: 50%;
-    //     left: 50%;
-    //     transform: translate(-50%, -50%);
-    //     z-index: 1000; // optional: ensure it's above other content
-    //     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); // optional: for visual elevation
-    //   }
-}
+    app-data-table {
+        display: flex;
+        flex: 3;
+    }
 
+    app-details-panel {
+        position: fixed;
+        top: 18%;
+    }
+}
 

@@ -32,7 +32,7 @@
         </ng-container>
         }
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns;sticky: true"></tr>
         <tr [class.selected-row]="row._index === selectedTrainee().payload?._index" mat-row
           (click)="selectedRowHandler(row)" *matRowDef="let row; columns: displayedColumns;">
         </tr>
