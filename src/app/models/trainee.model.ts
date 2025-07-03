@@ -13,7 +13,7 @@ export interface Trainee {
   phone?: number | null;
   state?: string;
   age?: number;
-  _index?: number;
+  readonly _index?: number;
   grades?: Record<string, number>;
   average?: number;
   exams?: number;

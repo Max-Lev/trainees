@@ -7,7 +7,7 @@
 
     <div class="button-container">
       <button (click)="addTrainee()" mat-flat-button color="primary" [disabled]="isAddBtnDisabled()">
-        {{activeActionState() === SELECT_ACTIONS.select_row ? 'Save' :
+        {{activeActionState() === SELECT_ACTIONS.select_row ? 'Update' :
         activeActionState() === SELECT_ACTIONS.open_panel ? 'Save New' : 'Add'}}
       </button>
     </div>
@@ -27,7 +27,12 @@
             {{column.header}}
           </th>
           <td mat-cell *matCellDef="let row">
-            {{column.cell(row)}}
+            <!-- {{column.cell(row)}} -->
+            @if(column.columnDef === 'date') {
+              {{column.columnDef === 'date' ? (row.dateJoined | date:'dd-MM-yyyy') : column.cell(row)}}
+            }@else {
+              {{column.cell(row)}}
+            }
           </td>
         </ng-container>
         }
@@ -44,7 +49,7 @@
         </tr>
       </table>
 
-      <mat-paginator (page)="pageSelected($event)" [pageSizeOptions]="[10, 20, 25, 100]"
+      <mat-paginator (page)="pageSelected($event)" [pageSizeOptions]="[10, 20, 25, 50]"
         aria-label="Select page of trainees">
       </mat-paginator>
     </div>

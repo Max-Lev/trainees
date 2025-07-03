@@ -3,18 +3,11 @@
     margin-right: 1rem;
     form {
         display: flex;
-        // align-items: center;
         flex-direction: column;
-        // .form-section,.form-row{
-            
-        //     display: flex;
-        //     flex-direction: column;
-            
-        // }
     }
-    .mat-mdc-form-field-subscript-wrapper{
-        display: none;
-    }
+    // .mat-mdc-form-field-subscript-wrapper{
+    //     display: none;
+    // }
 }
 
 
@@ -33,14 +26,6 @@
   flex-direction: column;
   gap: 8px;
   margin-bottom: 16px;
-  // .personal{
-  //   display: flex;
-  //   ::ng-deep{
-  //     mat-form-field{
-  //       flex-direction: row;
-  //     } 
-  //   }
-  // }
 }
 
 .form-row {
@@ -60,3 +45,86 @@ mat-form-field {
 .mat-mdc-card-content:last-child {
   padding-bottom: 0;
 }
+
+
+// :host {
+//   display: flex;
+//   margin-right: 1rem;
+//   form {
+//       display: flex;
+//       flex-direction: column;
+//   }
+//   // Remove or comment out this line that's breaking the error display
+//   // .mat-mdc-form-field-subscript-wrapper {
+//   //     display: none;
+//   // }
+  
+//   // If you want to hide subscript wrapper for specific fields only, use more specific selectors
+//   // .no-subscript .mat-mdc-form-field-subscript-wrapper {
+//   //     display: none;
+//   // }
+// }
+
+// .details-card {
+// margin-bottom: 16px;
+// }
+
+// .details-form {
+// display: flex;
+// flex-direction: column;
+// gap: 16px;
+// }
+
+// .form-section {
+// display: flex;
+// flex-direction: column;
+// gap: 8px;
+// margin-bottom: 16px;
+// }
+
+// .form-row {
+// display: flex;
+// gap: 16px;
+
+// // Ensure form fields in rows have proper spacing for error messages
+// mat-form-field {
+//   flex: 1;
+//   margin-bottom: 8px; // Add some bottom margin for error messages
+// }
+// }
+
+// .full-width {
+// width: 100%;
+// }
+
+// mat-form-field {
+// flex: 1;
+// }
+
+// .mat-mdc-card-content:last-child {
+// padding-bottom: 0;
+// }
+
+// // If you specifically want to control the grade input error display
+// .grade-input {
+// .mat-mdc-form-field-subscript-wrapper {
+//   // Allow errors to show for grade inputs
+//   display: block;
+// }
+// }
+// // .grade-input {
+// //   position: relative;
+  
+// //   .mat-mdc-form-field-subscript-wrapper {
+// //       position: absolute;
+// //       top: 100%;
+// //       left: 0;
+// //       right: 0;
+// //       z-index: 1;
+// //   }
+// // }
+
+// // Alternative: If you want to hide hints but show errors
+// .mat-mdc-form-field-hint-wrapper {
+// display: none; // This hides hints but keeps errors
+// }

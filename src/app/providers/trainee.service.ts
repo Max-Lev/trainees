@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { AnalysisStateService } from '../features/analysis-page/analysis-state.service';
+import { map } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class TraineeService {
@@ -19,17 +20,21 @@ export class TraineeService {
   }
 
   private loadTrainees(): void {
-    this.http.get<Trainee[]>(environment.traineesAPI).subscribe({
+    this.http.get<Trainee[]>(environment.traineesAPI).pipe(
+      map(data => data.map((trainee: Trainee, index) => ({ ...trainee, _index: index })))
+    ).subscribe({
       next: data => this.trainees.set(data),
       error: err => console.error('Failed to load trainees', err)
     });
   }
 
   updateTrainee(updatedTrainee: Trainee) {
+    
     this.trainees.update((traineesList) =>
       traineesList.map((existingTrainee) => {
         // Match by ID rather than by index for more reliable updates
-        if (existingTrainee.id === updatedTrainee.id) {
+        // if (existingTrainee.id === updatedTrainee.id) {
+        if (existingTrainee._index === updatedTrainee._index) {
           // Preserve _index to maintain consistency
           return { ...updatedTrainee, _index: existingTrainee._index };
         }
@@ -43,46 +48,28 @@ export class TraineeService {
 
     this.trainees.update((traineesList) => {
       // Make sure we have an _index property for the new trainee
-      const traineeWithIndex = {
+      const _newTrainee = {
         ...newTrainee,
         _index: traineesList.length
       };
-      return [...traineesList, traineeWithIndex as Trainee];
+      console.log('Adding trainee:', _newTrainee);
+      return [...traineesList, _newTrainee as Trainee];
+    });
+    console.log(this.trainees());
+  }
+
+  removeTrainee(trainee: Trainee) {
+    if (!trainee || !trainee.id) return;
+
+    this.trainees.update(traineesList => {
+      // Remove the trainee with the specified ID
+      const filtered = traineesList.filter(t => t.id !== trainee.id);
+
+      // Reindex the remaining trainees to maintain consistent _index values
+      return filtered.map((trainee, idx) => ({ ...trainee, _index: idx }));
     });
   }
 
-    removeTrainee(trainee: Trainee) {
-      if (!trainee || !trainee.id) return;
-
-      this.trainees.update(traineesList => {
-        // Remove the trainee with the specified ID
-        const filtered = traineesList.filter(t => t.id !== trainee.id);
-
-        // Reindex the remaining trainees to maintain consistent _index values
-        return filtered.map((t, idx) => ({...t, _index: idx}));
-      });
-    }
-
-
-  // removeTrainee(trainee: Trainee | null = null) {
-  //   const traineeToRemove = trainee;
-  //   if (!traineeToRemove || !traineeToRemove.id) return;
-
-  //   // Remove from trainee list
-  //   this.removeTrainee(traineeToRemove);
-
-  //   // Lazy load AnalysisStateService to avoid circular DI
-  //   const injector = inject(Injector);
-  //   const analysisStateService = injector.get(AnalysisStateService);
-
-  //   // Remove from selected trainees if present
-  //   const selected = analysisStateService.getSelectedIds();
-  //   const updated = selected().filter(t => t.id !== traineeToRemove.id);
-  //   analysisStateService.updateSelectedIds(updated);
-
-  //   // Reset selected trainee if it's the one being removed
-  //   // this.selectedTrainee.set({ action: SELECT_ACTIONS.initial, payload: null });
-  // }
 
 
 }

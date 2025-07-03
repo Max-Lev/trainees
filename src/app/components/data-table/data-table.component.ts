@@ -1,5 +1,5 @@
 import {
-  AfterViewInit, ChangeDetectorRef, Component, computed, effect, inject, Input,
+  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, effect, inject, input, Input,
   OnDestroy, OnInit, ViewChild
 } from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -15,6 +15,7 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, takeUntil } from 'rxjs';
 import { SELECT_ACTIONS } from '../../models/data.actions';
 import { Subject } from 'rxjs';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-data-table',
@@ -22,11 +23,13 @@ import { Subject } from 'rxjs';
     MatFormFieldModule, MatInputModule,
     MatTableModule, MatButtonModule,
     MatPaginator, MatPaginatorModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    DatePipe
   ],
   standalone: true,
   templateUrl: './data-table.component.html',
-  styleUrl: './data-table.component.scss'
+  styleUrl: './data-table.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
   // Create a subject to destroy observables
@@ -63,31 +66,22 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   isAddBtnDisabled = this.dataTableContainer.isAddBtnDisabled;
 
-  activeActionState = computed(() =>
-    this.dataTableContainer.selectedTrainee().action
-  );
+  activeActionState = computed(() =>this.dataTableContainer.selectedTrainee().action);
 
-  // When you get new input data
-  @Input() set trainees(value: Trainee[]) {
-    if (!value) return;
+  trainees = input<Trainee[]>([]);
 
-    // Add index property to each trainee
-    const indexedTrainees = value.map((val, index) => ({ ...val, _index: index }));
-    this.dataTableContainer.trainees.set(indexedTrainees);
-  }
-
-  // Get trainees directly from the container
-  get trainees(): Trainee[] {
-    return this.dataTableContainer.trainees();
-  }
 
   constructor() {
     // Initialize custom filter predicate
     this.setCustomFilterPredicate();
-
     // Connect data source to trainees signal
     this.setTableDataSource();
 
+    effect(()=>{
+      console.log(this.trainees());
+    })
+
+    
   }
 
   ngOnInit(): void {
@@ -110,7 +104,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // Listen for search input changes
     this.form.controls.search.valueChanges.pipe(
-      debounceTime(500),
+      debounceTime(1000),
       takeUntil(this.destroy$)
     ).subscribe((filterValue: string | null) => {
       const value = filterValue || '';
@@ -165,13 +159,16 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
   // Add a new trainee
   addTrainee() {
     const currentAction = this.activeActionState();
-
+    
     if (currentAction === SELECT_ACTIONS.open_panel) {
       // Save the new trainee
       this.dataTableContainer.addNewTrainee();
     } else if (currentAction === SELECT_ACTIONS.select_row) {
       // Save updates to existing trainee
+      
       const updatedTraineeValue = this.dataTableContainer.updatedTraineeValue();
+      console.log('updatedTraineeValue ',updatedTraineeValue)
+      debugger;
       this.dataTableContainer.updateTrainee(updatedTraineeValue || {});
     } else {
       // Open the add panel if not already open

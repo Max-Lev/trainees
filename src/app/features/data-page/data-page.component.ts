@@ -4,7 +4,7 @@ import { DataTableComponent } from '../../components/data-table/data-table.compo
 import { DataTableContainer } from '../../components/data-table/data-table-container.service';
 import { SELECT_ACTIONS } from '../../models/data.actions';
 import { DetailsPanelComponent } from '../../components/details-panel/details-panel.component';
-import { Component, inject, Input, computed, effect } from '@angular/core';
+import { Component, inject, Input, computed, effect, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'app-data-page',
@@ -14,7 +14,8 @@ import { Component, inject, Input, computed, effect } from '@angular/core';
     DetailsPanelComponent
   ],
   templateUrl: './data-page.component.html',
-  styleUrl: './data-page.component.scss'
+  styleUrl: './data-page.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DataPageComponent{
 
@@ -37,7 +38,7 @@ export class DataPageComponent{
       /**
        * simulate real world data update scenatio
        */
-      this.traineesResolver = this.traineeService.trainees()      
+      this.traineesResolver = this.traineeService.trainees();      
     })
   }
 

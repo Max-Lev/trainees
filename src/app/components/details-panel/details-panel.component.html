@@ -9,14 +9,14 @@
     <mat-card-content>
       <form [formGroup]="detailsForm" class="details-form">
         <!-- Hidden ID field -->
-        <input type="hidden" formControlName="id">
+        <!-- <input type="hidden" formControlName="id"> -->
 
         <!-- Basic Info Section -->
         <div class="form-section">
           <h3>Basic Information</h3>
 
           <div class="form-row">
-          <!-- <div class="personal"> -->
+            <!-- <div class="personal"> -->
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>ID</mat-label>
               <input matInput formControlName="id" placeholder="Enter trainee ID">
@@ -30,10 +30,10 @@
 
           <!-- Subject Selection -->
           <div class="form-row">
-          <!-- <div class="personal"> -->
+            <!-- <div class="personal"> -->
             <mat-form-field appearance="outline">
               <mat-label>Subjects</mat-label>
-              <mat-select formControlName="selectedSubject">
+              <mat-select formControlName="subject">
                 <mat-option [value]="null">None</mat-option>
                 @for (subject of subjectOptions(); track subject.value) {
                 <mat-option [value]="subject.value">{{ subject.viewValue }}</mat-option>
@@ -43,13 +43,29 @@
             <!-- </div> -->
 
             <!-- Grades -->
-            <!-- <div class="form-row" *ngIf="detailsForm.get('selectedSubject')?.value as selected"> -->
-            <div *ngIf="detailsForm.get('selectedSubject')?.value as selected">
+            <div *ngIf="detailsForm.get('subject')?.value as selected">
+              
               <mat-form-field appearance="outline" class="grade-input">
                 <mat-label>{{ selected }} Grade</mat-label>
                 <input matInput type="number" min="0" max="100" [value]="detailsForm.get('grades')?.value?.[selected]"
-                  (input)="onSGradeInput($event)" placeholder="Enter grade for {{ selected }}" />
+                  (input)="onSubjectGradeInput($event)" placeholder="Enter grade for {{ selected }}" />
               </mat-form-field>
+              <!-- <mat-form-field appearance="outline" class="grade-input">
+                <mat-label>{{ selected }} Grade</mat-label>
+                <input matInput type="number" min="0" max="100"
+                       [value]="detailsForm.get('grades')?.value?.[selected]"
+                       (input)="onSubjectGradeInput($event)"
+                       placeholder="Enter grade for {{ selected }}" />
+              
+                <mat-error *ngIf="detailsForm.get('grades')?.invalid && detailsForm.get('grades')?.touched">
+                  
+                  @for (error of getGradeErrors(); track $index) {
+                    <div>{{ error }}</div>
+                  }
+                </mat-error>
+              </mat-form-field> -->
+
+              
             </div>
           </div>
 
