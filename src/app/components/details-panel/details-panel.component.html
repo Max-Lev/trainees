@@ -30,7 +30,6 @@
 
           <!-- Subject Selection -->
           <div class="form-row">
-            <!-- <div class="personal"> -->
             <mat-form-field appearance="outline">
               <mat-label>Subjects</mat-label>
               <mat-select formControlName="subject">
@@ -40,33 +39,24 @@
                 }
               </mat-select>
             </mat-form-field>
-            <!-- </div> -->
+            
 
             <!-- Grades -->
             <div *ngIf="detailsForm.get('subject')?.value as selected">
-              
               <mat-form-field appearance="outline" class="grade-input">
                 <mat-label>{{ selected }} Grade</mat-label>
-                <input matInput type="number" min="0" max="100" [value]="detailsForm.get('grades')?.value?.[selected]"
-                  (input)="onSubjectGradeInput($event)" placeholder="Enter grade for {{ selected }}" />
-              </mat-form-field>
-              <!-- <mat-form-field appearance="outline" class="grade-input">
-                <mat-label>{{ selected }} Grade</mat-label>
-                <input matInput type="number" min="0" max="100"
-                       [value]="detailsForm.get('grades')?.value?.[selected]"
-                       (input)="onSubjectGradeInput($event)"
-                       placeholder="Enter grade for {{ selected }}" />
-              
-                <mat-error *ngIf="detailsForm.get('grades')?.invalid && detailsForm.get('grades')?.touched">
-                  
-                  @for (error of getGradeErrors(); track $index) {
-                    <div>{{ error }}</div>
-                  }
+                <input matInput type="number" [formControl]="getGradeControl(selected)"
+                  placeholder="Enter grade for {{ selected }}" />
+                <mat-error *ngIf="detailsForm.get('grades')?.get(selected)?.hasError('min')">
+                  Min value 0
                 </mat-error>
-              </mat-form-field> -->
-
-              
+                <mat-error *ngIf="detailsForm.get('grades')?.get(selected)?.hasError('max')">
+                  Max value 100
+                </mat-error>
+              </mat-form-field>
             </div>
+        
+            
           </div>
 
           <div class="form-row">

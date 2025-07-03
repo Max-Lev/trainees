@@ -38,30 +38,30 @@ export class DetailsPanelComponent implements AfterViewInit, OnDestroy {
   subjectsService = inject(SubjectsService);
   subjectOptions = computed(() => this.subjectsService.subjects());
 
-  private gradesValidator = (control: AbstractControl): ValidationErrors | null => {
-    const grades = control.value as Record<string, number>;
-    if (!grades || typeof grades !== 'object') {
-      return null; // Let other validators handle null/undefined
-    }
+  // private gradesValidator = (control: AbstractControl): ValidationErrors | null => {
+  //   const grades = control.value as Record<string, number>;
+  //   if (!grades || typeof grades !== 'object') {
+  //     return null; // Let other validators handle null/undefined
+  //   }
 
-    const errors: ValidationErrors = {};
-    let hasErrors = false;
+  //   const errors: ValidationErrors = {};
+  //   let hasErrors = false;
 
-    for (const [subject, grade] of Object.entries(grades)) {
-      if (typeof grade === 'number') {
-        if (grade < 0) {
-          errors[`${subject}_min`] = { min: { actual: grade, min: 0 } };
-          hasErrors = true;
-        }
-        if (grade > 100) {
-          errors[`${subject}_max`] = { max: { actual: grade, max: 100 } };
-          hasErrors = true;
-        }
-      }
-    }
+  //   for (const [subject, grade] of Object.entries(grades)) {
+  //     if (typeof grade === 'number') {
+  //       if (grade < 0) {
+  //         errors[`${subject}_min`] = { min: { actual: grade, min: 0 } };
+  //         hasErrors = true;
+  //       }
+  //       if (grade > 100) {
+  //         errors[`${subject}_max`] = { max: { actual: grade, max: 100 } };
+  //         hasErrors = true;
+  //       }
+  //     }
+  //   }
 
-    return hasErrors ? errors : null;
-  };
+  //   return hasErrors ? errors : null;
+  // };
 
   // Form for trainee details
   detailsForm = new FormGroup({
@@ -74,33 +74,52 @@ export class DetailsPanelComponent implements AfterViewInit, OnDestroy {
     country: new FormControl<string | null>(''),
     zip: new FormControl<number | null>(null),
     subject: new FormControl<string>(''),
-    grades: new FormControl<Record<string, number>>({}, [this.gradesValidator]),
+    grades: new FormGroup({}, { updateOn: 'change' }),
   });
 
+  // This function returns a FormControl for a given subject
+  getGradeControl(subject: string): FormControl<number | null> {
+    // Get the grades FormGroup from the detailsForm
+    const gradesFormGroup = this.detailsForm.get('grades') as FormGroup;
 
-
-  // Helper method to get grade validation errors for display
-  getGradeErrors(): string[] {
-    const errors = this.detailsForm.get('grades')?.errors;
-    if (!errors) return [];
-
-    const errorMessages: string[] = [];
-    for (const [key, error] of Object.entries(errors)) {
-      if (key.endsWith('_min')) {
-        const subject = key.replace('_min', '');
-        errorMessages.push(`${subject}: Grade must be at least 0`);
-      } else if (key.endsWith('_max')) {
-        const subject = key.replace('_max', '');
-        errorMessages.push(`${subject}: Grade must be at most 100`);
-      }
+    // If the gradesFormGroup does not have a FormControl for the given subject
+    if (!gradesFormGroup.get(subject)) {
+      // Add a FormControl for the given subject to the gradesFormGroup
+      gradesFormGroup.addControl(
+        subject,
+        new FormControl<number | null>(null, [Validators.min(0), Validators.max(100)])
+      );
     }
-    return errorMessages;
+
+    // Return the FormControl for the given subject
+    return gradesFormGroup.get(subject) as FormControl<number | null>;
   }
+
 
 
   constructor() {
     // Bind form data when selected trainee changes
     this.bindFormData();
+    /**
+     * disable immidiatly onPress subject control if grade is invalid
+     */
+    effect(() => {
+      const selected = this.detailsForm.get('subject')?.value;
+      const subjectControl = this.detailsForm.get('subject');
+
+      if (selected && subjectControl) {
+        const gradeControl = this.getGradeControl(selected);
+        gradeControl.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(() => {
+          debugger;
+          if (gradeControl.invalid) {
+            subjectControl.disable({ emitEvent: false });
+          } else {
+            subjectControl.enable({ emitEvent: false });
+          }
+        });
+      }
+    });
+
   }
 
 
@@ -110,10 +129,11 @@ export class DetailsPanelComponent implements AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    this.onValueChanges$(); // Subscribe to form value changes
+    this.onformValueChanges$(); // Subscribe to form value changes
+    this.disableInvalidSubjectControl(); // Disable subject control if grade is invalid
   }
 
-  onValueChanges$() {
+  onformValueChanges$() {
     // Update the appropriate signal when form values change
     this.detailsForm.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe((value) => {
       const { action } = this.dataTableContainer.selectedTrainee();
@@ -127,9 +147,15 @@ export class DetailsPanelComponent implements AfterViewInit, OnDestroy {
       }
 
       this.dataTableContainer.isAddBtnDisabled.set(!this.detailsForm.valid);
+    });
+  }
 
-      console.log(this.detailsForm.getRawValue());
-
+  // Disable subject control if grade is invalid
+  disableInvalidSubjectControl() {
+    this.detailsForm.get('grades')?.statusChanges.pipe(takeUntil(this.destroyed$)).subscribe((isValid) => {
+      if (isValid === 'INVALID') {
+        this.detailsForm.get('subject')?.disable({ emitEvent: false });
+      }
     });
   }
 
@@ -142,6 +168,8 @@ export class DetailsPanelComponent implements AfterViewInit, OnDestroy {
 
       if (trainee) {
         // Populate form with trainee data
+        this.detailsForm.get('subject')?.enable({ emitEvent: false });
+
         this.detailsForm.patchValue({
           id: trainee.id ?? null,
           name: trainee.name ?? '',
@@ -154,12 +182,25 @@ export class DetailsPanelComponent implements AfterViewInit, OnDestroy {
           grades: trainee.grades || {},
           subject: (trainee.subject) ? trainee.subject : ''
         });
+        this.validateExistingTrainee(trainee);
 
       } else if (action === SELECT_ACTIONS.open_panel) {
         // Clear form for new trainee
         this.detailsForm.reset();
       }
     });
+  }
+
+  validateExistingTrainee(trainee: Trainee) {
+    // Then add dynamic controls for grades
+    const gradesGroup = this.detailsForm.get('grades') as FormGroup;
+    for (const [subject, grade] of Object.entries(trainee.grades || {})) {
+      if (!gradesGroup.get(subject)) {
+        gradesGroup.addControl(subject, new FormControl<number | null>(
+          grade, [Validators.min(0), Validators.max(100)]
+        ));
+      }
+    }
   }
 
   onSubjectGradeInput(event: Event) {

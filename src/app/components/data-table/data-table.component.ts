@@ -168,7 +168,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
       
       const updatedTraineeValue = this.dataTableContainer.updatedTraineeValue();
       console.log('updatedTraineeValue ',updatedTraineeValue)
-      debugger;
+      
       this.dataTableContainer.updateTrainee(updatedTraineeValue || {});
     } else {
       // Open the add panel if not already open

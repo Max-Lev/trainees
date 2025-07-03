@@ -53,18 +53,18 @@ export class DataTableContainer {
 
   // Update an existing trainee
   updateTrainee(updated: Partial<Trainee>) {
-    debugger;
+    
     if (!updated || !this.selectedTrainee().payload) return;
 
     updated = {
       ...updated,
       grade: (updated.grades && updated.subject ? updated.grades[updated.subject] : undefined),
     } as Trainee; // Ensure value is of type Trainee
-    debugger
+    
     
     const selectedTrainee = this.selectedTrainee().payload;
     const updatedTrainee = { ...selectedTrainee, ...updated };
-    debugger
+    
     // Update the trainee in the TraineeService
     this.traineeService.updateTrainee(updatedTrainee as Trainee);
     // Update the selected trainee in the UI
@@ -75,7 +75,7 @@ export class DataTableContainer {
 
   // Add a new trainee
   addNewTrainee() {
-    debugger
+    
     const newTrainee = this.newTraineeValue();
     console.log('newTrainee ', newTrainee);
     if (!newTrainee) return;
