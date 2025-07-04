@@ -16,6 +16,7 @@ import { debounceTime, takeUntil } from 'rxjs';
 import { SELECT_ACTIONS } from '../../models/data.actions';
 import { Subject } from 'rxjs';
 import { DatePipe } from '@angular/common';
+import { EmptyValPipe } from '../../pipes/empty-val.pipe';
 
 @Component({
   selector: 'app-data-table',
@@ -24,7 +25,8 @@ import { DatePipe } from '@angular/common';
     MatTableModule, MatButtonModule,
     MatPaginator, MatPaginatorModule,
     ReactiveFormsModule,
-    DatePipe
+    DatePipe,
+    EmptyValPipe
   ],
   standalone: true,
   templateUrl: './data-table.component.html',

@@ -1,3 +1,5 @@
+
+
 <div class="container">
   <form [formGroup]="form" class="filter-row">
     <mat-form-field class="filter-field">
@@ -27,12 +29,13 @@
             {{column.header}}
           </th>
           <td mat-cell *matCellDef="let row">
-            <!-- {{column.cell(row)}} -->
+            
             @if(column.columnDef === 'date') {
               {{column.columnDef === 'date' ? (row.dateJoined | date:'dd-MM-yyyy') : column.cell(row)}}
             }@else {
-              {{column.cell(row)}}
+              {{column.cell(row) | emptyVal}}
             }
+            
           </td>
         </ng-container>
         }

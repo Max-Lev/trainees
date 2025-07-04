@@ -32,11 +32,8 @@ export class DataTableContainer {
   newTraineeValue = signal<Partial<Trainee> | null>(null);
 
   constructor() {
-    effect(()=>{
-      console.log('updatedTraineeValue ',this.updatedTraineeValue());
-    })
+    
   }
-
 
   // Utility function to toggle selection
   toggleSelection(value: { action: string; payload: Trainee | null; index?: number }) {
@@ -58,7 +55,7 @@ export class DataTableContainer {
 
     updated = {
       ...updated,
-      grade: (updated.grades && updated.subject ? updated.grades[updated.subject] : undefined),
+      grade: this.setSelectedGrade(updated as Trainee, updated.subject || ''),
     } as Trainee; // Ensure value is of type Trainee
     
     
@@ -77,7 +74,6 @@ export class DataTableContainer {
   addNewTrainee() {
     
     const newTrainee = this.newTraineeValue();
-    console.log('newTrainee ', newTrainee);
     if (!newTrainee) return;
 
     // Generate a unique ID (in a real app this might come from the backend)
@@ -85,11 +81,11 @@ export class DataTableContainer {
     const traineeWithId: Partial<Trainee> = {
       ...newTrainee,
       id: (!newTrainee.id) ? (maxId + 1) : newTrainee.id,
+      grade: this.setSelectedGrade(newTrainee as Trainee, newTrainee.subject || ''),
       dateJoined: newTrainee.dateJoined || new Date().toISOString().slice(0, 10),
       _index: this.trainees().length
     };
-    console.log('default date ', new Date().toISOString().split('T')[0]);
-    console.log('traineeWithId ', traineeWithId);
+    
     // Add the new trainee to the TraineeService
     this.traineeService.addTrainee(traineeWithId);
 
@@ -101,6 +97,10 @@ export class DataTableContainer {
 
     // Reset the newTraineeValue
     this.newTraineeValue.set(null);
+  }
+
+  private setSelectedGrade(trainee: Trainee, subject: string) {
+    return (trainee.grades && trainee.subject ? trainee.grades[subject] : undefined)
   }
 
   // Remove a trainee
