@@ -37,10 +37,10 @@
             *ngSwitchCase="'chart1'" [studentsAveragesOverTime]="studentsAveragesOverTime()">
             </app-chart-students-averages>
           }
-          <app-chart-subjects-avg *ngSwitchCase="'chart2'" [subjectAverages]="_subjectAverages"
+          <app-chart-subjects-avg *ngSwitchCase="'chart2'" [subjectAverages]="subjectAverages()"
             [xAxisLabel]="'Subjects'" [yAxisLabel]="'Average'">
           </app-chart-subjects-avg>
-          <app-chart-grades-average *ngSwitchCase="'chart3'" [studentsAverages]="_studentsAverages"
+          <app-chart-grades-average *ngSwitchCase="'chart3'" [studentsAverages]="studentsAverages()"
             [xAxisLabel]="'Students'" [yAxisLabel]="'Average'">
           </app-chart-grades-average>
         </div>

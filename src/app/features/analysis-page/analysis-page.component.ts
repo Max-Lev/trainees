@@ -39,18 +39,16 @@ export class AnalysisPageComponent {
   // Get the available IDs and subjects from the AnalysisStateService
   availableIds = this.analysisStateService.availableIds;
   _selectedTraineeSignal = this.analysisStateService.getSelectedIds();
-  _studentsAverages: { name: string; value: number; }[] = [];
 
   availableSubjects = this.analysisStateService.availableSubjects;
 
   _selectedSubjects = this.analysisStateService.getSelectedSubjects();
-  _subjectAverages: { name: string; value: number; }[] = [];
 
   visibleCharts = this.analysisStateService.visibleCharts();
   hiddenCharts = this.analysisStateService.hiddenCharts();
 
-  readonly studentsAveragesOverTime = computed(() => {
-    return this._selectedTraineeSignal().map(trainee => ({
+  readonly studentsAveragesOverTime = computed(() =>
+    this._selectedTraineeSignal().map(trainee => ({
       name: trainee.name ?? 'Unknown Trainee',
       series: (trainee.gradesOverTime ?? []).map(snapshot => ({
         name: snapshot?.date ?? 'Unknown Date',
@@ -58,30 +56,30 @@ export class AnalysisPageComponent {
           ? snapshot.average
           : 0
       }))
-    }));
-  });
+    }))
+  );
+
+  readonly studentsAverages = computed(() =>
+    this._selectedTraineeSignal().map(trainee => ({
+      name: `${trainee.name?.trim() || 'Trainee'} #${trainee.id}`,
+      value: this.safeAverage(this.averageUtilService.calculateAverage(trainee.grades!))
+    }))
+  );
+
+  readonly subjectAverages = computed(() =>
+    this._selectedSubjects().map(subject => ({
+      name: subject,
+      value: this.safeAverage(this.averageUtilService.calculateSubjectAverage(subject))
+    }))
+  );
+
+  // Optional helper
+  private safeAverage(avg: number): number {
+    return isNaN(avg) || typeof avg !== 'number' ? 0 : avg;
+  }
+
 
   constructor() {
-
-    effect(() => {
-      const _studentsAverages = this._selectedTraineeSignal().map((trainee, index) => ({
-        name: `${trainee.name} #${trainee.id}`,
-        value: this.averageUtilService.calculateAverage(trainee.grades!)
-      }));
-      this._studentsAverages = _studentsAverages;
-    });
-
-    effect(() => {
-
-      const _subjectAverages = this._selectedSubjects().map(subject => {
-        const avg = this.averageUtilService.calculateSubjectAverage(subject);
-        return {
-          name: subject,
-          value: isNaN(avg) ? 0 : avg
-        };
-      });
-      this._subjectAverages = _subjectAverages;
-    });
 
   }
 
@@ -141,35 +139,6 @@ export class AnalysisPageComponent {
       return;
     }
   }
-
-  // drop(event: CdkDragDrop<ChartInfo[]>) {
-  //   console.log('DROPPED at index:', event.currentIndex);
-
-  //   const prevList = event.previousContainer.data;
-  //   const currList = event.container.data;
-
-  //   if (prevList === currList && currList === this.visibleCharts) {
-  //     moveItemInArray(currList, event.previousIndex, event.currentIndex);
-  //     return;
-  //   }
-
-  //   const draggedChart = prevList[event.previousIndex];
-  //   const replacedChart = currList[event.currentIndex];
-
-  //   if (prevList === this.hiddenCharts && currList === this.visibleCharts) {
-  //     if (!replacedChart) return;
-  //     currList.splice(event.currentIndex, 1, draggedChart);
-  //     prevList.splice(event.previousIndex, 1, replacedChart);
-  //     return;
-  //   }
-
-  //   if (prevList === this.visibleCharts && currList === this.hiddenCharts) {
-  //     currList.splice(event.currentIndex, 1, draggedChart);
-  //     prevList.splice(event.previousIndex, 1, replacedChart);
-  //     return;
-  //   }
-  // }
-
 
 
 }
