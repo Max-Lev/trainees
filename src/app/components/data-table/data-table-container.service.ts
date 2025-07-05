@@ -11,7 +11,6 @@ export class DataTableContainer {
   traineeService = inject(TraineeService);
 
   // Core data state
-  // trainees = signal<Trainee[]>([]);
   trainees = this.traineeService.trainees;
 
   isAddBtnDisabled = signal<boolean>(false);

@@ -31,9 +31,12 @@
       cdkDropListOrientation="horizontal">
       <div *ngFor="let chart of visibleCharts; let i = index" class="chart-box" cdkDrag>
         {{ chart?.title }}
-        <div [ngSwitch]="chart.id">
-          <app-chart-students-averages *ngSwitchCase="'chart1'" [studentsAveragesOverTime]="studentsAveragesOverTime()">
-          </app-chart-students-averages>
+        <div [ngSwitch]="chart?.id">
+          @if(studentsAveragesOverTime().length > 0){
+            <app-chart-students-averages 
+            *ngSwitchCase="'chart1'" [studentsAveragesOverTime]="studentsAveragesOverTime()">
+            </app-chart-students-averages>
+          }
           <app-chart-subjects-avg *ngSwitchCase="'chart2'" [subjectAverages]="_subjectAverages"
             [xAxisLabel]="'Subjects'" [yAxisLabel]="'Average'">
           </app-chart-subjects-avg>
@@ -43,6 +46,7 @@
         </div>
       </div>
     </div>
+
 
     <!-- HIDDEN CHART PLACEHOLDER (BORDER ONLY) -->
     <div cdkDropList id="hiddenChartDropList" [cdkDropListConnectedTo]="['visibleChartDropList']"

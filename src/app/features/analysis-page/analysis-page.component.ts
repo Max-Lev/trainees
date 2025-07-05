@@ -1,8 +1,8 @@
 
-import { Component, computed, effect, inject, signal, WritableSignal } from '@angular/core';
+import { Component, computed, effect, inject } from '@angular/core';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { AnalysisStateService, ChartInfo } from './analysis-state.service';
-import { CdkDragDrop, DragDropModule, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 import { ChartGradesAverageStudetnsComponent } from '../../components/charts/chart-grades-avg-students/chart-grades-avg-students.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -49,19 +49,17 @@ export class AnalysisPageComponent {
   visibleCharts = this.analysisStateService.visibleCharts();
   hiddenCharts = this.analysisStateService.hiddenCharts();
 
-  // _studentsAveragesOverTime: { name: string; series: { name: string; value: number }[] }[] = [];
-
   readonly studentsAveragesOverTime = computed(() => {
     return this._selectedTraineeSignal().map(trainee => ({
       name: trainee.name ?? 'Unknown Trainee',
-      series: trainee.gradesOverTime?.map(snapshot => ({
-        name: snapshot.date,
-        value: snapshot.average || 0
-      })) || []
+      series: (trainee.gradesOverTime ?? []).map(snapshot => ({
+        name: snapshot?.date ?? 'Unknown Date',
+        value: typeof snapshot?.average === 'number' && !isNaN(snapshot.average)
+          ? snapshot.average
+          : 0
+      }))
     }));
   });
-
-
 
   constructor() {
 
@@ -74,10 +72,14 @@ export class AnalysisPageComponent {
     });
 
     effect(() => {
-      const _subjectAverages = this._selectedSubjects().map((subject, index) => ({
-        name: `${subject}`,
-        value: this.averageUtilService.calculateSubjectAverage(subject)
-      }));
+
+      const _subjectAverages = this._selectedSubjects().map(subject => {
+        const avg = this.averageUtilService.calculateSubjectAverage(subject);
+        return {
+          name: subject,
+          value: isNaN(avg) ? 0 : avg
+        };
+      });
       this._subjectAverages = _subjectAverages;
     });
 
@@ -102,36 +104,36 @@ export class AnalysisPageComponent {
    */
   compareTrainees = (a: Trainee, b: Trainee) => a?.id === b?.id;
 
-  
+
   drop(event: CdkDragDrop<ChartInfo[]>) {
     const prevList = event.previousContainer.data;
     const currList = event.container.data;
-  
+
     // Reordering within the same list (only allowed in visibleCharts)
     if (prevList === currList && currList === this.visibleCharts) {
       moveItemInArray(currList, event.previousIndex, event.currentIndex);
       return;
     }
-  
+
     const draggedChart = prevList[event.previousIndex];
-  
+
     // Dragging from hidden -> visible: Swap dragged hidden chart with the one at drop position
     if (prevList === this.hiddenCharts && currList === this.visibleCharts) {
       const replacedChart = currList[event.currentIndex];
-  
+
       if (!replacedChart) return;
-  
+
       // Replace visible with hidden
       currList.splice(event.currentIndex, 1, draggedChart);
       // Replace hidden with previously visible
       prevList.splice(event.previousIndex, 1, replacedChart);
       return;
     }
-  
+
     // Dragging from visible -> hidden: Always store dragged chart into hidden, and swap with hidden chart
     if (prevList === this.visibleCharts && currList === this.hiddenCharts) {
       const replacedChart = currList[event.currentIndex];
-  
+
       // Replace hidden with dragged
       currList.splice(event.currentIndex, 1, draggedChart);
       // Replace visible with hidden chart
@@ -139,6 +141,35 @@ export class AnalysisPageComponent {
       return;
     }
   }
-  
+
+  // drop(event: CdkDragDrop<ChartInfo[]>) {
+  //   console.log('DROPPED at index:', event.currentIndex);
+
+  //   const prevList = event.previousContainer.data;
+  //   const currList = event.container.data;
+
+  //   if (prevList === currList && currList === this.visibleCharts) {
+  //     moveItemInArray(currList, event.previousIndex, event.currentIndex);
+  //     return;
+  //   }
+
+  //   const draggedChart = prevList[event.previousIndex];
+  //   const replacedChart = currList[event.currentIndex];
+
+  //   if (prevList === this.hiddenCharts && currList === this.visibleCharts) {
+  //     if (!replacedChart) return;
+  //     currList.splice(event.currentIndex, 1, draggedChart);
+  //     prevList.splice(event.previousIndex, 1, replacedChart);
+  //     return;
+  //   }
+
+  //   if (prevList === this.visibleCharts && currList === this.hiddenCharts) {
+  //     currList.splice(event.currentIndex, 1, draggedChart);
+  //     prevList.splice(event.previousIndex, 1, replacedChart);
+  //     return;
+  //   }
+  // }
+
+
 
 }

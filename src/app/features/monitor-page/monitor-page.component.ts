@@ -8,7 +8,6 @@ import { NgClass } from '@angular/common';
 import { MonitorStateService } from './monitor-state.service';
 import { MONITOR_COLUMNS } from '../../models/data-table-columns';
 import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-// import { DataTableContainer } from '../../components/data-table/data-table-container.service';
 import { Trainee } from '../../models/trainee.model';
 import { IsFailedPipe } from '../../pipes/is-failed.pipe';
 
@@ -36,7 +35,6 @@ export class MonitorPageComponent implements AfterViewInit {
 
   // Inject the MonitorStateService and DataTableContainer
   state = inject(MonitorStateService);
-  // dataTableContainer = inject(DataTableContainer);
   // Get all trainee ids
   allIds = computed(() =>
     this.state.allTrainees().map(t => t.id)
