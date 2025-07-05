@@ -16,11 +16,6 @@ export class AverageUtilService {
   nameFilter = signal('');
   constructor() { 
 
-    effect(()=>{
-      // console.log('selectedIds ',this.selectedIds());
-      // console.log('allTrainees',this.allTrainees());
-    })
-
   }
 
   // Calculate the average grade of a trainee

@@ -1,5 +1,3 @@
-
-
 <div class="container">
   <form [formGroup]="form" class="filter-row">
     <mat-form-field class="filter-field">
@@ -9,11 +7,10 @@
 
     <div class="button-container">
       <button (click)="addTrainee()" mat-flat-button color="primary" [disabled]="isAddBtnDisabled()">
-        {{activeActionState() === SELECT_ACTIONS.select_row ? 'Update' :
-        activeActionState() === SELECT_ACTIONS.open_panel ? 'Save New' : 'Add'}}
+        {{selectedTrainee().action === SELECT_ACTIONS.select_row ? 'Update' :
+        selectedTrainee().action === SELECT_ACTIONS.open_panel ? 'Save New' : 'Add'}}
       </button>
     </div>
-    
 
     <div class="button-container">
       <button [disabled]="isRemoveBtnDisabled()" (click)="removeTrainee()" mat-flat-button color="warn">Remove</button>
@@ -29,13 +26,13 @@
             {{column.header}}
           </th>
           <td mat-cell *matCellDef="let row">
-            
+
             @if(column.columnDef === 'date') {
-              {{column.columnDef === 'date' ? (row.dateJoined | date:'dd-MM-yyyy') : column.cell(row)}}
+            {{column.columnDef === 'date' ? (row.dateJoined | date:'dd-MM-yyyy') : column.cell(row)}}
             }@else {
-              {{column.cell(row) | emptyVal}}
+            {{column.cell(row) | emptyVal}}
             }
-            
+
           </td>
         </ng-container>
         }

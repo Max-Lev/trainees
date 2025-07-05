@@ -1,6 +1,6 @@
 import {
-  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, effect, inject, input, Input,
-  OnDestroy, OnInit, ViewChild
+  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, effect, inject, 
+  input, OnDestroy, ViewChild
 } from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
@@ -33,7 +33,7 @@ import { EmptyValPipe } from '../../pipes/empty-val.pipe';
   styleUrl: './data-table.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
+export class DataTableComponent implements AfterViewInit, OnDestroy {
   // Create a subject to destroy observables
   private destroy$ = new Subject<void>();
 
@@ -41,7 +41,6 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   cdr = inject(ChangeDetectorRef);
-
   // Services
   dataTableContainer = inject(DataTableContainer);
   filterPredicateUtilService = inject(FilterPredicateUtilService);
@@ -68,25 +67,13 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   isAddBtnDisabled = this.dataTableContainer.isAddBtnDisabled;
 
-  activeActionState = computed(() =>this.dataTableContainer.selectedTrainee().action);
-
   trainees = input<Trainee[]>([]);
-
 
   constructor() {
     // Initialize custom filter predicate
     this.setCustomFilterPredicate();
     // Connect data source to trainees signal
     this.setTableDataSource();
-
-    effect(()=>{
-      console.log(this.trainees());
-    })
-
-    
-  }
-
-  ngOnInit(): void {
 
   }
 
@@ -104,27 +91,33 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
 
-    // Listen for search input changes
-    this.form.controls.search.valueChanges.pipe(
-      debounceTime(1000),
-      takeUntil(this.destroy$)
-    ).subscribe((filterValue: string | null) => {
-      const value = filterValue || '';
-      this.dataTableContainer.setFilter(value);
-      this.dataSource.filter = value.trim().toLowerCase();
-    });
+    this.onSearchValueChanges$(); // Subscribe to search value changes
 
+    this.restoreFilterValue(); // Restore filter value from container
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  // Listen for search input changes
+  onSearchValueChanges$() {
+    this.form.controls.search.valueChanges.pipe(debounceTime(750), takeUntil(this.destroy$))
+      .subscribe((filterValue: string | null) => {
+        const value = filterValue || '';
+        this.dataTableContainer.setFilter(value);
+        this.dataSource.filter = value.trim().toLowerCase();
+      });
+  }
+
+  restoreFilterValue() {
     // Restore filter if available
     const savedFilter = this.dataTableContainer.filterValue();
     if (savedFilter) {
       this.form.controls.search.setValue(savedFilter, { emitEvent: false });
       this.dataSource.filter = savedFilter.trim().toLowerCase();
     }
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
   }
 
   // Set up data source with reactive signal data
@@ -160,17 +153,17 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // Add a new trainee
   addTrainee() {
-    const currentAction = this.activeActionState();
-    
-    if (currentAction === SELECT_ACTIONS.open_panel) {
+    // const currentAction = this.activeActionState();
+    const { action } = this.selectedTrainee();
+
+    if (action === SELECT_ACTIONS.open_panel) {
       // Save the new trainee
       this.dataTableContainer.addNewTrainee();
-    } else if (currentAction === SELECT_ACTIONS.select_row) {
+    } else if (action === SELECT_ACTIONS.select_row) {
       // Save updates to existing trainee
-      
+
       const updatedTraineeValue = this.dataTableContainer.updatedTraineeValue();
-      console.log('updatedTraineeValue ',updatedTraineeValue)
-      
+
       this.dataTableContainer.updateTrainee(updatedTraineeValue || {});
     } else {
       // Open the add panel if not already open

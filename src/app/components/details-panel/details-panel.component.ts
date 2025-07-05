@@ -1,6 +1,6 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, computed, effect, inject, input, OnDestroy } from '@angular/core';
 import { Trainee } from '../../models/trainee.model';
-import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -50,76 +50,33 @@ export class DetailsPanelComponent implements AfterViewInit, OnDestroy {
     country: new FormControl<string | null>(''),
     zip: new FormControl<number | null>(null),
     subject: new FormControl<string>(''),
-    grades: new FormGroup({}, { updateOn: 'change' }),
-  });
+    grades: new FormGroup({}),
+  }, { validators: gradeControlValidator, updateOn: 'change' });
+
+  private getGradesFormGroup = (): FormGroup => this.detailsForm.get('grades') as FormGroup;
 
   // This function returns a FormControl for a given subject
   getGradeControl(subject: string): FormControl<number | null> {
-    console.log('getGradeControl called for subject:', subject);
     // Get the grades FormGroup from the detailsForm
-    const gradesFormGroup = this.detailsForm.get('grades') as FormGroup;
+    const gradesFormGroup = this.getGradesFormGroup()
 
     // If the gradesFormGroup does not have a FormControl for the given subject
     if (!gradesFormGroup.get(subject)) {
       // Add a FormControl for the given subject to the gradesFormGroup
       gradesFormGroup.addControl(
         subject,
-        new FormControl<number | null>(null, [Validators.min(0), Validators.max(100)])
+        new FormControl<number | null>(null,
+          [Validators.min(0), Validators.max(100)])
       );
-      gradesFormGroup.get(subject)?.markAsTouched(); // Mark as touched to trigger validation
-      gradesFormGroup.get(subject)?.updateValueAndValidity({ onlySelf: true, emitEvent: false });
     }
-
     // Return the FormControl for the given subject
     return gradesFormGroup.get(subject) as FormControl<number | null>;
   }
 
-
-
   constructor() {
     // Bind form data when selected trainee changes
     this.bindFormData();
-    /**
-     * disable immidiatly onPress subject control if grade is invalid
-     */
-    effect(() => {
-      console.log('Effect triggered for subject control');
-      const subjectControl = this.detailsForm.get('subject');
-      const selectedSubject = subjectControl?.value;
-
-      if (selectedSubject && subjectControl) {
-        const gradeControl = this.getGradeControl(selectedSubject);
-        if (gradeControl) {
-          // Immediately check and update the validation state
-          gradeControl.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe((val) => {
-            this.toggleSubjectControl(subjectControl, gradeControl.invalid);
-          });
-        }
-      }
-    });
   }
-
-  /**
- * Toggles the subject control based on the validity of the grade control.
- * @param subjectControl The FormControl for the subject.
- * @param isGradeInvalid Boolean indicating if the grade control is invalid.
- */
-  private toggleSubjectControl(subjectControl: AbstractControl, isGradeInvalid: boolean): void {
-    console.log('toggleSubjectControl called');
-    if (isGradeInvalid) {
-
-      subjectControl.disable({ emitEvent: false });
-      subjectControl.updateValueAndValidity({ onlySelf: true, emitEvent: false });
-
-      const gradesFormGroup = this.detailsForm.get('grades') as FormGroup;
-      gradesFormGroup.controls[subjectControl.value].markAsTouched();
-      gradesFormGroup.controls[subjectControl.value].updateValueAndValidity({ onlySelf: true, emitEvent: false });
-
-    } else {
-      subjectControl.enable({ emitEvent: false });
-    }
-  }
-
 
   ngOnDestroy(): void {
     this.destroyed$.next();
@@ -135,7 +92,6 @@ export class DetailsPanelComponent implements AfterViewInit, OnDestroy {
     // Update the appropriate signal when form values change
     this.detailsForm.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe((value) => {
       const { action } = this.dataTableContainer.selectedTrainee();
-
       if (action === SELECT_ACTIONS.select_row) {
         // Update existing trainee
         this.dataTableContainer.updatedTraineeValue.set(value as Trainee);
@@ -143,7 +99,6 @@ export class DetailsPanelComponent implements AfterViewInit, OnDestroy {
         // New trainee
         this.dataTableContainer.newTraineeValue.set(value as Trainee);
       }
-
       this.dataTableContainer.isAddBtnDisabled.set(!this.detailsForm.valid);
     });
   }
@@ -151,19 +106,21 @@ export class DetailsPanelComponent implements AfterViewInit, OnDestroy {
   private onGradeValueChanges$() {
     // Listen for changes in the grades FormGroup
     this.detailsForm.get('grades')?.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe((grades) => {
-      console.log('Grades changed:', grades);
-      const selectedSubject = this.detailsForm.get('subject')?.value;
-      const gradesFormGroup = this.detailsForm.get('grades') as FormGroup;
-      // console.log('Grades changed:', this.detailsForm.get('grades'));
-      if (this.detailsForm.get('grades')?.invalid) {
-        this.detailsForm.get('subject')?.disable({ emitEvent: false });
-        // this.detailsForm.get('grades')[''].markAsTouched();
-        // this.detailsForm.get('grades').controls[this.detailsForm.get('subject').value]
-        gradesFormGroup.controls[selectedSubject!]?.markAsTouched();
-        gradesFormGroup.controls[selectedSubject!]?.updateValueAndValidity({ onlySelf: true, emitEvent: false });
 
+      const selectedSubject = this.detailsForm.get('subject');
+      const gradesFormGroup = this.getGradesFormGroup();
+
+      if (gradesFormGroup.invalid) {
+        selectedSubject?.disable({ emitEvent: false });
+        // trigger immidiate user error 
+        if (selectedSubject?.value && gradesFormGroup.controls[selectedSubject.value]) {
+          const gradeControl = gradesFormGroup.get(selectedSubject.value);
+          if (gradeControl) {
+            gradeControl.markAsTouched();
+          }
+        }
       } else {
-        this.detailsForm.get('subject')?.enable({ emitEvent: false });
+        selectedSubject?.enable({ emitEvent: false });
       }
     });
   }
@@ -202,7 +159,7 @@ export class DetailsPanelComponent implements AfterViewInit, OnDestroy {
 
   private validateExistingTrainee(trainee: Trainee) {
     // Then add dynamic controls for grades
-    const gradesFormGroup = this.detailsForm.get('grades') as FormGroup;
+    const gradesFormGroup = this.getGradesFormGroup();
     for (const [subject, grade] of Object.entries(trainee.grades || {})) {
       if (!gradesFormGroup.get(subject)) {
         gradesFormGroup.addControl(subject, new FormControl<number | null>(
@@ -212,4 +169,23 @@ export class DetailsPanelComponent implements AfterViewInit, OnDestroy {
     }
   }
 
+
+
 }
+
+export const gradeControlValidator: ValidatorFn = (
+  formGroup: AbstractControl,
+): ValidationErrors | null => {
+
+  const gradesFormGroup = formGroup.get('grades') as FormGroup;
+  const subjectControl = formGroup.get('subject') as FormControl;
+
+  if (!gradesFormGroup || !subjectControl) return null;
+
+  const gradeControl = gradesFormGroup.get(subjectControl.value || '');
+  if (gradeControl && gradeControl.invalid) {
+    return { invalidGrade: true };
+  }
+
+  return null;
+};
