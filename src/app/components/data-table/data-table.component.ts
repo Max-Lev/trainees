@@ -74,7 +74,6 @@ export class DataTableComponent implements AfterViewInit, OnDestroy {
     this.setCustomFilterPredicate();
     // Connect data source to trainees signal
     this.setTableDataSource();
-
   }
 
   ngAfterViewInit(): void {

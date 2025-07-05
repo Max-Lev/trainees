@@ -5,11 +5,13 @@ import { inject } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { AnalysisStateService } from '../features/analysis-page/analysis-state.service';
 import { map } from 'rxjs/operators';
+import { RandomGradesUtilService } from './random-grades-util.service';
 
 @Injectable({ providedIn: 'root' })
 export class TraineeService {
 
   private http = inject(HttpClient);
+  private randomGradesUtilService = inject(RandomGradesUtilService);
 
   // Core data state
   trainees = signal<Trainee[]>([]);
@@ -21,8 +23,17 @@ export class TraineeService {
 
   private loadTrainees(): void {
     this.http.get<Trainee[]>(environment.traineesAPI).pipe(
-      map(data => data.map((trainee: Trainee, index) => ({ ...trainee, _index: index })))
-    ).subscribe({
+      map(data => data.map((trainee: Trainee, index) => ({ ...trainee, _index: index }))),
+      map(data => {
+       data =  data.map((trainee) => {
+          const gradesOverTime = this.randomGradesUtilService.generateRandomGradesOverTime(trainee, "2024-01-01", "2025-12-31", 30); // Generate grades every 30 days
+          trainee = { ...trainee, gradesOverTime: gradesOverTime };
+          return trainee;
+        })
+        return data;
+      })
+    )
+    .subscribe({
       next: data => this.trainees.set(data),
       error: err => console.error('Failed to load trainees', err)
     });
@@ -70,6 +81,7 @@ export class TraineeService {
     });
   }
 
-
-
 }
+
+
+ 

@@ -12,12 +12,6 @@ import { NgxChartsModule } from "@swimlane/ngx-charts";
 })
 export class ChartGradesAverageStudetnsComponent implements OnChanges {
 
-  // @Input() selectedTrainee: Trainee[] = [];
-
-  // averageUtilService = inject(AverageUtilService);
-
-  // private selectedTraineeSignal: WritableSignal<Trainee[]> = signal([]);
-
   @Input({ required: true }) studentsAverages: { name: string; value: number; }[] = [];
   
   @Input() xAxisLabel = '';

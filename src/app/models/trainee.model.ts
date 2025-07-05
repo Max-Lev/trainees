@@ -17,7 +17,10 @@ export interface Trainee {
   grades?: Record<string, number>;
   average?: number;
   exams?: number;
-
+  gradesOverTime?: { date: string; 
+    average?: number;
+    grades: Record<string, number> 
+  }[];
 }
 
 export interface TraineeMonitor {

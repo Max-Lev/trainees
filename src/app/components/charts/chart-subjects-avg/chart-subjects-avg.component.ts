@@ -16,19 +16,12 @@ export class ChartSubjectsAvgComponent {
   @Input() yAxisLabel = '';
   @Input({ required: false }) subjectAverages: { name: string; value: number; }[] = [];
 
-  // single!: any[];
-  // view: [number,number] = [700, 400];
-
   // options
   gradient: boolean = true;
   showLegend: boolean = true;
   showLabels: boolean = true;
   isDoughnut: boolean = false;
   legendPosition = LegendPosition.Right
-
-  // colorScheme = {
-  //   domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA']
-  // };
 
 
 }

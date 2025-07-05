@@ -26,23 +26,8 @@
       </div>
     </div>
 
-    <!-- <div class="charts-grid">
-      <div class="charts-container">
-        <div class="chart-box" *ngFor="let chart of analysisStateService.visibleCharts()" cdkDrag>
-          <div [ngSwitch]="chart.id">
-            {{chart.title}}
-            <app-chart-grades-average *ngSwitchCase="'chart1'" [studentsAverages]="_studentsAverages"
-              [xAxisLabel]="'Students'" [yAxisLabel]="'Average'"></app-chart-grades-average>
 
-            <app-chart-subjects-avg *ngSwitchCase="'chart2'" [xAxisLabel]="'Subjects'" [yAxisLabel]="'Average'"
-              [subjectAverages]="_subjectAverages"></app-chart-subjects-avg>
-            
-          </div>
-        </div>
-      </div>
-    </div> -->
-    <!-- (cdkDropListDropped)="drop($event)" -->
-    <div class="charts-grid">
+    <!-- <div class="charts-grid">
     <div cdkDropList cdkDropListOrientation="horizontal" class="charts-container" (cdkDropListDropped)="drop($event)">
       <div class="chart-box" *ngFor="let chart of analysisStateService.visibleCharts()" cdkDrag>
         <div [ngSwitch]="chart.id">
@@ -55,7 +40,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
 
     <!-- <div class="hidden-charts">
     <div *ngFor="let chart of analysisStateService.hiddenCharts()" class="hidden-chart-button" cdkDrag
@@ -63,5 +48,43 @@
       {{chart.title}}
     </div>
   </div> -->
+
+    <!-- Visible charts section -->
+    <div class="charts-grid">
+      <div cdkDropList cdkDropListOrientation="horizontal" class="charts-container" [cdkDropListData]="visibleCharts"
+        (cdkDropListDropped)="drop($event)">
+        <div class="chart-box" *ngFor="let chart of visibleCharts" cdkDrag>
+         
+          <div [ngSwitch]="chart.id">
+            {{chart.title}}
+            <app-chart-grades-average *ngSwitchCase="'chart3'" [studentsAverages]="_studentsAverages"
+              [xAxisLabel]="'Students'" [yAxisLabel]="'Average'"></app-chart-grades-average>
+
+            <app-chart-subjects-avg *ngSwitchCase="'chart2'" [xAxisLabel]="'Subjects'" [yAxisLabel]="'Average'"
+              [subjectAverages]="_subjectAverages"></app-chart-subjects-avg>
+
+              <app-chart-students-averages
+              *ngSwitchCase="'chart1'"
+              [studentsAveragesOverTime]="studentsAveragesOverTime()">
+            </app-chart-students-averages>
+
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+
+    <!-- Hidden charts section -->
+    <div class="hidden-charts">
+      <div cdkDropList class="hidden-chart-container" [cdkDropListData]="hiddenCharts"
+        (cdkDropListDropped)="drop($event)">
+        <div *ngFor="let chart of hiddenCharts" class="hidden-chart-button" cdkDrag>
+          {{chart.title}}
+        </div>
+      </div>
+    </div>
+
+
   </div>
 </div>
