@@ -3,7 +3,6 @@ import { Trainee } from '../models/trainee.model';
 import { HttpClient } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { AnalysisStateService } from '../features/analysis-page/analysis-state.service';
 import { map } from 'rxjs/operators';
 import { RandomGradesUtilService } from './random-grades-util.service';
 

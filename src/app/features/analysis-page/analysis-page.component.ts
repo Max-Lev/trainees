@@ -1,7 +1,7 @@
 
 import { Component, computed, effect, inject, signal, WritableSignal } from '@angular/core';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
-import { AnalysisStateService } from './analysis-state.service';
+import { AnalysisStateService, ChartInfo } from './analysis-state.service';
 import { CdkDragDrop, DragDropModule, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { ChartGradesAverageStudetnsComponent } from '../../components/charts/chart-grades-avg-students/chart-grades-avg-students.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -48,6 +48,7 @@ export class AnalysisPageComponent {
 
   visibleCharts = this.analysisStateService.visibleCharts();
   hiddenCharts = this.analysisStateService.hiddenCharts();
+
   // _studentsAveragesOverTime: { name: string; series: { name: string; value: number }[] }[] = [];
 
   readonly studentsAveragesOverTime = computed(() => {
@@ -59,7 +60,7 @@ export class AnalysisPageComponent {
       })) || []
     }));
   });
-  
+
 
 
   constructor() {
@@ -80,17 +81,6 @@ export class AnalysisPageComponent {
       this._subjectAverages = _subjectAverages;
     });
 
-    // effect(() => {
-    //   const studentsAveragesOverTime = this._selectedTraineeSignal().map(trainee => ({
-    //     name: trainee.name ?? 'Unknown Trainee',
-    //     series: trainee.gradesOverTime?.map(snapshot => ({
-    //       name: snapshot.date,
-    //       value: snapshot.average || 0
-    //     })) || []
-    //   }));
-    //   this._studentsAveragesOverTime = studentsAveragesOverTime;
-    //   console.log('_studentsAveragesOverTime ',this._studentsAveragesOverTime);
-    // });
   }
 
   idsChange($event: MatSelectChange) {
@@ -112,23 +102,43 @@ export class AnalysisPageComponent {
    */
   compareTrainees = (a: Trainee, b: Trainee) => a?.id === b?.id;
 
-  /**
-  * Handles drag-and-drop functionality for charts.
-  * Allows swapping between visible charts and hidden charts.
-  */
- drop(event: CdkDragDrop<any[]>) {
-   if (event.previousContainer === event.container) {
-     // Reorder within the same container
-     moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-   } else {
-     // Transfer between containers
-     transferArrayItem(
-       event.previousContainer.data,
-       event.container.data,
-       event.previousIndex,
-       event.currentIndex
-     );
-   }
- }
+  
+  drop(event: CdkDragDrop<ChartInfo[]>) {
+    const prevList = event.previousContainer.data;
+    const currList = event.container.data;
+  
+    // Reordering within the same list (only allowed in visibleCharts)
+    if (prevList === currList && currList === this.visibleCharts) {
+      moveItemInArray(currList, event.previousIndex, event.currentIndex);
+      return;
+    }
+  
+    const draggedChart = prevList[event.previousIndex];
+  
+    // Dragging from hidden -> visible: Swap dragged hidden chart with the one at drop position
+    if (prevList === this.hiddenCharts && currList === this.visibleCharts) {
+      const replacedChart = currList[event.currentIndex];
+  
+      if (!replacedChart) return;
+  
+      // Replace visible with hidden
+      currList.splice(event.currentIndex, 1, draggedChart);
+      // Replace hidden with previously visible
+      prevList.splice(event.previousIndex, 1, replacedChart);
+      return;
+    }
+  
+    // Dragging from visible -> hidden: Always store dragged chart into hidden, and swap with hidden chart
+    if (prevList === this.visibleCharts && currList === this.hiddenCharts) {
+      const replacedChart = currList[event.currentIndex];
+  
+      // Replace hidden with dragged
+      currList.splice(event.currentIndex, 1, draggedChart);
+      // Replace visible with hidden chart
+      prevList.splice(event.previousIndex, 1, replacedChart);
+      return;
+    }
+  }
+  
 
 }

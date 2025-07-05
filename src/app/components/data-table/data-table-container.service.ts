@@ -2,7 +2,6 @@ import { effect, inject, Injectable, signal } from '@angular/core';
 import { Trainee } from '../../models/trainee.model';
 import { SELECT_ACTIONS } from '../../models/data.actions';
 import { TraineeService } from '../../providers/trainee.service';
-import { AnalysisStateService } from '../../features/analysis-page/analysis-state.service';
 
 @Injectable({
   providedIn: 'root'
