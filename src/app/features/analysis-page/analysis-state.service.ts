@@ -35,7 +35,7 @@ export class AnalysisStateService {
 
   // Computed properties for available data
   readonly availableTrainees = computed(() => [...this.traineeService.trainees()]);
-  readonly availableSubjects = computed(() => this.subjectsService.subjects());
+  readonly availableSubjects = computed(() => this.subjectsService.subjects$());
 
   // Computed properties for selected data
   readonly selectedTrainees = computed(() => this._selectedTrainees());

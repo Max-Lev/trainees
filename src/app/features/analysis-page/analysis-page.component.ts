@@ -71,9 +71,7 @@ export class AnalysisPageComponent {
   );
 
   constructor() {
-    effect(() => {
-      console.log(this.availableTrainees())
-    })
+
   }
 
   // Event handlers

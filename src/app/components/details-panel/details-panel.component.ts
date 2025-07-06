@@ -37,7 +37,7 @@ export class DetailsPanelComponent implements AfterViewInit, OnDestroy {
   // Input signal for the selected trainee
   selectedTrainee = input<Trainee | null>(null);
 
-  subjectOptions = computed(() => this.subjectsService.subjects());
+  subjectOptions = computed(() => this.subjectsService.subjects$());
 
   // Form for trainee details
   detailsForm = new FormGroup({
