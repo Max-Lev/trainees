@@ -16,69 +16,45 @@ export interface ChartInfo {
 export class AnalysisStateService {
 
   // Injecting services
-  traineeService = inject(TraineeService);
-  subjectsService = inject(SubjectsService);
+  private readonly traineeService = inject(TraineeService);
+  private readonly subjectsService = inject(SubjectsService);
 
-  private _availableSubjects = computed(() => this.subjectsService.subjects());
-  public availableSubjects = computed(() => this._availableSubjects());
-  public selectedSubjects = computed(() => this._selectedSubjects());
+  // Private signals for selected state
+  private readonly _selectedTrainees = signal<Trainee[]>([]);
+  private readonly _selectedSubjects = signal<string[]>([]);
+
   // Chart configurations
-  visibleCharts = signal<ChartInfo[]>([
+  readonly visibleCharts = signal<ChartInfo[]>([
     { id: 'chart1', title: 'Chart 1: Student Time Averages' },
     { id: 'chart2', title: 'Chart 2: Subject Averages' }
   ]);
 
-  hiddenCharts = signal<ChartInfo[]>([
+  readonly hiddenCharts = signal<ChartInfo[]>([
     { id: 'chart3', title: 'Chart 3: Student Averages' }
   ]);
 
+  // Computed properties for available data
+  readonly availableTrainees = computed(() => [...this.traineeService.trainees()]);
+  readonly availableSubjects = computed(() => this.subjectsService.subjects());
+
+  // Computed properties for selected data
+  readonly selectedTrainees = computed(() => this._selectedTrainees());
+  readonly selectedSubjects = computed(() => this._selectedSubjects());
+
   constructor() {
-    this.watchSelectedIds();
+    this.watchSelectedTrainees();
   }
 
-  // Available data
-  private _availableIds = computed(() => [...this.traineeService.trainees()]);
-
-  // Selected filters
-  private _selectedTraineesIds = signal<Trainee[]>([]);
-  private _selectedSubjects = signal<string[]>([]);
-
-  // Computed properties
-  public trainees = computed(() => {
-    return this._availableIds();
-  });
-
-  public selectedIds = computed(() => {
-    return this._selectedTraineesIds();
-  });
-
-  // Update methods
-  updateSelectedIds(trainees: Trainee[]) {
-    this._selectedTraineesIds.set(trainees);
+  // Selection management methods
+  updateSelectedTrainees(trainees: Trainee[]): void {
+    this._selectedTrainees.set(trainees);
   }
 
-  getSelectedIds() {
-    return this._selectedTraineesIds;
+  getSelectedTrainees(): WritableSignal<Trainee[]> {
+    return this._selectedTrainees;
   }
 
-
-  watchSelectedIds() {
-    effect(() => {
-      const availableIds = this._availableIds();
-      const selected = this._selectedTraineesIds();
-
-      const filtered = selected.filter(trainee =>
-        availableIds.some(t => t.id === trainee.id)
-      );
-
-      if (filtered.length !== selected.length) {
-        this._selectedTraineesIds.set(filtered);
-      }
-    }, { allowSignalWrites: true });
-  }
-
-  // This function updates the selected subjects by setting the subjects array to the _selectedSubjects set
-  updateSelectedSubjects(subjects: string[]) {
+  updateSelectedSubjects(subjects: string[]): void {
     this._selectedSubjects.set(subjects);
   }
 
@@ -86,5 +62,19 @@ export class AnalysisStateService {
     return this._selectedSubjects;
   }
 
+  // Keep selected trainees in sync with available trainees
+  private watchSelectedTrainees(): void {
+    effect(() => {
+      const availableTrainees = this.availableTrainees();
+      const selectedTrainees = this._selectedTrainees();
 
+      const validSelectedTrainees = selectedTrainees.filter(trainee =>
+        availableTrainees.some(t => t.id === trainee.id)
+      );
+
+      if (validSelectedTrainees.length !== selectedTrainees.length) {
+        this._selectedTrainees.set(validSelectedTrainees);
+      }
+    }, { allowSignalWrites: true });
+  }
 }

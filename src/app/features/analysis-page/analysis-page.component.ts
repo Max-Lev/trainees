@@ -1,5 +1,4 @@
-
-import { Component, computed, effect, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { AnalysisStateService, ChartInfo } from './analysis-state.service';
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
@@ -20,7 +19,6 @@ import { ChartStudentsAveragesComponent } from '../../components/charts/chart-st
     NgSwitchCase,
     MatSelectModule,
     MatFormFieldModule,
-    MatSelectModule,
     MatInputModule,
     DragDropModule,
     ChartGradesAverageStudetnsComponent,
@@ -31,23 +29,21 @@ import { ChartStudentsAveragesComponent } from '../../components/charts/chart-st
   styleUrl: './analysis-page.component.scss'
 })
 export class AnalysisPageComponent {
-  // Inject the AnalysisStateService
-  analysisStateService = inject(AnalysisStateService);
-  averageUtilService = inject(AverageUtilService);
+  // Inject services
+  private readonly analysisStateService = inject(AnalysisStateService);
+  private readonly averageUtilService = inject(AverageUtilService);
 
-  // Get the available IDs and subjects from the AnalysisStateService
-  trainees = this.analysisStateService.trainees;
-  _selectedTrainee = this.analysisStateService.getSelectedIds();
+  // Public properties for template access
+  readonly availableTrainees = this.analysisStateService.availableTrainees;
+  readonly selectedTrainees = this.analysisStateService.getSelectedTrainees();
+  readonly availableSubjects = this.analysisStateService.availableSubjects;
+  readonly selectedSubjects = this.analysisStateService.getSelectedSubjects();
+  readonly visibleCharts = this.analysisStateService.visibleCharts();
+  readonly hiddenCharts = this.analysisStateService.hiddenCharts();
 
-  availableSubjects = this.analysisStateService.availableSubjects;
-
-  _selectedSubjects = this.analysisStateService.getSelectedSubjects();
-
-  visibleCharts = this.analysisStateService.visibleCharts();
-  hiddenCharts = this.analysisStateService.hiddenCharts();
-
+  // Computed data for charts
   readonly studentsAveragesOverTime = computed(() =>
-    this._selectedTrainee().map(trainee => ({
+    this.selectedTrainees().map(trainee => ({
       name: trainee.name ?? 'Unknown Trainee',
       series: (trainee.gradesOverTime ?? []).map(snapshot => ({
         name: snapshot?.date ?? 'Unknown Date',
@@ -57,8 +53,8 @@ export class AnalysisPageComponent {
   );
 
   readonly studentsAverages = computed(() => {
-    const allTrainees = this.trainees();
-    return this._selectedTrainee().map(trainee => {
+    const allTrainees = this.availableTrainees();
+    return this.selectedTrainees().map(trainee => {
       const currentTrainee = allTrainees.find(t => t.id === trainee.id) || trainee;
       return {
         name: `${currentTrainee.name?.trim() || 'Trainee'} #${currentTrainee.id}`,
@@ -68,38 +64,29 @@ export class AnalysisPageComponent {
   });
 
   readonly subjectAverages = computed(() =>
-    this._selectedSubjects().map(subject => ({
+    this.selectedSubjects().map(subject => ({
       name: subject,
       value: this.safeAverage(this.averageUtilService.calculateSubjectAverage(subject))
     }))
   );
 
-
-  constructor() {
-
-  }
-
-  idsChange($event: MatSelectChange) {
-    const validIds = this.trainees();
-    const selected = ($event.value as Trainee[]).filter(id =>
-      validIds.some(v => v.id === id.id)
+  // Event handlers
+  onTraineesSelectionChange(event: MatSelectChange): void {
+    const validTrainees = this.availableTrainees();
+    const selectedTrainees = (event.value as Trainee[]).filter(trainee =>
+      validTrainees.some(v => v.id === trainee.id)
     );
-    this._selectedTrainee.set(selected);
-    this.analysisStateService.updateSelectedIds(selected);
+    this.selectedTrainees.set(selectedTrainees);
+    this.analysisStateService.updateSelectedTrainees(selectedTrainees);
   }
 
-  subjectChange($event: MatSelectChange) {
-    this._selectedSubjects.set($event.value as string[]);
-    this.analysisStateService.updateSelectedSubjects($event.value)
+  onSubjectsSelectionChange(event: MatSelectChange): void {
+    const selectedSubjects = event.value as string[];
+    this.selectedSubjects.set(selectedSubjects);
+    this.analysisStateService.updateSelectedSubjects(selectedSubjects);
   }
 
-  /**
-   * fix situation: deleting trainee and select selected options are empty on rout back
-   */
-  compareTrainees = (a: Trainee, b: Trainee) => a?.id === b?.id;
-
-
-  drop(event: CdkDragDrop<ChartInfo[]>) {
+  onChartDrop(event: CdkDragDrop<ChartInfo[]>): void {
     const prevList = event.previousContainer.data;
     const currList = event.container.data;
 
@@ -136,11 +123,10 @@ export class AnalysisPageComponent {
     }
   }
 
-    // Optional helper
-    private safeAverage(avg: number): number {
-      return isNaN(avg) || typeof avg !== 'number' ? 0 : avg;
-    }
-  
+  // Utility methods
+  compareTrainees = (a: Trainee, b: Trainee): boolean => a?.id === b?.id;
 
-
+  private safeAverage(avg: number): number {
+    return isNaN(avg) || typeof avg !== 'number' ? 0 : avg;
+  }
 }

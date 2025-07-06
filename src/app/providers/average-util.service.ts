@@ -23,7 +23,6 @@ export class AverageUtilService {
     const values = Object.values(grades ?? {}).filter(g => typeof g === 'number');
     if (values.length === 0) return 0;
     const sum = values.reduce((acc, curr) => acc + curr, 0);
-    console.log('calculateAverage', values, sum);
     return Math.round((sum / values.length) * 100) / 100; // rounded to 2 decimals
   }
 

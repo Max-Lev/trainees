@@ -4,10 +4,10 @@
       <div class="filters">
         <mat-form-field>
           <mat-label>Students:</mat-label>
-          <mat-select [compareWith]="compareTrainees" [multiple]="true" [value]="_selectedTrainee()"
-            (selectionChange)="idsChange($event)">
-            @for (trainee of trainees(); track trainee.id) {
-              <mat-option  [value]="trainee">
+          <mat-select [compareWith]="compareTrainees" [multiple]="true" [value]="selectedTrainees()"
+            (selectionChange)="onTraineesSelectionChange($event)">
+            @for (trainee of availableTrainees(); track trainee.id) {
+              <mat-option [value]="trainee">
                 ({{trainee.id}}) {{trainee.name}}
               </mat-option>
             }
@@ -18,7 +18,7 @@
       <div class="filters">
         <mat-form-field>
           <mat-label>Subjects:</mat-label>
-          <mat-select [multiple]="true" [value]="_selectedSubjects()" (selectionChange)="subjectChange($event)">
+          <mat-select [multiple]="true" [value]="selectedSubjects()" (selectionChange)="onSubjectsSelectionChange($event)">
             @for (subject of availableSubjects(); track subject.value) {
               <mat-option [value]="subject.value">
                 {{subject.viewValue}}
@@ -31,7 +31,7 @@
 
     <!-- VISIBLE CHARTS -->
     <div cdkDropList id="visibleChartDropList" [cdkDropListConnectedTo]="['hiddenChartDropList']"
-      [cdkDropListData]="visibleCharts" (cdkDropListDropped)="drop($event)" class="charts-container"
+      [cdkDropListData]="visibleCharts" (cdkDropListDropped)="onChartDrop($event)" class="charts-container"
       cdkDropListOrientation="horizontal">
       @for (chart of visibleCharts; track chart.id) {
         <div class="chart-box" cdkDrag>
@@ -53,10 +53,9 @@
       }
     </div>
 
-
     <!-- HIDDEN CHART PLACEHOLDER (BORDER ONLY) -->
     <div cdkDropList id="hiddenChartDropList" [cdkDropListConnectedTo]="['visibleChartDropList']"
-      [cdkDropListData]="hiddenCharts" (cdkDropListDropped)="drop($event)" class="hidden-chart-container">
+      [cdkDropListData]="hiddenCharts" (cdkDropListDropped)="onChartDrop($event)" class="hidden-chart-container">
       @for (chart of hiddenCharts; track chart.id) {
         <div class="hidden-chart-placeholder" cdkDrag>
           <!-- Only show border and chart title as a placeholder -->
