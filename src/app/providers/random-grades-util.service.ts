@@ -12,7 +12,7 @@ export class RandomGradesUtilService {
     trainee: Trainee,
     startDate: string,
     endDate: string,
-    intervalDays: number
+    intervalDays: number = 90
   ): { date: string; average: number; grades: Record<string, number> }[] {
     const gradesOverTime: { date: string; average: number; grades: Record<string, number> }[] = [];
     const subjects = Object.keys(trainee.grades || {});

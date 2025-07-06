@@ -24,26 +24,25 @@ export class TraineeService {
     this.http.get<Trainee[]>(environment.traineesAPI).pipe(
       map(data => data.map((trainee: Trainee, index) => ({ ...trainee, _index: index }))),
       map(data => {
-       data =  data.map((trainee) => {
-          const gradesOverTime = this.randomGradesUtilService.generateRandomGradesOverTime(trainee, "2024-01-01", "2025-12-31", 30); // Generate grades every 30 days
+        data = data.map((trainee) => {
+          const gradesOverTime =
+            this.randomGradesUtilService.generateRandomGradesOverTime(trainee, "2024-01-01", "2025-12-31"); // Generate grades every 30 days
           trainee = { ...trainee, gradesOverTime: gradesOverTime };
           return trainee;
         })
         return data;
       })
-    )
-    .subscribe({
+    ).subscribe({
       next: data => this.trainees.set(data),
       error: err => console.error('Failed to load trainees', err)
     });
   }
 
   updateTrainee(updatedTrainee: Trainee) {
-    
+
     this.trainees.update((traineesList) =>
       traineesList.map((existingTrainee) => {
         // Match by ID rather than by index for more reliable updates
-        // if (existingTrainee.id === updatedTrainee.id) {
         if (existingTrainee._index === updatedTrainee._index) {
           // Preserve _index to maintain consistency
           return { ...updatedTrainee, _index: existingTrainee._index };
@@ -58,14 +57,16 @@ export class TraineeService {
 
     this.trainees.update((traineesList) => {
       // Make sure we have an _index property for the new trainee
+      const gradesOverTime = this.randomGradesUtilService.generateRandomGradesOverTime(
+        newTrainee as Trainee, "2024-01-01", "2025-12-31");
+
       const _newTrainee = {
         ...newTrainee,
-        _index: traineesList.length
+        _index: traineesList.length,
+        gradesOverTime: gradesOverTime
       };
-      console.log('Adding trainee:', _newTrainee);
       return [...traineesList, _newTrainee as Trainee];
     });
-    console.log(this.trainees());
   }
 
   removeTrainee(trainee: Trainee) {
@@ -83,4 +84,4 @@ export class TraineeService {
 }
 
 
- 
+

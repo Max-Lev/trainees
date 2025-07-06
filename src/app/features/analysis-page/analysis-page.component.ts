@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, effect, inject } from '@angular/core';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { AnalysisStateService, ChartInfo } from './analysis-state.service';
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
@@ -55,7 +55,7 @@ export class AnalysisPageComponent {
   readonly studentsAverages = computed(() => {
     const allTrainees = this.availableTrainees();
     return this.selectedTrainees().map(trainee => {
-      const currentTrainee = allTrainees.find(t => t.id === trainee.id) || trainee;
+      const currentTrainee = allTrainees.find(t => t._index === trainee._index) || trainee;
       return {
         name: `${currentTrainee.name?.trim() || 'Trainee'} #${currentTrainee.id}`,
         value: this.safeAverage(this.averageUtilService.calculateAverage(currentTrainee.grades!))
@@ -70,12 +70,16 @@ export class AnalysisPageComponent {
     }))
   );
 
+  constructor() {
+    effect(() => {
+      console.log(this.availableTrainees())
+    })
+  }
+
   // Event handlers
   onTraineesSelectionChange(event: MatSelectChange): void {
     const validTrainees = this.availableTrainees();
-    const selectedTrainees = (event.value as Trainee[]).filter(trainee =>
-      validTrainees.some(v => v.id === trainee.id)
-    );
+    const selectedTrainees = (event.value as Trainee[]).filter(trainee => validTrainees.some(v => v._index === trainee._index));
     this.selectedTrainees.set(selectedTrainees);
     this.analysisStateService.updateSelectedTrainees(selectedTrainees);
   }
@@ -124,7 +128,7 @@ export class AnalysisPageComponent {
   }
 
   // Utility methods
-  compareTrainees = (a: Trainee, b: Trainee): boolean => a?.id === b?.id;
+  compareTrainees = (a: Trainee, b: Trainee): boolean => a?._index === b?._index;
 
   private safeAverage(avg: number): number {
     return isNaN(avg) || typeof avg !== 'number' ? 0 : avg;
