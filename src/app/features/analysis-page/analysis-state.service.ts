@@ -1,4 +1,3 @@
-// analysis-state.service.ts
 import { Injectable, signal, computed, inject, effect, WritableSignal } from '@angular/core';
 import { TraineeService } from '../../providers/trainee.service';
 import { SubjectsService } from '../../providers/subjects.service';
@@ -17,19 +16,18 @@ export interface ChartInfo {
 export class AnalysisStateService {
 
   // Injecting services
-  analysisTraineeService = inject(TraineeService);
   traineeService = inject(TraineeService);
-
   subjectsService = inject(SubjectsService);
+
   private _availableSubjects = computed(() => this.subjectsService.subjects());
   public availableSubjects = computed(() => this._availableSubjects());
   public selectedSubjects = computed(() => this._selectedSubjects());
   // Chart configurations
   visibleCharts = signal<ChartInfo[]>([
-    { id: 'chart1', title: 'Chart 1: Student Time Series' },
+    { id: 'chart1', title: 'Chart 1: Student Time Averages' },
     { id: 'chart2', title: 'Chart 2: Subject Averages' }
   ]);
-  
+
   hiddenCharts = signal<ChartInfo[]>([
     { id: 'chart3', title: 'Chart 3: Student Averages' }
   ]);
@@ -39,55 +37,48 @@ export class AnalysisStateService {
   }
 
   // Available data
-  private _availableIds = computed(() => {
-    // return this.analysisTraineeService.trainees().map(trainee => {
-    return this.traineeService.trainees().map(trainee => {
-      return trainee;
-    });
-  });
+  private _availableIds = computed(() => [...this.traineeService.trainees()]);
 
   // Selected filters
-  private _selectedIds = signal<Trainee[]>([]);
+  private _selectedTraineesIds = signal<Trainee[]>([]);
   private _selectedSubjects = signal<string[]>([]);
 
   // Computed properties
-  public availableIds = computed(() => {
+  public trainees = computed(() => {
     return this._availableIds();
   });
 
   public selectedIds = computed(() => {
-    return this._selectedIds();
+    return this._selectedTraineesIds();
   });
 
   // Update methods
   updateSelectedIds(trainees: Trainee[]) {
-    this._selectedIds.set(trainees);
+    this._selectedTraineesIds.set(trainees);
   }
 
-  // :WritableSignal<Trainee[]>
   getSelectedIds() {
-    return this._selectedIds;
+    return this._selectedTraineesIds;
   }
+
 
   watchSelectedIds() {
     effect(() => {
       const availableIds = this._availableIds();
-      const selected = this._selectedIds();
+      const selected = this._selectedTraineesIds();
 
       const filtered = selected.filter(trainee =>
         availableIds.some(t => t.id === trainee.id)
       );
 
       if (filtered.length !== selected.length) {
-        this._selectedIds.set(filtered);
+        this._selectedTraineesIds.set(filtered);
       }
-      
     }, { allowSignalWrites: true });
   }
 
   // This function updates the selected subjects by setting the subjects array to the _selectedSubjects set
   updateSelectedSubjects(subjects: string[]) {
-    // Set the _selectedSubjects set to the subjects array
     this._selectedSubjects.set(subjects);
   }
 
@@ -95,5 +86,5 @@ export class AnalysisStateService {
     return this._selectedSubjects;
   }
 
- 
+
 }

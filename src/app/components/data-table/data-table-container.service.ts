@@ -2,6 +2,7 @@ import { effect, inject, Injectable, signal } from '@angular/core';
 import { Trainee } from '../../models/trainee.model';
 import { SELECT_ACTIONS } from '../../models/data.actions';
 import { TraineeService } from '../../providers/trainee.service';
+// import { AverageUtilService } from '../../providers/average-util.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,6 +10,7 @@ import { TraineeService } from '../../providers/trainee.service';
 export class DataTableContainer {
   // Inject the TraineeService
   traineeService = inject(TraineeService);
+  // averageUtilService = inject(AverageUtilService);
 
   // Core data state
   trainees = this.traineeService.trainees;
@@ -60,6 +62,9 @@ export class DataTableContainer {
     const selectedTrainee = this.selectedTrainee().payload;
     const updatedTrainee = { ...selectedTrainee, ...updated };
     
+    // debugger
+    // this.averageUtilService.calculateAverage(updatedTrainee.grades!);
+
     // Update the trainee in the TraineeService
     this.traineeService.updateTrainee(updatedTrainee as Trainee);
     // Update the selected trainee in the UI
@@ -83,7 +88,10 @@ export class DataTableContainer {
       dateJoined: newTrainee.dateJoined || new Date().toISOString().slice(0, 10),
       _index: this.trainees().length
     };
-    
+
+    // this.averageUtilService.calculateAverage(traineeWithId.grades!);
+    // console.log(traineeWithId)
+
     // Add the new trainee to the TraineeService
     this.traineeService.addTrainee(traineeWithId);
 

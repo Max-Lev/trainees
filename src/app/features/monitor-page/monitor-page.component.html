@@ -1,7 +1,7 @@
 <div class="container">
 <div class="filters">
   <mat-form-field>
-    <mat-label>IDs</mat-label>
+    <mat-label>IDs:</mat-label>
     <mat-select multiple [value]="state.selectedIds()" (valueChange)="state.selectedIds.set($event)">
       @for (id of allIds(); track $index) {
       <mat-option [value]="id">{{ id }}</mat-option>
@@ -10,7 +10,7 @@
   </mat-form-field>
 
   <mat-form-field>
-    <mat-label>Names</mat-label>
+    <mat-label>Names:</mat-label>
     <input matInput [value]="state.nameFilter()" (input)="state.nameFilter.set($any($event.target).value)" />
   </mat-form-field>
 

@@ -14,7 +14,7 @@ export class AverageUtilService {
   showPassed = signal(true);
   showFailed = signal(true);
   nameFilter = signal('');
-  constructor() { 
+  constructor() {
 
   }
 
@@ -23,16 +23,17 @@ export class AverageUtilService {
     const values = Object.values(grades ?? {}).filter(g => typeof g === 'number');
     if (values.length === 0) return 0;
     const sum = values.reduce((acc, curr) => acc + curr, 0);
+    console.log('calculateAverage', values, sum);
     return Math.round((sum / values.length) * 100) / 100; // rounded to 2 decimals
   }
 
   calculateSubjectAverage(subject: string): number {
-    const values = this.allTrainees().map(trainee => trainee.grades?.[subject]??0).filter(g => typeof g === 'number');
+    const values = this.allTrainees().map(trainee => trainee.grades?.[subject] ?? 0).filter(g => typeof g === 'number');
     if (values.length === 0) return 0;
     const sum = values.reduce((acc, curr) => acc + curr, 0);
-    const avg =  Math.round((sum / values.length) * 100) / 100; // rounded to 2 decimals
+    const avg = Math.round((sum / values.length) * 100) / 100; // rounded to 2 decimals
     return avg;
-    
+
   }
 
   // Create a computed value to filter the trainees based on the selected IDs, name filter, and pass/fail status
@@ -43,7 +44,7 @@ export class AverageUtilService {
       const matchesName = trainee.name?.toLowerCase().includes(this.nameFilter().toLowerCase()) ?? true;
       const isPassed = avg >= 65;
       const matchesState = (isPassed && this.showPassed()) || (!isPassed && this.showFailed());
-      const found =  matchesId && matchesName && matchesState;
+      const found = matchesId && matchesName && matchesState;
       return found;
     });
   });

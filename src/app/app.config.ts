@@ -9,9 +9,12 @@ import { CustomRouteReuseStrategy } from './custom-route-reuse.strategy';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes, withComponentInputBinding()),
-    { 
-      provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy 
-    },
+    /**
+     * No need: using component state approach
+     */
+    // { 
+    //   provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy 
+    // },
     provideAnimationsAsync(),
     provideAnimationsAsync(),
     provideHttpClient()

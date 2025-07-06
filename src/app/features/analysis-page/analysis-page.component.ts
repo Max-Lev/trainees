@@ -6,7 +6,7 @@ import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-
 import { ChartGradesAverageStudetnsComponent } from '../../components/charts/chart-grades-avg-students/chart-grades-avg-students.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { NgFor, NgSwitch, NgSwitchCase } from '@angular/common';
+import { NgSwitch, NgSwitchCase } from '@angular/common';
 import { Trainee } from '../../models/trainee.model';
 import { AverageUtilService } from '../../providers/average-util.service';
 import { ChartSubjectsAvgComponent } from '../../components/charts/chart-subjects-avg/chart-subjects-avg.component';
@@ -18,7 +18,6 @@ import { ChartStudentsAveragesComponent } from '../../components/charts/chart-st
   imports: [
     NgSwitch,
     NgSwitchCase,
-    NgFor,
     MatSelectModule,
     MatFormFieldModule,
     MatSelectModule,
@@ -37,8 +36,8 @@ export class AnalysisPageComponent {
   averageUtilService = inject(AverageUtilService);
 
   // Get the available IDs and subjects from the AnalysisStateService
-  availableIds = this.analysisStateService.availableIds;
-  _selectedTraineeSignal = this.analysisStateService.getSelectedIds();
+  trainees = this.analysisStateService.trainees;
+  _selectedTrainee = this.analysisStateService.getSelectedIds();
 
   availableSubjects = this.analysisStateService.availableSubjects;
 
@@ -48,23 +47,25 @@ export class AnalysisPageComponent {
   hiddenCharts = this.analysisStateService.hiddenCharts();
 
   readonly studentsAveragesOverTime = computed(() =>
-    this._selectedTraineeSignal().map(trainee => ({
+    this._selectedTrainee().map(trainee => ({
       name: trainee.name ?? 'Unknown Trainee',
       series: (trainee.gradesOverTime ?? []).map(snapshot => ({
         name: snapshot?.date ?? 'Unknown Date',
-        value: typeof snapshot?.average === 'number' && !isNaN(snapshot.average)
-          ? snapshot.average
-          : 0
+        value: typeof snapshot?.average === 'number' && !isNaN(snapshot.average) ? snapshot.average : 0
       }))
     }))
   );
 
-  readonly studentsAverages = computed(() =>
-    this._selectedTraineeSignal().map(trainee => ({
-      name: `${trainee.name?.trim() || 'Trainee'} #${trainee.id}`,
-      value: this.safeAverage(this.averageUtilService.calculateAverage(trainee.grades!))
-    }))
-  );
+  readonly studentsAverages = computed(() => {
+    const allTrainees = this.trainees();
+    return this._selectedTrainee().map(trainee => {
+      const currentTrainee = allTrainees.find(t => t.id === trainee.id) || trainee;
+      return {
+        name: `${currentTrainee.name?.trim() || 'Trainee'} #${currentTrainee.id}`,
+        value: this.safeAverage(this.averageUtilService.calculateAverage(currentTrainee.grades!))
+      };
+    });
+  });
 
   readonly subjectAverages = computed(() =>
     this._selectedSubjects().map(subject => ({
@@ -73,22 +74,17 @@ export class AnalysisPageComponent {
     }))
   );
 
-  // Optional helper
-  private safeAverage(avg: number): number {
-    return isNaN(avg) || typeof avg !== 'number' ? 0 : avg;
-  }
-
 
   constructor() {
 
   }
 
   idsChange($event: MatSelectChange) {
-    const validIds = this.availableIds();
+    const validIds = this.trainees();
     const selected = ($event.value as Trainee[]).filter(id =>
       validIds.some(v => v.id === id.id)
     );
-    this._selectedTraineeSignal.set(selected);
+    this._selectedTrainee.set(selected);
     this.analysisStateService.updateSelectedIds(selected);
   }
 
@@ -139,6 +135,12 @@ export class AnalysisPageComponent {
       return;
     }
   }
+
+    // Optional helper
+    private safeAverage(avg: number): number {
+      return isNaN(avg) || typeof avg !== 'number' ? 0 : avg;
+    }
+  
 
 
 }

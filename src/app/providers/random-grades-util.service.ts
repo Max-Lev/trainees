@@ -34,7 +34,7 @@ export class RandomGradesUtilService {
           : 0;
 
       gradesOverTime.push({
-        date: date.toISOString().split('T')[0], // Format date as YYYY-MM-DD
+        date: date.toISOString().slice(0, 10),// Format date as YYYY-MM-DD
         average: parseFloat(average.toFixed(2)), // Round average to 2 decimal places
         grades: gradesSnapshot,
       });

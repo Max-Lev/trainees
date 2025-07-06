@@ -3,12 +3,14 @@
     <div class="filter-section">
       <div class="filters">
         <mat-form-field>
-          <mat-label>Trainees:</mat-label>
-          <mat-select [compareWith]="compareTrainees" [multiple]="true" [value]="_selectedTraineeSignal()"
+          <mat-label>Students:</mat-label>
+          <mat-select [compareWith]="compareTrainees" [multiple]="true" [value]="_selectedTrainee()"
             (selectionChange)="idsChange($event)">
-            <mat-option *ngFor="let id of availableIds()" [value]="id">
-              ({{id.id}}) {{id.name}}
-            </mat-option>
+            @for (trainee of trainees(); track trainee.id) {
+              <mat-option  [value]="trainee">
+                ({{trainee.id}}) {{trainee.name}}
+              </mat-option>
+            }
           </mat-select>
         </mat-form-field>
       </div>
@@ -17,9 +19,11 @@
         <mat-form-field>
           <mat-label>Subjects:</mat-label>
           <mat-select [multiple]="true" [value]="_selectedSubjects()" (selectionChange)="subjectChange($event)">
-            <mat-option *ngFor="let subject of availableSubjects()" [value]="subject.value">
-              {{subject.viewValue}}
-            </mat-option>
+            @for (subject of availableSubjects(); track subject.value) {
+              <mat-option [value]="subject.value">
+                {{subject.viewValue}}
+              </mat-option>
+            }
           </mat-select>
         </mat-form-field>
       </div>
@@ -29,37 +33,37 @@
     <div cdkDropList id="visibleChartDropList" [cdkDropListConnectedTo]="['hiddenChartDropList']"
       [cdkDropListData]="visibleCharts" (cdkDropListDropped)="drop($event)" class="charts-container"
       cdkDropListOrientation="horizontal">
-      <div *ngFor="let chart of visibleCharts; let i = index" class="chart-box" cdkDrag>
-        {{ chart?.title }}
-        <div [ngSwitch]="chart?.id">
-          @if(studentsAveragesOverTime().length > 0){
-            <app-chart-students-averages 
-            *ngSwitchCase="'chart1'" [studentsAveragesOverTime]="studentsAveragesOverTime()">
-            </app-chart-students-averages>
-          }
-          <app-chart-subjects-avg *ngSwitchCase="'chart2'" [subjectAverages]="subjectAverages()"
-            [xAxisLabel]="'Subjects'" [yAxisLabel]="'Average'">
-          </app-chart-subjects-avg>
-          <app-chart-grades-average *ngSwitchCase="'chart3'" [studentsAverages]="studentsAverages()"
-            [xAxisLabel]="'Students'" [yAxisLabel]="'Average'">
-          </app-chart-grades-average>
+      @for (chart of visibleCharts; track chart.id) {
+        <div class="chart-box" cdkDrag>
+          {{ chart?.title }}
+          <div [ngSwitch]="chart?.id">
+            @if(studentsAveragesOverTime().length > 0){
+              <app-chart-students-averages 
+              *ngSwitchCase="'chart1'" [studentsAveragesOverTime]="studentsAveragesOverTime()">
+              </app-chart-students-averages>
+            }
+            <app-chart-subjects-avg *ngSwitchCase="'chart2'" [subjectAverages]="subjectAverages()"
+              [xAxisLabel]="'Subjects'" [yAxisLabel]="'Average'">
+            </app-chart-subjects-avg>
+            <app-chart-grades-average *ngSwitchCase="'chart3'" [studentsAverages]="studentsAverages()"
+              [xAxisLabel]="'Students'" [yAxisLabel]="'Average'">
+            </app-chart-grades-average>
+          </div>
         </div>
-      </div>
+      }
     </div>
 
 
     <!-- HIDDEN CHART PLACEHOLDER (BORDER ONLY) -->
     <div cdkDropList id="hiddenChartDropList" [cdkDropListConnectedTo]="['visibleChartDropList']"
       [cdkDropListData]="hiddenCharts" (cdkDropListDropped)="drop($event)" class="hidden-chart-container">
-      <div *ngFor="let chart of hiddenCharts" class="hidden-chart-placeholder" cdkDrag>
-        <!-- Only show border and chart title as a placeholder -->
-        <span class="hidden-chart-title">{{ chart?.title }}</span>
-      </div>
+      @for (chart of hiddenCharts; track chart.id) {
+        <div class="hidden-chart-placeholder" cdkDrag>
+          <!-- Only show border and chart title as a placeholder -->
+          <span class="hidden-chart-title">{{ chart?.title }}</span>
+        </div>
+      }
     </div>
-
-
-
-
 
   </div>
 </div>
