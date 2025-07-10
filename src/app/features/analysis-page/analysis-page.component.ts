@@ -82,6 +82,8 @@ export class AnalysisPageComponent {
   onTraineesSelectionChange(event: MatSelectChange): void {
     const validTrainees = this.availableTrainees();
     const selectedTrainees = (event.value as Trainee[]).filter(trainee => validTrainees.some(v => v.id === trainee.id));
+    // const selectedTrainees = (event.value as Trainee[]).filter(trainee => validTrainees.some(v => v._index === trainee._index));
+    console.log(validTrainees, selectedTrainees);
     this.analysisStateService.updateSelectedTrainees(selectedTrainees);
   }
 
@@ -141,7 +143,9 @@ export class AnalysisPageComponent {
 
   // Utility methods
   compareTrainees = (a: Trainee, b: Trainee): boolean => {
-    return a.id === b.id;
+    // return a.id === b.id;
+    console.log(a._index ,b._index)
+    return a._index === b._index;
   };
 
   private safeAverage(avg: number): number {

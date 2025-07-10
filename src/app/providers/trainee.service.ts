@@ -39,11 +39,11 @@ export class TraineeService {
 
   updateTrainee(updatedTrainee: Trainee) {
 
-    this.trainees.update((traineesList:Trainee[]) =>
-      traineesList.map((existingTrainee:Trainee) => {
+    this.trainees.update((traineesList: Trainee[]) =>
+      traineesList.map((existingTrainee: Trainee) => {
         // Match by ID rather than by index for more reliable updates
         if (existingTrainee._index === updatedTrainee._index) {
-        // if (existingTrainee.id === updatedTrainee.id) {
+          // if (existingTrainee.id === updatedTrainee.id) {
           // Preserve _index to maintain consistency
           return { ...updatedTrainee, _index: existingTrainee._index };
         }
@@ -58,7 +58,7 @@ export class TraineeService {
     this.trainees.update((traineesList) => {
       // Make sure we have an _index property for the new trainee
       const gradesOverTime = this.randomGradesUtilService.generateRandomGradesOverTime
-      (newTrainee as Trainee, "2024-01-01", "2025-12-31");
+        (newTrainee as Trainee, "2024-01-01", "2025-12-31");
 
       const _newTrainee = {
         ...newTrainee,
@@ -77,8 +77,13 @@ export class TraineeService {
       const filtered = traineesList.filter(t => t.id !== trainee.id);
 
       // Reindex the remaining trainees to maintain consistent _index values
-      const _filtered =  filtered.map((trainee, idx) => ({ ...trainee, _index: idx }));
-      return _filtered;
+
+
+      // fix selected analysis and removed/deleted option from data page
+      // const _filtered = filtered.map((trainee, idx) => ({ ...trainee, _index: idx }));
+      // const _filtered = filtered.map((trainee) => ({ ...trainee }));
+      // return _filtered;
+      return filtered;
     });
   }
 
