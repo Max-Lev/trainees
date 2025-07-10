@@ -81,15 +81,17 @@ export class AnalysisPageComponent {
 
   onTraineesSelectionChange(event: MatSelectChange): void {
     const validTrainees = this.availableTrainees();
-    const selectedTrainees = (event.value as Trainee[]).filter(trainee =>
-      validTrainees.some(v => v.id === trainee.id)
-    );
+    const selectedTrainees = (event.value as Trainee[]).filter(trainee => validTrainees.some(v => v.id === trainee.id));
     this.analysisStateService.updateSelectedTrainees(selectedTrainees);
   }
 
+  // This function is called when the user selects a subject from the dropdown menu
   onSubjectsSelectionChange(event: MatSelectChange): void {
+    // Get the selected subjects from the event
     const selectedSubjects = event.value as string[];
+    // Set the selected subjects in the selectedSubjects set
     this.selectedSubjects.set(selectedSubjects);
+    // Update the selected subjects in the analysisStateService
     this.analysisStateService.updateSelectedSubjects(selectedSubjects);
   }
 

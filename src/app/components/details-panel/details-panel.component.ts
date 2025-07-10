@@ -97,7 +97,6 @@ export class DetailsPanelComponent implements AfterViewInit, OnDestroy {
         // New trainee
         this.dataTableContainer.newTraineeValue.set(value as Trainee);
       }
-      // console.log('this.detailsForm.valid ', this.detailsForm.valid, this.detailsForm)
       this.dataTableContainer.isAddBtnDisabled.set(!this.detailsForm.valid);
     });
   }

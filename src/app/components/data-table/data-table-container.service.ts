@@ -9,7 +9,7 @@ import { TraineeService } from '../../providers/trainee.service';
 export class DataTableContainer {
   // Inject the TraineeService
   traineeService = inject(TraineeService);
-  
+
   // Core data state
   trainees = this.traineeService.trainees;
 
@@ -30,7 +30,7 @@ export class DataTableContainer {
   newTraineeValue = signal<Partial<Trainee> | null>(null);
 
   constructor() {
-    
+
   }
 
   // Utility function to toggle selection
@@ -48,30 +48,27 @@ export class DataTableContainer {
 
   // Update an existing trainee
   updateTrainee(updated: Partial<Trainee>) {
-    
+
     if (!updated || !this.selectedTrainee().payload) return;
 
     updated = {
       ...updated,
       grade: this.setSelectedGrade(updated as Trainee, updated.subject || ''),
     } as Trainee; // Ensure value is of type Trainee
-    
-    
+
     const selectedTrainee = this.selectedTrainee().payload;
     const updatedTrainee = { ...selectedTrainee, ...updated };
-    console.log('updatedTrainee ',updatedTrainee)
     // Update the trainee in the TraineeService
     this.traineeService.updateTrainee(updatedTrainee as Trainee);
     // Update the selected trainee in the UI
     this.selectedTrainee.set({ action: SELECT_ACTIONS.select_row, payload: updatedTrainee as Trainee });
-    console.log(this.trainees())
     // Reset the updatedTraineeValue
     this.updatedTraineeValue.set(null);
   }
 
   // Add a new trainee
   addNewTrainee() {
-    
+
     const newTrainee = this.newTraineeValue();
     if (!newTrainee) return;
 

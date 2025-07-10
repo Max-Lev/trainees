@@ -6,7 +6,7 @@
           <mat-label>Students:</mat-label>
           <mat-select [compareWith]="compareTrainees" [multiple]="true" [value]="selectedTrainees()"
             (selectionChange)="onTraineesSelectionChange($event)">
-            @for (trainee of availableTrainees(); track trainee._index) {
+            @for (trainee of availableTrainees(); track trainee.id) {
               <mat-option [value]="trainee">
                 ({{trainee.id}}) {{trainee.name}}
               </mat-option>

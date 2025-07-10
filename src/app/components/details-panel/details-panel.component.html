@@ -17,7 +17,9 @@
           <div class="form-row">
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>ID</mat-label>
-              <input type="text" matInput formControlName="id" placeholder="Enter trainee ID">
+              <input type="text" matInput formControlName="id" 
+              (input)="detailsForm.get('id')?.markAsTouched()" 
+              placeholder="Enter trainee ID">
               <mat-error *ngIf="detailsForm.get('id')?.hasError('required')">
                 Required field
               </mat-error>
