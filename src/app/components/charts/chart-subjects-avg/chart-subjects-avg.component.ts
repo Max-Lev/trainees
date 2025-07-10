@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { LegendPosition, NgxChartsModule } from '@swimlane/ngx-charts';
 
 @Component({
@@ -7,8 +7,14 @@ import { LegendPosition, NgxChartsModule } from '@swimlane/ngx-charts';
   imports: [
     NgxChartsModule
   ],
-  templateUrl: './chart-subjects-avg.component.html',
-  styleUrl: './chart-subjects-avg.component.scss'
+  template: `
+  <ngx-charts-pie-chart [results]="subjectAverages" [tooltipDisabled]="false" 
+  [gradient]="gradient" [legend]="showLegend"
+  [legendPosition]="legendPosition" [labels]="showLabels" [doughnut]="isDoughnut">
+</ngx-charts-pie-chart>
+  `,
+  styleUrl: './chart-subjects-avg.component.scss',
+  changeDetection:ChangeDetectionStrategy.OnPush
 })
 export class ChartSubjectsAvgComponent {
 

@@ -59,11 +59,12 @@ export class DataTableContainer {
     
     const selectedTrainee = this.selectedTrainee().payload;
     const updatedTrainee = { ...selectedTrainee, ...updated };
-    
+    console.log('updatedTrainee ',updatedTrainee)
     // Update the trainee in the TraineeService
     this.traineeService.updateTrainee(updatedTrainee as Trainee);
     // Update the selected trainee in the UI
     this.selectedTrainee.set({ action: SELECT_ACTIONS.select_row, payload: updatedTrainee as Trainee });
+    console.log(this.trainees())
     // Reset the updatedTraineeValue
     this.updatedTraineeValue.set(null);
   }

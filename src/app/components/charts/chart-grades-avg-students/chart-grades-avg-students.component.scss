@@ -51,11 +51,7 @@
     height: 100% !important;
   }
 
-  // ::ng-deep .ngx-charts text.axis-label {
-  //   fill: #ff5722; // X/Y axis label color
-  //   font-weight: bold;
-  // }
-  
+ 
   ::ng-deep .ngx-charts .x.axis text,
   ::ng-deep .ngx-charts .y.axis text {
     fill: #afb7c8; // Tick label color
@@ -65,9 +61,4 @@
     color:#afb7c8;;
   }
   
-  // ::ng-deep .ngx-charts .x.axis path,
-  // ::ng-deep .ngx-charts .y.axis path,
-  // ::ng-deep .ngx-charts .x.axis line,
-  // ::ng-deep .ngx-charts .y.axis line {
-  //   stroke: #607d8b; // Axis lines color
-  // }
+  

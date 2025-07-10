@@ -35,7 +35,7 @@ export class AnalysisStateService {
 
   // Computed properties for available data
   readonly availableTrainees = computed(() => [...this.traineeService.trainees()]);
-  readonly availableSubjects = computed(() => this.subjectsService.subjects());
+  readonly availableSubjects = computed(() => [...this.subjectsService.subjects()]);
 
   // Computed properties for selected data
   readonly selectedTrainees = computed(() => this._selectedTrainees());
@@ -65,14 +65,13 @@ export class AnalysisStateService {
   // Keep selected trainees in sync with available trainees
   private watchSelectedTrainees(): void {
     effect(() => {
-      debugger
       const availableTrainees = this.availableTrainees();
       const selectedTrainees = this._selectedTrainees();
 
       const validSelectedTrainees = selectedTrainees.filter(trainee =>
         // availableTrainees.some(t => t.id === trainee.id)
         // availableTrainees.find(t => t._index === trainee._index && t.id === trainee.id)
-        availableTrainees.find(t=>t.id === trainee.id)
+        availableTrainees.find(t => t.id === trainee.id)
       );
 
       if (validSelectedTrainees.length !== selectedTrainees.length) {

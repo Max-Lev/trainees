@@ -39,10 +39,11 @@ export class TraineeService {
 
   updateTrainee(updatedTrainee: Trainee) {
 
-    this.trainees.update((traineesList) =>
-      traineesList.map((existingTrainee) => {
+    this.trainees.update((traineesList:Trainee[]) =>
+      traineesList.map((existingTrainee:Trainee) => {
         // Match by ID rather than by index for more reliable updates
         if (existingTrainee._index === updatedTrainee._index) {
+        // if (existingTrainee.id === updatedTrainee.id) {
           // Preserve _index to maintain consistency
           return { ...updatedTrainee, _index: existingTrainee._index };
         }

@@ -1,4 +1,4 @@
-import { Component, OnChanges, Input, SimpleChanges } from "@angular/core";
+import { Component, OnChanges, Input, SimpleChanges, ChangeDetectionStrategy } from "@angular/core";
 import { NgxChartsModule } from "@swimlane/ngx-charts";
 
 @Component({
@@ -7,13 +7,21 @@ import { NgxChartsModule } from "@swimlane/ngx-charts";
   imports: [
     NgxChartsModule
   ],
-  templateUrl: './chart-grades-avg-students.component.html',
-  styleUrl: './chart-grades-avg-students.component.scss'
+  template: `
+  <ngx-charts-bar-vertical [tooltipDisabled]="false" [results]="studentsAverages" 
+  [rotateXAxisTicks]="true" [gradient]="gradient"
+  [xAxis]="showXAxis" [yAxis]="showYAxis" [legend]="showLegend" 
+  [showXAxisLabel]="showXAxisLabel"
+  [showYAxisLabel]="showYAxisLabel" [xAxisLabel]="xAxisLabel" 
+  [yAxisLabel]="yAxisLabel" (select)="onSelect($event)">
+</ngx-charts-bar-vertical>`,
+  styleUrl: './chart-grades-avg-students.component.scss',
+  changeDetection:ChangeDetectionStrategy.OnPush
 })
 export class ChartGradesAverageStudetnsComponent implements OnChanges {
 
   @Input({ required: true }) studentsAverages: { name: string; value: number; }[] = [];
-  
+
   @Input() xAxisLabel = '';
   @Input() yAxisLabel = '';
 
@@ -25,14 +33,14 @@ export class ChartGradesAverageStudetnsComponent implements OnChanges {
   showYAxisLabel = true;
 
   constructor() {
-    
+
   }
   ngOnChanges(changes: SimpleChanges): void {
-    
+
   }
 
   onSelect(event: any) {
-    
+
   }
 
 

@@ -17,9 +17,15 @@
           <div class="form-row">
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>ID</mat-label>
-              <input matInput formControlName="id" placeholder="Enter trainee ID">
+              <input type="text" matInput formControlName="id" placeholder="Enter trainee ID">
+              <mat-error *ngIf="detailsForm.get('id')?.hasError('required')">
+                Required field
+              </mat-error>
               <mat-error *ngIf="detailsForm.get('id')?.hasError('existingId')">
                 This ID already exists.
+              </mat-error>
+              <mat-error *ngIf="detailsForm.get('id')?.touched && detailsForm.get('id')?.hasError('pattern')">
+                Must be 1 to 9 digits.
               </mat-error>
             </mat-form-field>
 

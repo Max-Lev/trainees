@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { NgxChartsModule } from "@swimlane/ngx-charts";
 
 @Component({
@@ -19,7 +19,8 @@ import { NgxChartsModule } from "@swimlane/ngx-charts";
       [autoScale]="true">
     </ngx-charts-line-chart>
   `,
-  styleUrls: ['./chart-students-averages.component.scss']
+  changeDetection:ChangeDetectionStrategy.OnPush
+  
 })
 export class ChartStudentsAveragesComponent implements OnChanges {
   // ✅ CHANGED: internal memoized input to avoid unnecessary redraw
@@ -33,7 +34,11 @@ export class ChartStudentsAveragesComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     if (changes['studentsAveragesOverTime']) {
       // shallow copy to avoid full redraw unless data changes
-      this.chartData = [...this.studentsAveragesOverTime];
+      this.chartData = this.studentsAveragesOverTime.map(student => ({
+        name: student.name,
+        series: student.series.map(s => ({ name: s.name, value: s.value }))
+      }));
+      
     }
   }
 }

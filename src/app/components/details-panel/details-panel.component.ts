@@ -1,6 +1,6 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, computed, effect, inject, input, OnDestroy } from '@angular/core';
 import { Trainee } from '../../models/trainee.model';
-import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -11,6 +11,7 @@ import { SubjectsService } from '../../providers/subjects.service';
 import { MatSelectModule } from '@angular/material/select';
 import { NgIf } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
+import { existingIdValidator, gradeControlValidator, validateExistingTrainee } from './custom.validators';
 
 @Component({
   selector: 'app-details-panel',
@@ -56,21 +57,18 @@ export class DetailsPanelComponent implements AfterViewInit, OnDestroy {
   private getGradesFormGroup = (): FormGroup => this.detailsForm.get('grades') as FormGroup;
 
   // This function returns a FormControl for a given subject
-  getGradeControl(subject: string): FormControl<number | null> {
+  getGradeControl(subjectSelectedCtrl: string): FormControl<number | null> {
     // Get the grades FormGroup from the detailsForm
     const gradesFormGroup = this.getGradesFormGroup()
 
     // If the gradesFormGroup does not have a FormControl for the given subject
-    if (!gradesFormGroup.get(subject)) {
+    if (!gradesFormGroup.get(subjectSelectedCtrl)) {
       // Add a FormControl for the given subject to the gradesFormGroup
-      gradesFormGroup.addControl(
-        subject,
-        new FormControl<number | null>(null,
-          [Validators.min(0), Validators.max(100)])
-      );
+      gradesFormGroup.addControl(subjectSelectedCtrl,
+        new FormControl<number | null>(null, [Validators.min(0), Validators.max(100)]));
     }
     // Return the FormControl for the given subject
-    return gradesFormGroup.get(subject) as FormControl<number | null>;
+    return gradesFormGroup.get(subjectSelectedCtrl) as FormControl<number | null>;
   }
 
   constructor() {
@@ -86,12 +84,6 @@ export class DetailsPanelComponent implements AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     this.onformValueChanges$(); // Subscribe to form value changes
     this.onGradeValueChanges$(); // Subscribe to grade value changes
-
-    const idControl = this.detailsForm.get('id');
-    idControl?.addValidators(existingIdValidator(
-      () => this.dataTableContainer.trainees(),
-      () => this.selectedTrainee()
-    ));
   }
 
   private onformValueChanges$() {
@@ -105,6 +97,7 @@ export class DetailsPanelComponent implements AfterViewInit, OnDestroy {
         // New trainee
         this.dataTableContainer.newTraineeValue.set(value as Trainee);
       }
+      // console.log('this.detailsForm.valid ', this.detailsForm.valid, this.detailsForm)
       this.dataTableContainer.isAddBtnDisabled.set(!this.detailsForm.valid);
     });
   }
@@ -133,17 +126,17 @@ export class DetailsPanelComponent implements AfterViewInit, OnDestroy {
 
   // Bind selected trainee data to the form
   private bindFormData() {
-
     effect(() => {
       const trainee = this.selectedTrainee();
       const { action } = this.dataTableContainer.selectedTrainee();
-
+  
+      const idControl = this.detailsForm.get('id');
+      const gradesFormGroup = this.getGradesFormGroup();
+  
       if (trainee) {
-        // Populate form with trainee data
-        this.detailsForm.get('subject')?.enable({ emitEvent: false });
-
+        // ✏️ Editing existing trainee
         this.detailsForm.patchValue({
-          id: trainee.id ?? null,
+          id: trainee.id,
           name: trainee.name ?? '',
           email: trainee.email ?? '',
           dateJoined: trainee.dateJoined ?? null,
@@ -152,58 +145,34 @@ export class DetailsPanelComponent implements AfterViewInit, OnDestroy {
           country: trainee.country ?? '',
           zip: trainee.zip ?? null,
           grades: trainee.grades || {},
-          subject: (trainee.subject) ? trainee.subject : ''
+          subject: trainee.subject || ''
         });
-        this.validateExistingTrainee(trainee);
-
+  
+        // Add grade controls for all subjects
+        validateExistingTrainee(trainee, gradesFormGroup);
+  
       } else if (action === SELECT_ACTIONS.open_panel) {
-        // Clear form for new trainee
+        // ➕ Adding a new trainee — reset everything!
         this.detailsForm.reset();
+        gradesFormGroup.reset();
       }
+  
+      // ✅ Always set up all ID validators
+      idControl?.clearValidators();
+      idControl?.setValidators([
+        Validators.required,
+        Validators.pattern(/^\d{1,9}$/),
+        existingIdValidator(this.dataTableContainer.trainees(), this.selectedTrainee())
+      ]);
+      idControl?.updateValueAndValidity();
     });
   }
+  
 
-  private validateExistingTrainee(trainee: Trainee) {
-    // Then add dynamic controls for grades
-    const gradesFormGroup = this.getGradesFormGroup();
-    for (const [subject, grade] of Object.entries(trainee.grades || {})) {
-      if (!gradesFormGroup.get(subject)) {
-        gradesFormGroup.addControl(subject, new FormControl<number | null>(
-          grade, [Validators.min(0), Validators.max(100)]
-        ));
-      }
-    }
-  }
+  
 
 
 
 }
 
-export const gradeControlValidator: ValidatorFn = (
-  formGroup: AbstractControl,
-): ValidationErrors | null => {
 
-  const gradesFormGroup = formGroup.get('grades') as FormGroup;
-  const subjectControl = formGroup.get('subject') as FormControl;
-
-  if (!gradesFormGroup || !subjectControl) return null;
-
-  const gradeControl = gradesFormGroup.get(subjectControl.value || '');
-  if (gradeControl && gradeControl.invalid) {
-    return { invalidGrade: true };
-  }
-
-  return null;
-};
-
-export function existingIdValidator(trainees: () => Trainee[], selectedTrainee: () => Trainee | null): ValidatorFn {
-  return (control: AbstractControl): ValidationErrors | null => {
-    const value = Number(control.value);
-    if (!value || isNaN(value)) return null;
-
-    const isEditing = !!selectedTrainee();
-    const currentId = selectedTrainee()?.id;
-
-    const isDuplicate = trainees().some(t => t.id === value && (!isEditing || t.id !== currentId));
-    return isDuplicate ? { existingId: true } : null;
-  }};

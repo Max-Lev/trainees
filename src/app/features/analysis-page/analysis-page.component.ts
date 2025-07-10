@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { AnalysisStateService, ChartInfo } from './analysis-state.service';
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
@@ -15,18 +15,12 @@ import { ChartStudentsAveragesComponent } from '../../components/charts/chart-st
   selector: 'app-analysis-page',
   standalone: true,
   imports: [
-    NgSwitch,
-    NgSwitchCase,
-    MatSelectModule,
-    MatFormFieldModule,
-    MatInputModule,
-    DragDropModule,
-    ChartGradesAverageStudetnsComponent,
-    ChartSubjectsAvgComponent,
-    ChartStudentsAveragesComponent
+    NgSwitch, NgSwitchCase, MatSelectModule, MatFormFieldModule, MatInputModule, DragDropModule,
+    ChartGradesAverageStudetnsComponent, ChartSubjectsAvgComponent, ChartStudentsAveragesComponent
   ],
   templateUrl: './analysis-page.component.html',
-  styleUrl: './analysis-page.component.scss'
+  styleUrl: './analysis-page.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AnalysisPageComponent {
   // Inject services
@@ -35,28 +29,37 @@ export class AnalysisPageComponent {
 
   // Public properties for template access
   readonly availableTrainees = this.analysisStateService.availableTrainees;
-  // readonly selectedTrainees = this.analysisStateService.getSelectedTrainees();
-  readonly selectedTrainees = computed(() => {
-    const all = this.availableTrainees();
-    const selected = this.analysisStateService.getSelectedTrainees()();
-    return selected.filter(sel => all.some(t => t.id === sel.id));
-  });
-  
+  readonly selectedTrainees = this.analysisStateService.getSelectedTrainees();
   readonly availableSubjects = this.analysisStateService.availableSubjects;
   readonly selectedSubjects = this.analysisStateService.getSelectedSubjects();
   readonly visibleCharts = this.analysisStateService.visibleCharts();
   readonly hiddenCharts = this.analysisStateService.hiddenCharts();
 
   // Computed data for charts
-  readonly studentsAveragesOverTime = computed(() =>
-    this.selectedTrainees().map(trainee => ({
-      name: trainee.name ?? 'Unknown Trainee',
-      series: (trainee.gradesOverTime ?? []).map(snapshot => ({
-        name: snapshot?.date ?? 'Unknown Date',
-        value: typeof snapshot?.average === 'number' && !isNaN(snapshot.average) ? snapshot.average : 0
-      }))
-    }))
-  );
+  readonly studentsAveragesOverTime = computed(() => {
+    const allTrainees = this.availableTrainees();
+    return this.selectedTrainees().map(trainee => {
+      // Find the latest trainee data in case of updates of trainee name
+      const latest = allTrainees.find(t => t.id === trainee.id) || trainee;
+      return {
+        name: latest.name ?? 'Unknown Trainee',
+        series: (latest.gradesOverTime ?? []).map(snapshot => ({
+          name: snapshot?.date ?? 'Unknown Date',
+          value: typeof snapshot?.average === 'number' && !isNaN(snapshot.average) ? snapshot.average : 0
+        }))
+      }
+    });
+  });
+
+  // readonly studentsAveragesOverTime = computed(() =>
+  //   this.selectedTrainees().map(trainee => ({
+  //     name: trainee.name ?? 'Unknown Trainee',
+  //     series: (trainee.gradesOverTime ?? []).map(snapshot => ({
+  //       name: snapshot?.date ?? 'Unknown Date',
+  //       value: typeof snapshot?.average === 'number' && !isNaN(snapshot.average) ? snapshot.average : 0
+  //     }))
+  //   }))
+  // );
 
   readonly studentsAverages = computed(() => {
     const allTrainees = this.availableTrainees();
@@ -75,10 +78,6 @@ export class AnalysisPageComponent {
       value: this.safeAverage(this.averageUtilService.calculateSubjectAverage(subject))
     }))
   );
-
-  constructor() {
-
-  }
 
   onTraineesSelectionChange(event: MatSelectChange): void {
     const validTrainees = this.availableTrainees();
