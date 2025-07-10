@@ -15,11 +15,15 @@ export const routes: Routes = [
     {
         path: 'analysis', loadComponent: () => import('./features/analysis-page/analysis-page.component').then(m => m.AnalysisPageComponent),
         resolve: {
+            traineesResolver: traineesResolver,
             subjectsResolver: subjectsResolver
         }
     },
     {
-        path: 'monitor', loadComponent: () => import('./features/monitor-page/monitor-page.component').then(m => m.MonitorPageComponent)
+        path: 'monitor', loadComponent: () => import('./features/monitor-page/monitor-page.component').then(m => m.MonitorPageComponent),
+        resolve: {
+            traineesResolver: traineesResolver
+        }
     },
     { path: '**', redirectTo: '/data' }
 ];

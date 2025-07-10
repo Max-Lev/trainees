@@ -35,7 +35,13 @@ export class AnalysisPageComponent {
 
   // Public properties for template access
   readonly availableTrainees = this.analysisStateService.availableTrainees;
-  readonly selectedTrainees = this.analysisStateService.getSelectedTrainees();
+  // readonly selectedTrainees = this.analysisStateService.getSelectedTrainees();
+  readonly selectedTrainees = computed(() => {
+    const all = this.availableTrainees();
+    const selected = this.analysisStateService.getSelectedTrainees()();
+    return selected.filter(sel => all.some(t => t.id === sel.id));
+  });
+  
   readonly availableSubjects = this.analysisStateService.availableSubjects;
   readonly selectedSubjects = this.analysisStateService.getSelectedSubjects();
   readonly visibleCharts = this.analysisStateService.visibleCharts();
@@ -74,11 +80,11 @@ export class AnalysisPageComponent {
 
   }
 
-  // Event handlers
   onTraineesSelectionChange(event: MatSelectChange): void {
     const validTrainees = this.availableTrainees();
-    const selectedTrainees = (event.value as Trainee[]).filter(trainee => validTrainees.some(v => v._index === trainee._index));
-    this.selectedTrainees.set(selectedTrainees);
+    const selectedTrainees = (event.value as Trainee[]).filter(trainee =>
+      validTrainees.some(v => v.id === trainee.id)
+    );
     this.analysisStateService.updateSelectedTrainees(selectedTrainees);
   }
 
@@ -88,22 +94,28 @@ export class AnalysisPageComponent {
     this.analysisStateService.updateSelectedSubjects(selectedSubjects);
   }
 
+  // Function to handle chart drop event
   onChartDrop(event: CdkDragDrop<ChartInfo[]>): void {
+    // Get the previous and current lists of charts
     const prevList = event.previousContainer.data;
     const currList = event.container.data;
 
     // Reordering within the same list (only allowed in visibleCharts)
     if (prevList === currList && currList === this.visibleCharts) {
+      // Move the item in the array to the new position
       moveItemInArray(currList, event.previousIndex, event.currentIndex);
       return;
     }
 
+    // Get the dragged chart
     const draggedChart = prevList[event.previousIndex];
 
     // Dragging from hidden -> visible: Swap dragged hidden chart with the one at drop position
     if (prevList === this.hiddenCharts && currList === this.visibleCharts) {
+      // Get the chart at the drop position
       const replacedChart = currList[event.currentIndex];
 
+      // Check if there is a chart at the drop position
       if (!replacedChart) return;
 
       // Replace visible with hidden
@@ -115,6 +127,7 @@ export class AnalysisPageComponent {
 
     // Dragging from visible -> hidden: Always store dragged chart into hidden, and swap with hidden chart
     if (prevList === this.visibleCharts && currList === this.hiddenCharts) {
+      // Get the chart at the drop position
       const replacedChart = currList[event.currentIndex];
 
       // Replace hidden with dragged
@@ -126,7 +139,9 @@ export class AnalysisPageComponent {
   }
 
   // Utility methods
-  compareTrainees = (a: Trainee, b: Trainee): boolean => a?._index === b?._index;
+  compareTrainees = (a: Trainee, b: Trainee): boolean => {
+    return a.id === b.id;
+  };
 
   private safeAverage(avg: number): number {
     return isNaN(avg) || typeof avg !== 'number' ? 0 : avg;

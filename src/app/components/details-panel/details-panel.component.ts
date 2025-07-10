@@ -37,7 +37,7 @@ export class DetailsPanelComponent implements AfterViewInit, OnDestroy {
   // Input signal for the selected trainee
   selectedTrainee = input<Trainee | null>(null);
 
-  subjectOptions = computed(() => this.subjectsService.subjects$());
+  subjectOptions = computed(() => this.subjectsService.subjects());
 
   // Form for trainee details
   detailsForm = new FormGroup({
@@ -86,6 +86,12 @@ export class DetailsPanelComponent implements AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     this.onformValueChanges$(); // Subscribe to form value changes
     this.onGradeValueChanges$(); // Subscribe to grade value changes
+
+    const idControl = this.detailsForm.get('id');
+    idControl?.addValidators(existingIdValidator(
+      () => this.dataTableContainer.trainees(),
+      () => this.selectedTrainee()
+    ));
   }
 
   private onformValueChanges$() {
@@ -189,3 +195,15 @@ export const gradeControlValidator: ValidatorFn = (
 
   return null;
 };
+
+export function existingIdValidator(trainees: () => Trainee[], selectedTrainee: () => Trainee | null): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const value = Number(control.value);
+    if (!value || isNaN(value)) return null;
+
+    const isEditing = !!selectedTrainee();
+    const currentId = selectedTrainee()?.id;
+
+    const isDuplicate = trainees().some(t => t.id === value && (!isEditing || t.id !== currentId));
+    return isDuplicate ? { existingId: true } : null;
+  }};

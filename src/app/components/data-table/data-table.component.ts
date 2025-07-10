@@ -102,7 +102,7 @@ export class DataTableComponent implements AfterViewInit, OnDestroy {
 
   // Listen for search input changes
   onSearchValueChanges$() {
-    this.form.controls.search.valueChanges.pipe(debounceTime(750), takeUntil(this.destroy$))
+    this.form.controls.search.valueChanges.pipe(debounceTime(500), takeUntil(this.destroy$))
       .subscribe((filterValue: string | null) => {
         const value = filterValue || '';
         this.dataTableContainer.setFilter(value);

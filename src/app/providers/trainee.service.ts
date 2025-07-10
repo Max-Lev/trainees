@@ -3,8 +3,9 @@ import { Trainee } from '../models/trainee.model';
 import { HttpClient } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { map } from 'rxjs/operators';
+import { map, shareReplay } from 'rxjs/operators';
 import { RandomGradesUtilService } from './random-grades-util.service';
+import { Observable } from 'rxjs/internal/Observable';
 
 @Injectable({ providedIn: 'root' })
 export class TraineeService {
@@ -16,26 +17,24 @@ export class TraineeService {
   trainees = signal<Trainee[]>([]);
 
   constructor() {
-    // Initial data load
-    this.loadTrainees();
+
   }
 
-  private loadTrainees(): void {
-    this.http.get<Trainee[]>(environment.traineesAPI).pipe(
+  loadTrainees(): Observable<Trainee[]> {
+    return this.http.get<Trainee[]>(environment.traineesAPI).pipe(
       map(data => data.map((trainee: Trainee, index) => ({ ...trainee, _index: index }))),
       map(data => {
         data = data.map((trainee) => {
-          const gradesOverTime =
-            this.randomGradesUtilService.generateRandomGradesOverTime(trainee, "2024-01-01", "2025-12-31"); // Generate grades every 30 days
+          const gradesOverTime = this.randomGradesUtilService.generateRandomGradesOverTime
+            (trainee, "2024-01-01", "2025-12-31"); // Generate grades every 30 days
           trainee = { ...trainee, gradesOverTime: gradesOverTime };
           return trainee;
-        })
+        });
+        this.trainees.set(data);
         return data;
-      })
-    ).subscribe({
-      next: data => this.trainees.set(data),
-      error: err => console.error('Failed to load trainees', err)
-    });
+      }),
+      shareReplay(1) // Cache the result for subsequent subscribers
+    );
   }
 
   updateTrainee(updatedTrainee: Trainee) {
@@ -57,8 +56,8 @@ export class TraineeService {
 
     this.trainees.update((traineesList) => {
       // Make sure we have an _index property for the new trainee
-      const gradesOverTime = this.randomGradesUtilService.generateRandomGradesOverTime(
-        newTrainee as Trainee, "2024-01-01", "2025-12-31");
+      const gradesOverTime = this.randomGradesUtilService.generateRandomGradesOverTime
+      (newTrainee as Trainee, "2024-01-01", "2025-12-31");
 
       const _newTrainee = {
         ...newTrainee,
@@ -77,7 +76,8 @@ export class TraineeService {
       const filtered = traineesList.filter(t => t.id !== trainee.id);
 
       // Reindex the remaining trainees to maintain consistent _index values
-      return filtered.map((trainee, idx) => ({ ...trainee, _index: idx }));
+      const _filtered =  filtered.map((trainee, idx) => ({ ...trainee, _index: idx }));
+      return _filtered;
     });
   }
 

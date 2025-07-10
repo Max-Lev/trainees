@@ -8,18 +8,19 @@
 
     <mat-card-content>
       <form [formGroup]="detailsForm" class="details-form">
-        <!-- Hidden ID field -->
-        <!-- <input type="hidden" formControlName="id"> -->
+        
 
         <!-- Basic Info Section -->
         <div class="form-section">
           <h3>Basic Information</h3>
 
           <div class="form-row">
-            <!-- <div class="personal"> -->
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>ID</mat-label>
               <input matInput formControlName="id" placeholder="Enter trainee ID">
+              <mat-error *ngIf="detailsForm.get('id')?.hasError('existingId')">
+                This ID already exists.
+              </mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="full-width">
