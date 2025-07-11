@@ -143,8 +143,6 @@ export class AnalysisPageComponent {
 
   // Utility methods
   compareTrainees = (a: Trainee, b: Trainee): boolean => {
-    // return a.id === b.id;
-    console.log(a._index ,b._index)
     return a._index === b._index;
   };
 

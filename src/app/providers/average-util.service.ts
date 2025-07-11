@@ -32,7 +32,6 @@ export class AverageUtilService {
     const sum = values.reduce((acc, curr) => acc + curr, 0);
     const avg = Math.round((sum / values.length) * 100) / 100; // rounded to 2 decimals
     return avg;
-
   }
 
   // Create a computed value to filter the trainees based on the selected IDs, name filter, and pass/fail status

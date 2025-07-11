@@ -36,17 +36,17 @@ export class MonitorPageComponent implements AfterViewInit {
   // Inject the MonitorStateService and DataTableContainer
   state = inject(MonitorStateService);
   // Get all trainee ids
-  allIds = computed(() =>
-    this.state.allTrainees().map(t => t.id)
-  );
+  trainees = computed(() => this.state.trainees());
   // Get filtered trainees
-  trainees = this.state.filteredTrainees;
+  filteredTrainees = this.state.filteredTrainees;
 
   dataSource = new MatTableDataSource<Trainee>([]);
+
+  compareTrainees = (a: Trainee, b: Trainee): boolean => a._index === b._index;
   constructor() {
     effect(() => {
       // Effect to update the data source with the filtered trainees
-      this.dataSource.data = this.trainees();
+      this.dataSource.data = this.filteredTrainees();
     });
   }
 
@@ -73,6 +73,8 @@ export class MonitorPageComponent implements AfterViewInit {
       pageSize: event.pageSize
     });
   }
+
+  
 
 
 }

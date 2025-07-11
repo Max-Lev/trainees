@@ -69,12 +69,8 @@ export class AnalysisStateService {
       const selectedTrainees = this._selectedTrainees();
 
       const validSelectedTrainees = selectedTrainees.filter(trainee =>
-        // availableTrainees.some(t => t.id === trainee.id)
-        availableTrainees.find(t => t._index === trainee._index)
-        // availableTrainees.find(t => t.id === trainee.id)
-      );
-      console.log('Valid selected trainees:', validSelectedTrainees);
-      console.log('trainees:', this.traineeService.trainees());
+        availableTrainees.find(t => t._index === trainee._index));
+        
       if (validSelectedTrainees.length !== selectedTrainees.length) {
         this._selectedTrainees.set(validSelectedTrainees);
       }

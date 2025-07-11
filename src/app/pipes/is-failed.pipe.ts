@@ -1,4 +1,5 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { inject, Pipe, PipeTransform } from '@angular/core';
+import { AverageUtilService } from '../providers/average-util.service';
 
 @Pipe({
   name: 'isFailed',
@@ -6,8 +7,11 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class IsFailedPipe implements PipeTransform {
 
-  transform(value: number, ...args: unknown[]): string {
-    return (value >= 65) ? 'passed' : 'failed';
+  util = inject(AverageUtilService);
+
+  transform(grades: Record<string, number>) {
+    const avg = this.util.calculateAverage(grades);
+    return avg >= 65 ? 'passed' : 'failed';
   }
 
 }

@@ -2,9 +2,11 @@
 <div class="filters">
   <mat-form-field>
     <mat-label>IDs:</mat-label>
-    <mat-select multiple [value]="state.selectedIds()" (valueChange)="state.selectedIds.set($event)">
-      @for (id of allIds(); track $index) {
-      <mat-option [value]="id">{{ id }}</mat-option>
+    <mat-select multiple [value]="state.selectedTrainee()" 
+    [compareWith]="compareTrainees"
+    (valueChange)="state.selectedTrainee.set($event)">
+      @for (trainee of trainees(); track $index) {
+      <mat-option [value]="trainee">{{ trainee.id }} - {{trainee.name}}</mat-option>
       }
     </mat-select>
   </mat-form-field>
@@ -24,23 +26,23 @@
 
 <div class="table-container">
   <div class="table-wrapper">
-    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 demo-table">
+    <table mat-table [dataSource]="dataSource">
       @for (column of columns; track column) {
       <ng-container [matColumnDef]="column.columnDef">
         <th mat-header-cell *matHeaderCellDef>
           {{column.header}}
         </th>
         @if(column.columnDef==='average'){
-        <td mat-cell *matCellDef="let row" [ngClass]="state.calculateAverage(row.grades) | isFailed">
-          {{ state.calculateAverage(row.grades) }}
+        <td mat-cell *matCellDef="let row" [ngClass]="row.grades | isFailed">
+          {{ state.averageUtilService.calculateAverage(row.grades) }}
         </td>
         }@else if (column.columnDef==='exams') {
-        <td mat-cell *matCellDef="let row" [ngClass]="state.calculateAverage(row.grades) | isFailed">
+        <td mat-cell *matCellDef="let row" [ngClass]="row.grades | isFailed">
           {{state.countExams(row.grades)}}
         </td>
         }
         @else{
-        <td mat-cell *matCellDef="let row" [ngClass]="state.calculateAverage(row.grades) | isFailed">
+        <td mat-cell *matCellDef="let row" [ngClass]="row.grades | isFailed">
           {{column.cell(row)}}
         </td>
         }

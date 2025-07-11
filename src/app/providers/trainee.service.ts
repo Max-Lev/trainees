@@ -75,14 +75,6 @@ export class TraineeService {
     this.trainees.update(traineesList => {
       // Remove the trainee with the specified ID
       const filtered = traineesList.filter(t => t.id !== trainee.id);
-
-      // Reindex the remaining trainees to maintain consistent _index values
-
-
-      // fix selected analysis and removed/deleted option from data page
-      // const _filtered = filtered.map((trainee, idx) => ({ ...trainee, _index: idx }));
-      // const _filtered = filtered.map((trainee) => ({ ...trainee }));
-      // return _filtered;
       return filtered;
     });
   }
